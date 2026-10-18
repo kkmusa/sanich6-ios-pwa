@@ -1,0 +1,128 @@
+[
+  {
+    "file": "ANDROID_APP_PART_01_OF_15.zip",
+    "sha256": "3fa1a55efa12c031e0db19b14f725b76169e4634028a94bf4a2d11ebe2e701c8",
+    "entries": 35,
+    "bytes": 57409
+  },
+  {
+    "file": "ANDROID_APP_PART_02_OF_15.zip",
+    "sha256": "97de9718f75ee77a3c4fa4c925f2cd950c48e3a3667cc82bf3e2638e1d6b9d6a",
+    "entries": 35,
+    "bytes": 73732
+  },
+  {
+    "file": "ANDROID_APP_PART_03_OF_15.zip",
+    "sha256": "7cd53b21b72aa7e40cb7abbea12fa7c6e0cfe82bdcc0b575e0a052aeac88a087",
+    "entries": 35,
+    "bytes": 6145289
+  },
+  {
+    "file": "ANDROID_APP_PART_04_OF_15.zip",
+    "sha256": "08a918b79c5aeb7e79dadd23c9bc3e3e0569b77cf4f6c0eea92ccbc3485a7362",
+    "entries": 35,
+    "bytes": 6225390
+  },
+  {
+    "file": "ANDROID_APP_PART_05_OF_15.zip",
+    "sha256": "8df74be69cc40852dc011369a1b67e6f17c9674876adc675c4225981e0dff3af",
+    "entries": 35,
+    "bytes": 5886289
+  },
+  {
+    "file": "ANDROID_APP_PART_06_OF_15.zip",
+    "sha256": "3f02b45ed47de46dfab4c9679a85b8b7f590ac277d2c3eaf8c7e80675c459b1a",
+    "entries": 11,
+    "bytes": 941170
+  },
+  {
+    "file": "ANDROID_APP_PART_07_OF_15.zip",
+    "sha256": "192f3e06213bc34bbf338bfbba6de0f15738ecf81e4902560d5c96ca2006617f",
+    "entries": 1,
+    "bytes": 10560560
+  },
+  {
+    "file": "ANDROID_APP_PART_08_OF_15.zip",
+    "sha256": "e5af5eb8bf6ff3d618cec1bf80cf137cf8da3f321075564bbc82eab58d45e639",
+    "entries": 26,
+    "bytes": 9897423
+  },
+  {
+    "file": "ANDROID_APP_PART_09_OF_15.zip",
+    "sha256": "703b5f85e1e4a1f7d4863173f14e557a26f02c8744263e99fc6a901e82bc5588",
+    "entries": 35,
+    "bytes": 8912619
+  },
+  {
+    "file": "ANDROID_APP_PART_10_OF_15.zip",
+    "sha256": "c31eead4306f8e32b9c2762a83e79e2f73fdcf7f89d215a7ea60709b65d8ed75",
+    "entries": 35,
+    "bytes": 8675747
+  },
+  {
+    "file": "ANDROID_APP_PART_11_OF_15.zip",
+    "sha256": "677be7a3c3fe5ee783f5bd17ee765b695f5e8b0aa9a99cb1d8b2f63b1d96b78c",
+    "entries": 35,
+    "bytes": 9538295
+  },
+  {
+    "file": "ANDROID_APP_PART_12_OF_15.zip",
+    "sha256": "04803c20e4d813f559df31e83a47b1e54cf7615d8af2a6939f6f72c261c0c342",
+    "entries": 35,
+    "bytes": 8186945
+  },
+  {
+    "file": "ANDROID_APP_PART_13_OF_15.zip",
+    "sha256": "c31257fb273f650c10fa57bf2671ce44326b58a7d358f9b9705474176e4170fa",
+    "entries": 35,
+    "bytes": 8571940
+  },
+  {
+    "file": "ANDROID_APP_PART_14_OF_15.zip",
+    "sha256": "fadf37f0316d28eb4d3efc6f7aa24e35c92482514a7f8dd953cf8d9177774944",
+    "entries": 35,
+    "bytes": 6718209
+  },
+  {
+    "file": "ANDROID_APP_PART_15_OF_15.zip",
+    "sha256": "86260106f5b4697e8396ccd95c2b16a2059e61b306bfcf44dc10a24eb26eda5b",
+    "entries": 16,
+    "bytes": 1033610
+  },
+  {
+    "file": "PWA_VNR_PART_01_OF_06.zip",
+    "sha256": "ab9720edb07d9b9a667f3009d3d4d4c2f4641214f25bc388dec97d4fae00ad66",
+    "entries": 35,
+    "bytes": 9722631
+  },
+  {
+    "file": "PWA_VNR_PART_02_OF_06.zip",
+    "sha256": "4c96a72c774cfabda17599e53b125505a52e353bfe038ea11505f9d9c8ad9bd5",
+    "entries": 35,
+    "bytes": 8897009
+  },
+  {
+    "file": "PWA_VNR_PART_03_OF_06.zip",
+    "sha256": "34c4bb3ce10fdcd22fea3145cc48bf54b40009914b80cc52b106bfd355974325",
+    "entries": 35,
+    "bytes": 8666214
+  },
+  {
+    "file": "PWA_VNR_PART_04_OF_06.zip",
+    "sha256": "032da752959a03e9b51841218ddade5d0da0394b7d718a8afe5c34193b774110",
+    "entries": 35,
+    "bytes": 9261079
+  },
+  {
+    "file": "PWA_VNR_PART_05_OF_06.zip",
+    "sha256": "6ab71588eff7d489abf97d332e12426d8f28411d6e979606a06d70989527c292",
+    "entries": 35,
+    "bytes": 8580691
+  },
+  {
+    "file": "PWA_VNR_PART_06_OF_06.zip",
+    "sha256": "26809fe9449e909e1027c1f4b8387c3457ae2a407fe352b61916eb5a180c39cd",
+    "entries": 33,
+    "bytes": 7907540
+  }
+]
