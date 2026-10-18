@@ -1,0 +1,63 @@
+
+> sanich6-ios-pwa@2.8.1-web.22 test
+> node --test tests/*.test.cjs
+
+✔ original Kotlin parity: level (2.49072ms)
+✔ original Kotlin parity: frequency (0.676147ms)
+✔ original Kotlin parity: annular (0.329674ms)
+✔ original Kotlin parity: inner (0.239727ms)
+✔ original Kotlin parity: sensor (0.893122ms)
+✔ original Kotlin parity: flow (2.108866ms)
+✔ original Kotlin parity: sko (0.563165ms)
+✔ original Kotlin parity: tap (0.961711ms)
+✔ original Kotlin parity: upr (0.471333ms)
+✔ original Kotlin parity: apv (4.552161ms)
+✔ calculator navigation preserves result, and history persists across reload (3821.392814ms)
+✔ manual stopwatch suspends UI updates on navigation, interval wheels survive navigation and reload (3646.757597ms)
+✔ flow static level can be entered without clearing itself; casing selector works (1932.124151ms)
+✔ shell, VNR index and every station photo work offline (4391.542309ms)
+✔ all five stations provide ramp and RICH instructions with existing photographs (1914.382062ms)
+✔ all routes render; operating screens use existing mathematical functions (2087.565832ms)
+✔ VNR index: 207 sections, 338 links, phrase search, highlight, arrows and clearing (2557.236941ms)
+✔ Android engineering calculators: motor swap, temperature cap, potential and persistent inputs (3544.149169ms)
+✔ complete VNR: download 207 pages, reload offline and decode every image (9066.175973ms)
+✔ manual timer continues across navigation/reload, units convert, reset pauses it (3637.073188ms)
+✔ PED selection/current and operator station/mode survive navigation and reload (5196.086441ms)
+✔ SKO and tap choices and geometry survive reload; level extension and original density units (5197.024725ms)
+✔ RPD original example and unsuitable APV cycle can be corrected (2346.751327ms)
+✔ VNR zoom/page controls and search survive reload (4698.276951ms)
+✔ new shell activation preserves existing VNR, photos and unrelated caches (2185.370958ms)
+✔ blocked storage does not crash startup or calculations and reports history failure (2064.737658ms)
+✔ manual calendar dates save complete interval history and survive reload (3689.577859ms)
+✔ history retains older entries beyond 150, paginates and deletes individual records (2162.833507ms)
+✔ liquid level: reference example and invalid density (1.74747ms)
+✔ start frequency and invalid head (5.722086ms)
+✔ manual measurement: equivalent seconds and minutes (0.343526ms)
+✔ manual interval: midnight, full day and invalid times (0.301206ms)
+✔ operating cycle: productive time, startup and stop (1.496846ms)
+✔ APV: rounds minimum cycle to full minutes (0.522904ms)
+✔ Android motor coefficient: both directions, zero frequency and invalid poles (0.414011ms)
+✔ Android TMS temperature: all groups, cap and invalid inputs (0.351442ms)
+✔ Android well potential: optional delay, zero production and invalid interval (0.257359ms)
+✔ Android APV uses minutes, rounds to whole hours and checks the selected cycle (0.35515ms)
+✔ Android RPD: accumulation limit and pressure example (0.34434ms)
+✔ annular geometry: validates diameters and wall thickness (0.186222ms)
+✔ all flow modes and negative/zero boundaries (0.14101ms)
+✔ all four SKO variants preserve original constants (0.296171ms)
+✔ tap voltage: VFD/filter/material and motor coefficients (1.072234ms)
+✔ PED cooling: squared current ratio, zero current and invalid denominator (0.216538ms)
+✔ manual calendar interval: midnight, leap day, year boundary and invalid dates (0.995937ms)
+✔ overflow does not produce a valid displayed calculation (0.100941ms)
+✔ operator ramp and RICH use original time units and validation (0.38108ms)
+✔ all Android assistant topics, original wording and formatting are preserved (6.836536ms)
+✔ service worker upgrade preserves document, photos and unrelated application caches (4.900145ms)
+✔ VNR download rejects HTML pages, reports failure and resumes without repeating saved pages (76.231403ms)
+✔ offline quota errors are reported without claiming completion (4.263905ms)
+ℹ tests 51
+ℹ suites 0
+ℹ pass 51
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64830.025806
