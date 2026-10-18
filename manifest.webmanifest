@@ -1,0 +1,15 @@
+{
+  "name": "Оператор ДНГ — Инженерные расчёты",
+  "short_name": "Оператор ДНГ",
+  "description": "Офлайн инженерные расчёты",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFD100",
+  "theme_color": "#FFD100",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src":"assets/icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
+    {"src":"assets/icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+  ]
+}
