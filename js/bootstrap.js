@@ -36,7 +36,7 @@ function renderNotice() {
 }
 function renderSplash() {
   state.route = 'splash';
-  app.innerHTML = `<div class="splash"><div class="center"><img src="assets/logo.png" alt="Саныч-6"><div class="tag">Инженерные расчёты</div></div><div class="meta">Автор<strong>Муса Якупов</strong>Версия ${APP_VERSION}</div></div>`;
+  app.innerHTML = `<div class="splash"><div class="center"><img src="assets/logo.png" alt="Оператор ДНГ"><div class="tag">Инженерные расчёты</div></div><div class="meta">Автор<strong>Муса Якупов</strong>Версия ${APP_VERSION}</div></div>`;
   setTimeout(() => {
     if (hasPrivacySeen()) openHomeFromStart();
     else renderNotice();

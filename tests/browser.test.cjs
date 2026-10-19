@@ -652,7 +652,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.0'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.1'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -971,3 +971,46 @@ test(
       );
     }),
 );
+
+test('home is compact, product identity is Operator DNG, and technologist tools have one menu location', () =>
+  withPage(async (page) => {
+    assert.equal(await page.title(), 'Оператор ДНГ');
+    assert.equal(
+      await page.locator('meta[name="apple-mobile-web-app-title"]').getAttribute('content'),
+      'Оператор ДНГ',
+    );
+    const manifest = await page.evaluate(async () => (await fetch('manifest.webmanifest')).json());
+    assert.equal(manifest.name, 'Оператор ДНГ');
+    assert.equal(manifest.short_name, 'Оператор ДНГ');
+    const routes = () =>
+      page
+        .locator('.menu-card')
+        .evaluateAll((nodes) =>
+          nodes.map((node) => node.getAttribute('onclick').match(/go\('([^']+)'\)/)[1]),
+        );
+    const homeRoutes = await routes();
+    assert.deepEqual(homeRoutes, [
+      'level',
+      'frequency',
+      'manual',
+      'tap',
+      'ramp',
+      'rich',
+      'motorCoefficient',
+      'wellPotential',
+    ]);
+    assert.equal(await page.locator('.hero h1').textContent(), 'Расчёты');
+    assert.equal(await page.locator('.hero p, .menu-card p').count(), 0);
+    const technologyTab = page.locator('.bottom-nav button').filter({ hasText: 'Технолог' });
+    assert.equal(await technologyTab.count(), 1);
+    await technologyTab.click();
+    const techRoutes = await routes();
+    assert.deepEqual(techRoutes, ['rpd', 'flow', 'upr', 'apv', 'sko', 'temperatureSetpoint']);
+    assert.equal(techRoutes.filter((route) => homeRoutes.includes(route)).length, 0);
+    for (const route of techRoutes) {
+      await page.locator(`.menu-card[onclick="go('${route}')"]`).click();
+      assert.equal(await page.evaluate(() => state.route), route);
+      await page.locator('.back').click();
+      assert.equal(await page.evaluate(() => state.route), 'technologist');
+    }
+  }));

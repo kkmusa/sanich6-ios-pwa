@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.0';
+const APP_VERSION = '3.0.1';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -400,7 +400,7 @@ function iconSvg(type) {
   return type;
 }
 function menuCard(icon, title, subtitle, route) {
-  return `<div class="card menu-card pressable" role="button" tabindex="0" onclick="go('${route}')"><div class="emoji">${iconSvg(icon)}</div><div class="grow"><h3>${esc(title)}</h3><p>${esc(subtitle)}</p></div><div class="chev">›</div></div>`;
+  return `<div class="card menu-card pressable" role="button" tabindex="0" onclick="go('${route}')"><div class="emoji">${iconSvg(icon)}</div><div class="grow"><h3>${esc(title)}</h3>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div><div class="chev">›</div></div>`;
 }
 
 // Choice buttons need persistence after their screen-specific click handlers run.

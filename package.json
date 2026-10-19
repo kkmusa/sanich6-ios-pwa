@@ -1,8 +1,8 @@
 {
-  "name": "sanich6-ios-pwa",
-  "version": "3.0.0",
+  "name": "operator-dng-pwa",
+  "version": "3.0.1",
   "private": true,
-  "description": "Саныч-6: офлайн инженерные расчёты и регламент ВНР",
+  "description": "Оператор ДНГ: офлайн инженерные расчёты и регламент ВНР",
   "scripts": {
     "start": "python3 -m http.server 8081 --bind 127.0.0.1",
     "test": "node --test tests/*.test.cjs",

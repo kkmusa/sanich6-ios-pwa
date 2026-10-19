@@ -12,8 +12,8 @@ const exists = (ref) => {
 };
 const index = read('index.html'),
   manifest = JSON.parse(read('manifest.webmanifest'));
-assert.match(index, /<title>Саныч-6<\/title>/);
-assert.equal(manifest.short_name, 'Саныч-6');
+assert.match(index, /<title>Оператор ДНГ<\/title>/);
+assert.equal(manifest.short_name, 'Оператор ДНГ');
 assert.equal(manifest.start_url, './');
 assert.equal(manifest.scope, './');
 for (const [, ref] of index.matchAll(/(?:src|href)="([^"]+)"/g))

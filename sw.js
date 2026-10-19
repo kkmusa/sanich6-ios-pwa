@@ -1,23 +1,23 @@
-const CACHE = 'operator-dng-pwa-v3.0.0';
+const CACHE = 'operator-dng-pwa-v3.0.1';
 const VNR_CACHE = 'operator-dng-vnr-pages-v1';
 const VNR_TOTAL = 207;
 const OP_CACHE = 'operator-dng-photos-v1';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=3.0.0',
-  './js/core.js?v=3.0.0',
-  './js/ui-components.js?v=3.0.0',
-  './js/math.js?v=3.0.0',
-  './js/calculators.js?v=3.0.0',
-  './js/manual.js?v=3.0.0',
-  './js/engineering.js?v=3.0.0',
-  './js/reference-data.js?v=3.0.0',
-  './js/reference-ui.js?v=3.0.0',
-  './js/ped.js?v=3.0.0',
-  './js/operator-data.js?v=3.0.0',
-  './js/operators.js?v=3.0.0',
-  './js/bootstrap.js?v=3.0.0',
+  './styles.css?v=3.0.1',
+  './js/core.js?v=3.0.1',
+  './js/ui-components.js?v=3.0.1',
+  './js/math.js?v=3.0.1',
+  './js/calculators.js?v=3.0.1',
+  './js/manual.js?v=3.0.1',
+  './js/engineering.js?v=3.0.1',
+  './js/reference-data.js?v=3.0.1',
+  './js/reference-ui.js?v=3.0.1',
+  './js/ped.js?v=3.0.1',
+  './js/operator-data.js?v=3.0.1',
+  './js/operators.js?v=3.0.1',
+  './js/bootstrap.js?v=3.0.1',
   './manifest.webmanifest',
   './assets/logo.png',
   './assets/PedCoolingDatabase.json',
@@ -38,11 +38,11 @@ self.addEventListener('install', (event) =>
         try {
           await cache.addAll([
             './vnr/index.html',
-            './vnr/search-data.js?v=3.0.0',
-            './vnr/reader.js?v=3.0.0',
-            './vnr/toolbar.js?v=3.0.0',
-            './vnr/offline.js?v=3.0.0',
-            './vnr/bookmarks.js?v=3.0.0',
+            './vnr/search-data.js?v=3.0.1',
+            './vnr/reader.js?v=3.0.1',
+            './vnr/toolbar.js?v=3.0.1',
+            './vnr/offline.js?v=3.0.1',
+            './vnr/bookmarks.js?v=3.0.1',
           ]);
         } catch {}
       })

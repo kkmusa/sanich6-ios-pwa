@@ -1,21 +1,14 @@
 function renderHome() {
   app.innerHTML = screen(
-    `<section class="hero"><img src="assets/logo.png" alt="Саныч-6"><h1>Расчёт параметров скважины</h1><p>Выберите необходимый расчёт</p></section><main class="content stack">
-${menuCard('level', 'Уровень жидкости в скважине', 'Определение уровня по замерам', 'level')}
-${menuCard('frequency', 'Необходимая частота запуска', 'Расчёт частоты УЭЦН', 'frequency')}
-${menuCard('flow', 'Определение притока', 'Три режима ОК, Vкп по таблице или геометрии', 'flow')}
-${menuCard('manual', 'Ручной замер дебита', 'Перевод литров и времени замера в м³/сут', 'manual')}
-${menuCard('⚡', 'Расчёт отпайки ТМПН', 'Для СУ без ЧРП и для СУ с ЧРП', 'tap')}
-${menuCard('↻', 'Перевод ПР в УПР', 'Расчёт времени работы и остановки', 'upr')}
-${menuCard('↻', 'Перевод УПР в АПВ', 'Проверка цикла с учётом времени слива', 'apv')}
-${menuCard('ramp', 'Разгон', 'Настройка разгона станций управления', 'ramp')}
-${menuCard('FF', 'РИЧ', 'Режим изменения частоты', 'rich')}
-${menuCard('sko', 'Объём СКО', 'Четыре варианта расчёта кислотной обработки', 'sko')}
-${menuCard('2А', 'Коэффициент двигателя 2А', 'Перевод обычной частоты и частоты станции', 'motorCoefficient')}
-${menuCard('🌡', 'Уставка температуры ТМС', 'Расчёт по рабочей температуре и группе двигателя', 'temperatureSetpoint')}
-${menuCard('Q', 'Потенциал скважины', 'Добыча с учётом цикла и задержки подачи', 'wellPotential')}
-${menuCard('↻', 'Расчёт РПД', 'Цикл откачки, накопления и давления на приёме', 'rpd')}
-${menuCard('⚙', 'Технолог', 'РПД, режимы УПР/АПВ и кислотная обработка', 'technologist')}</main>`,
+    `<section class="hero home-hero"><img src="assets/logo.png" alt="Оператор ДНГ"><h1>Расчёты</h1></section><main class="content stack">
+${menuCard('level', 'Уровень жидкости в скважине', '', 'level')}
+${menuCard('frequency', 'Необходимая частота запуска', '', 'frequency')}
+${menuCard('manual', 'Ручной замер дебита', '', 'manual')}
+${menuCard('⚡', 'Расчёт отпайки ТМПН', '', 'tap')}
+${menuCard('ramp', 'Разгон', '', 'ramp')}
+${menuCard('FF', 'РИЧ', '', 'rich')}
+${menuCard('2А', 'Коэффициент двигателя 2А', '', 'motorCoefficient')}
+${menuCard('Q', 'Потенциал скважины', '', 'wellPotential')}</main>`,
     'home',
   );
 }

@@ -713,8 +713,78 @@ button {
   display: none !important;
 }
 
-.time-wheel-column{position:relative}.time-wheel-column::after{content:"";position:absolute;pointer-events:none;left:0;right:0;bottom:44px;height:44px;border:2px solid #e8b500;border-radius:9px;background:#ffda4a33;box-sizing:border-box}.time-wheel-option[aria-selected="true"]{font-size:24px}.nav-btn{font-size:11px}.manual-mini{position:fixed;z-index:40;bottom:calc(76px + var(--safe-bottom));right:12px;border:1px solid #a67e00;border-radius:12px;padding:10px;background:#ffda4a;box-shadow:0 2px 8px #0003;font-variant-numeric:tabular-nums}.manual-mini[hidden]{display:none}
+.time-wheel-column {
+  position: relative;
+}
+.time-wheel-column::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  height: 44px;
+  border: 2px solid #e8b500;
+  border-radius: 9px;
+  background: #ffda4a33;
+  box-sizing: border-box;
+}
+.time-wheel-option[aria-selected='true'] {
+  font-size: 24px;
+}
+.nav-btn {
+  font-size: 11px;
+}
+.manual-mini {
+  position: fixed;
+  z-index: 40;
+  bottom: calc(76px + var(--safe-bottom));
+  right: 12px;
+  border: 1px solid #a67e00;
+  border-radius: 12px;
+  padding: 10px;
+  background: #ffda4a;
+  box-shadow: 0 2px 8px #0003;
+  font-variant-numeric: tabular-nums;
+}
+.manual-mini[hidden] {
+  display: none;
+}
 
-.offline-dialog{width:calc(100% - 32px);max-width:440px;max-height:80dvh;box-sizing:border-box;overflow:auto;border:2px solid #c59400;border-radius:16px;padding:16px;color:#171717;background:#fff8dc}.offline-dialog::backdrop{background:#0006}
+.offline-dialog {
+  width: calc(100% - 32px);
+  max-width: 440px;
+  max-height: 80dvh;
+  box-sizing: border-box;
+  overflow: auto;
+  border: 2px solid #c59400;
+  border-radius: 16px;
+  padding: 16px;
+  color: #171717;
+  background: #fff8dc;
+}
+.offline-dialog::backdrop {
+  background: #0006;
+}
 
-#pedDetails{scroll-margin-top:16px}#pedDetails:focus{outline:2px solid #e8b500;outline-offset:3px;border-radius:12px}
+#pedDetails {
+  scroll-margin-top: 16px;
+}
+#pedDetails:focus {
+  outline: 2px solid #e8b500;
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* Compact home header; the logo already contains the product name. */
+.home-hero {
+  padding: calc(10px + var(--safe-top)) 16px 10px;
+}
+.home-hero img {
+  width: 96px;
+  max-height: 96px;
+}
+.home-hero h1 {
+  font-size: 20px;
+  margin: 6px 0 0;
+}
