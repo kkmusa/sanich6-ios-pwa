@@ -1,0 +1,4 @@
+01_Experimental_One_Shift.pptx: 20 слайдов; PPTX открыт, заметки и Morph/Fade присутствуют; PDF экспортирован.
+02_Executive.pptx: 19 слайдов; PPTX открыт, заметки и Morph/Fade присутствуют; PDF экспортирован.
+03_Product_Showcase.pptx: 19 слайдов; PPTX открыт, заметки и Morph/Fade присутствуют; PDF экспортирован.
+Реальное воспроизведение переходов в Microsoft PowerPoint не проверено. 3D-видео отсутствует.
