@@ -1,0 +1,21 @@
+{
+  "product": "Оператор ДНГ",
+  "pptx_slides": 23,
+  "main_slides": 21,
+  "hidden_reference_slides": 2,
+  "pdf_pages": 21,
+  "approved_task_headings_and_notes": 4,
+  "approved_opening_geometry": "unchanged",
+  "internal_navigation_actions": 26,
+  "morph_with_push_fallback": 21,
+  "card_expansions": 4,
+  "macro_crop_transitions": 2,
+  "moving_photo_strips": 7,
+  "pdf_text_outside_page": [],
+  "pdf_intersecting_separate_text_blocks": [],
+  "mathematical_examples": "passed",
+  "old_product_name_in_xml": false,
+  "office_playback": "NOT TESTED",
+  "actual_phone_tests": "NOT PERFORMED",
+  "preview": "Opening only; independent animatic, not Office recording"
+}
