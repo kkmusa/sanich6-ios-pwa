@@ -1,5 +1,5 @@
 function topbarTo(title, backRoute = 'reference') {
-  return `<div class="topbar"><button class="back" onclick="goBack()">‹</button><h1>${esc(title)}</h1></div>`;
+  return topbar(title);
 }
 const tubingGost633 = {
   60: { outside: 60.3, walls: [5.0] },

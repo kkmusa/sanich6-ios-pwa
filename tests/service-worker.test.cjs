@@ -23,6 +23,7 @@ test('service worker upgrade preserves document, photos and unrelated applicatio
         'operator-dng-pwa-v21',
         'operator-dng-pwa-v3.0.0',
         'operator-dng-pwa-v3.0.1',
+        'operator-dng-pwa-v3.0.2',
         'operator-dng-vnr-pages-v1',
         'operator-dng-photos-v1',
         'another-app-cache',
@@ -38,7 +39,11 @@ test('service worker upgrade preserves document, photos and unrelated applicatio
     },
   });
   await task;
-  assert.deepEqual(deleted, ['operator-dng-pwa-v21', 'operator-dng-pwa-v3.0.0']);
+  assert.deepEqual(deleted, [
+    'operator-dng-pwa-v21',
+    'operator-dng-pwa-v3.0.0',
+    'operator-dng-pwa-v3.0.1',
+  ]);
   assert.equal(claimed, true);
 });
 test('VNR download rejects HTML pages, reports failure and resumes without repeating saved pages', async () => {

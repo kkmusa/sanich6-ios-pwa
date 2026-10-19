@@ -1,12 +1,13 @@
 // Shared presentation components. Kept separate from application state and calculations.
 function topbar(title) {
-  return `<div class="topbar"><button class="back" onclick="goBack()">‹</button><h1>${esc(title)}</h1></div>`;
+  return `<div class="topbar"><button class="back" onclick="goBack()">‹</button><h1>${esc(title)}</h1>${calculationHelpFor() ? '<button type="button" class="calculation-help-open" id="calculationHelpOpen" onclick="openCalculationHelp()" aria-label="Пояснения и формулы">?</button>' : ''}</div>`;
 }
 function bottomNav(active = 'home') {
   const canBack = state.route !== 'home' || state.navStack.length > 0;
   return `<nav class="bottom-nav"><button class="nav-btn back-nav" onclick="goBack()" ${canBack ? '' : 'disabled'}><span>‹</span><span>Назад</span></button><button class="nav-btn ${active === 'home' ? 'active' : ''}" onclick="go('home')"><span>⌂</span><span>Главная</span></button><button class="nav-btn ${active === 'technologist' ? 'active' : ''}" onclick="go('technologist')"><span>△</span><span>Технолог</span></button><button class="nav-btn ${active === 'history' ? 'active' : ''}" onclick="go('history')"><span>◷</span><span>История</span></button><button class="nav-btn ${active === 'reference' ? 'active' : ''}" onclick="go('reference')"><span>☰</span><span>Справочник</span></button></nav>`;
 }
 function screen(body, active = 'home') {
+  closeCalculationHelp(false);
   return `<div class="screen">${body}</div>${bottomNav(active)}`;
 }
 function field(id, label, opts = '') {

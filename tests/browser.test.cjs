@@ -201,6 +201,10 @@ test('shell, VNR index and every station photo work offline', () =>
     await go(page, 'manual');
     await fill(page, { liters: '100', seconds: '60' });
     await result(page, '144 м³/сут');
+    await page.getByRole('button', { name: 'Пояснения и формулы' }).click();
+    assert.equal(await page.locator('#calculationHelpDialog math mfrac').count(), 1);
+    await page.getByRole('button', { name: 'Понятно', exact: true }).click();
+    await result(page, '144 м³/сут');
   }));
 test('all five stations provide ramp and RICH instructions with existing photographs', () =>
   withPage(async (page) => {
@@ -652,7 +656,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.1'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.2'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1013,4 +1017,56 @@ test('home is compact, product identity is Operator DNG, and technologist tools 
       await page.locator('.back').click();
       assert.equal(await page.evaluate(() => state.route), 'technologist');
     }
+  }));
+
+test('Android question buttons show formulas and terms, retain inputs and close accessibly', () =>
+  withPage(async (page) => {
+    const topics = [
+      ['level', 1, 'Плотность'],
+      ['frequency', 1, 'частота'],
+      ['manual', 1, 'время'],
+      ['flow', 3, 'Vкп'],
+      ['tap', 5, 'кабел'],
+      ['rpd', 7, 'давление'],
+      ['upr', 4, 'потенциал'],
+      ['apv', 4, 'потенциал'],
+      ['temperatureSetpoint', 3, 'температур'],
+      ['wellPotential', 1, 'потенциал'],
+      ['ped', 0, 'номинальн'],
+    ];
+    for (const [route, count, term] of topics) {
+      await go(page, route);
+      await page.getByRole('button', { name: 'Пояснения и формулы' }).click();
+      const dialog = page.getByRole('dialog', { name: 'Как выполняется расчёт' });
+      assert.equal(await dialog.isVisible(), true);
+      assert.equal(await dialog.locator('math').count(), count);
+      assert.match((await dialog.textContent()).toLowerCase(), new RegExp(term.toLowerCase()));
+      await dialog.getByRole('button', { name: 'Понятно', exact: true }).click();
+      assert.equal(await dialog.count(), 0);
+      assert.equal(
+        await page.locator('#calculationHelpOpen').evaluate((e) => e === document.activeElement),
+        true,
+      );
+    }
+    await go(page, 'level');
+    await fill(page, { depth: '1800', pz: '10', pd: '50', density: '0.9' });
+    const value = await page.locator('#liveResult').textContent();
+    await page.getByRole('button', { name: 'Пояснения и формулы' }).click();
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('#calculationHelpDialog').count(), 0);
+    assert.equal(await page.locator('#depth').inputValue(), '1800');
+    assert.equal(await page.locator('#liveResult').textContent(), value);
+    await page.setViewportSize({ width: 320, height: 568 });
+    await go(page, 'tap');
+    await page.getByRole('button', { name: 'Пояснения и формулы' }).click();
+    assert.equal(await page.locator('#calculationHelpDialog math mfrac').count(), 4);
+    assert.ok(
+      await page
+        .locator('#calculationHelpDialog')
+        .evaluate((e) => e.getBoundingClientRect().width <= innerWidth),
+    );
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await page.getByRole('button', { name: 'Закрыть пояснения' }).click();
+    await go(page, 'ramp');
+    assert.equal(await page.locator('#calculationHelpOpen').count(), 0);
   }));

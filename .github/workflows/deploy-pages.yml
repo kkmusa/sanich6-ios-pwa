@@ -38,7 +38,7 @@ jobs:
         env:
           PWA_TEST_ROOT: dist
           PWA_TEST_SUBPATH: '1'
-        run: node --test --test-name-pattern='complete VNR|all routes|manual calendar|PED selection|home is compact' tests/browser.test.cjs
+        run: node --test --test-name-pattern='complete VNR|all routes|manual calendar|PED selection|home is compact|Android question buttons|shell, VNR index' tests/browser.test.cjs
       - name: Upload Pages site
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
