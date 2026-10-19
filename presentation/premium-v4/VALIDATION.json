@@ -1,0 +1,17 @@
+{
+  "pptx_slides": 24,
+  "main_slides": 21,
+  "hidden_reference_slides": 3,
+  "morph_and_fade_fallback": 21,
+  "internal_navigation_actions": 30,
+  "panel_expansions_verified": 4,
+  "screenshot_macro_transitions_verified": 2,
+  "native_photo_glyph_mask": true,
+  "photo_shutter_strips": 7,
+  "pdf_pages": 21,
+  "pdf_text_outside_page": [],
+  "math_examples": "passed",
+  "office_playback": "NOT TESTED",
+  "device_tests": "NOT PERFORMED",
+  "animatic": "independent renderer, not a recording of Office"
+}
