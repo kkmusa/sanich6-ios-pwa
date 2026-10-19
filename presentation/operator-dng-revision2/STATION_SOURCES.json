@@ -1,0 +1,82 @@
+{
+  "rich": {
+    "station": "Борец КАСКАД-НТ",
+    "steps": [
+      {
+        "title": "Вход в меню",
+        "description": "Нажать «Ввод / Enter».",
+        "image": "assets/operators/borets_cascade_01.jpg"
+      },
+      {
+        "title": "Уставки",
+        "description": "Открыть «Уставки».",
+        "image": "assets/operators/borets_cascade_02.jpg"
+      },
+      {
+        "title": "Уставки I",
+        "description": "Открыть «Уставки I».",
+        "image": "assets/operators/borets_rich_03.jpg"
+      },
+      {
+        "title": "ЗСП",
+        "description": "Установить ЗСП ${formatNumber((lm!! + 1.0) * 60.0)} с. ",
+        "image": "assets/operators/borets_rich_04.jpg"
+      },
+      {
+        "title": "Уставки другие",
+        "description": "Открыть «Уставки другие».",
+        "image": "assets/operators/borets_cascade_03.jpg"
+      },
+      {
+        "title": "Пониженная частота",
+        "description": "В «NminПРГ» установить $lo Гц.",
+        "image": "assets/operators/borets_rich_06.jpg"
+      },
+      {
+        "title": "ПРГ пауза",
+        "description": "Установить НАШЕ время на пониженной частоте $ltime мин.",
+        "image": "assets/operators/borets_rich_06.jpg"
+      },
+      {
+        "title": "ПРГ работа",
+        "description": "Установить НАШЕ время на рабочей частоте $htime мин и включить ПРГ.",
+        "image": "assets/operators/borets_rich_08.jpg"
+      }
+    ]
+  },
+  "ramp": {
+    "station": "Эталон ЧР",
+    "steps": [
+      {
+        "title": "Параметры ЧРП",
+        "description": "Зайти в «Параметры ЧРП».",
+        "image": "assets/operators/etalon_new_ramp_01.jpg"
+      },
+      {
+        "title": "Прогр. изм F",
+        "description": "Зайти в «Прогр. изм F».",
+        "image": "assets/operators/etalon_new_ramp_02.jpg"
+      },
+      {
+        "title": "Частоты",
+        "description": "Установить начальную $st Гц и конечную $en Гц.",
+        "image": "assets/operators/etalon_new_ramp_03.jpg"
+      },
+      {
+        "title": "Шаг по регл.",
+        "description": "Установить шаг ${formatNumber(dv!!)} Гц.",
+        "image": "assets/operators/etalon_new_ramp_04.jpg"
+      },
+      {
+        "title": "Задерж. по регл.",
+        "description": "Установить задержку ${formatNumber(sm!!)} с.",
+        "image": "assets/operators/etalon_new_ramp_05.jpg"
+      },
+      {
+        "title": "Вывод на режим",
+        "description": "Выбрать «Однокр».",
+        "image": "assets/operators/etalon_new_ramp_06.jpg"
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "manual": {
+    "litres": 1000,
+    "minutes": 60,
+    "result": "Дебит скважины\n24 м³/сут"
+  },
+  "interval": {
+    "duration": "Продолжительность: 12 ч 0 мин",
+    "result": "Дебит скважины\n2 м³/сут"
+  },
+  "cooling": {
+    "ped": {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД16-М,М1",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.07,
+      "casing": 168,
+      "wall": 12.1,
+      "flow": 50
+    },
+    "nominalCurrent": 20,
+    "workingCurrent": 16.2,
+    "nominalFlow": 50,
+    "exactFlow": 32.80499999999999,
+    "display": "32.8 м³/сут"
+  },
+  "scope": "Real screenshots from current local PWA; currents are illustrative inputs, not motor passport data."
+}

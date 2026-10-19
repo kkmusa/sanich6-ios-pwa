@@ -1,0 +1,112 @@
+[
+  {
+    "slide": 1,
+    "kind": "opening",
+    "hidden": false
+  },
+  {
+    "slide": 2,
+    "kind": "reveal",
+    "hidden": false
+  },
+  {
+    "slide": 3,
+    "kind": "goal",
+    "hidden": false
+  },
+  {
+    "slide": 4,
+    "kind": "tasks",
+    "hidden": false
+  },
+  {
+    "slide": 5,
+    "kind": "hub",
+    "hidden": false
+  },
+  {
+    "slide": 6,
+    "kind": "manual",
+    "hidden": false
+  },
+  {
+    "slide": 7,
+    "kind": "interval",
+    "hidden": false
+  },
+  {
+    "slide": 8,
+    "kind": "cooling",
+    "hidden": false
+  },
+  {
+    "slide": 9,
+    "kind": "ramp",
+    "hidden": false
+  },
+  {
+    "slide": 10,
+    "kind": "rich",
+    "hidden": false
+  },
+  {
+    "slide": 11,
+    "kind": "vnr",
+    "hidden": false
+  },
+  {
+    "slide": 12,
+    "kind": "tools",
+    "hidden": false
+  },
+  {
+    "slide": 13,
+    "kind": "guidance",
+    "hidden": false
+  },
+  {
+    "slide": 14,
+    "kind": "situations",
+    "hidden": false
+  },
+  {
+    "slide": 15,
+    "kind": "sources",
+    "hidden": false
+  },
+  {
+    "slide": 16,
+    "kind": "development",
+    "hidden": false
+  },
+  {
+    "slide": 17,
+    "kind": "audience",
+    "hidden": false
+  },
+  {
+    "slide": 18,
+    "kind": "effects",
+    "hidden": false
+  },
+  {
+    "slide": 19,
+    "kind": "pilot",
+    "hidden": false
+  },
+  {
+    "slide": 20,
+    "kind": "closing",
+    "hidden": false
+  },
+  {
+    "slide": 21,
+    "kind": "author",
+    "hidden": true
+  },
+  {
+    "slide": 22,
+    "kind": "reference",
+    "hidden": true
+  }
+]
