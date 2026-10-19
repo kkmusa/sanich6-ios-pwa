@@ -247,7 +247,7 @@ select {
   background: #fff;
   border-top: 1px solid #ddd;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
 }
 .nav-btn {
   border: 0;
@@ -521,7 +521,7 @@ select {
 }
 .nkt-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 }
 .nkt-option {
@@ -572,7 +572,7 @@ select {
   margin: 2px 0 7px;
 }
 .time-wheel {
-  height: 240px;
+  height: 132px;
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-snap-type: y mandatory;
@@ -580,7 +580,7 @@ select {
   scrollbar-width: none;
   border-radius: 12px;
   background: linear-gradient(to bottom, #f0f0f0, #fff 40%, #fff 60%, #f0f0f0);
-  padding: 96px 0;
+  padding: 44px 0;
   box-sizing: border-box;
 }
 .time-wheel::-webkit-scrollbar {
@@ -589,7 +589,7 @@ select {
 .time-wheel-option {
   display: block;
   width: 100%;
-  height: 48px;
+  height: 44px;
   scroll-snap-align: center;
   border: 0;
   background: transparent;
@@ -603,7 +603,7 @@ select {
   font-size: 27px;
   font-weight: 800;
   color: #171717;
-  background: #ffda4a;
+  background: transparent;
   border-radius: 9px;
 }
 #saveManual:disabled {
@@ -662,7 +662,7 @@ button {
   cursor: default;
 }
 .time-wheel-option {
-  min-height: 48px;
+  min-height: 44px;
 }
 .storage-notice {
   position: fixed;
@@ -712,3 +712,9 @@ button {
 #vfdFields[hidden] {
   display: none !important;
 }
+
+.time-wheel-column{position:relative}.time-wheel-column::after{content:"";position:absolute;pointer-events:none;left:0;right:0;bottom:44px;height:44px;border:2px solid #e8b500;border-radius:9px;background:#ffda4a33;box-sizing:border-box}.time-wheel-option[aria-selected="true"]{font-size:24px}.nav-btn{font-size:11px}.manual-mini{position:fixed;z-index:40;bottom:calc(76px + var(--safe-bottom));right:12px;border:1px solid #a67e00;border-radius:12px;padding:10px;background:#ffda4a;box-shadow:0 2px 8px #0003;font-variant-numeric:tabular-nums}.manual-mini[hidden]{display:none}
+
+.offline-dialog{width:calc(100% - 32px);max-width:440px;max-height:80dvh;box-sizing:border-box;overflow:auto;border:2px solid #c59400;border-radius:16px;padding:16px;color:#171717;background:#fff8dc}.offline-dialog::backdrop{background:#0006}
+
+#pedDetails{scroll-margin-top:16px}#pedDetails:focus{outline:2px solid #e8b500;outline-offset:3px;border-radius:12px}

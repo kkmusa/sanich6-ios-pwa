@@ -4,7 +4,7 @@ function topbar(title) {
 }
 function bottomNav(active = 'home') {
   const canBack = state.route !== 'home' || state.navStack.length > 0;
-  return `<nav class="bottom-nav"><button class="nav-btn back-nav" onclick="goBack()" ${canBack ? '' : 'disabled'}><span>‹</span><span>Назад</span></button><button class="nav-btn ${active === 'home' ? 'active' : ''}" onclick="go('home')"><span>⌂</span><span>Главная</span></button><button class="nav-btn ${active === 'history' ? 'active' : ''}" onclick="go('history')"><span>◷</span><span>История</span></button><button class="nav-btn ${active === 'reference' ? 'active' : ''}" onclick="go('reference')"><span>☰</span><span>Справочник</span></button></nav>`;
+  return `<nav class="bottom-nav"><button class="nav-btn back-nav" onclick="goBack()" ${canBack ? '' : 'disabled'}><span>‹</span><span>Назад</span></button><button class="nav-btn ${active === 'home' ? 'active' : ''}" onclick="go('home')"><span>⌂</span><span>Главная</span></button><button class="nav-btn ${active === 'technologist' ? 'active' : ''}" onclick="go('technologist')"><span>△</span><span>Технолог</span></button><button class="nav-btn ${active === 'history' ? 'active' : ''}" onclick="go('history')"><span>◷</span><span>История</span></button><button class="nav-btn ${active === 'reference' ? 'active' : ''}" onclick="go('reference')"><span>☰</span><span>Справочник</span></button></nav>`;
 }
 function screen(body, active = 'home') {
   return `<div class="screen">${body}</div>${bottomNav(active)}`;

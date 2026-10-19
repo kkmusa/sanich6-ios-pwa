@@ -76,6 +76,8 @@ async function withPage(run) {
 }
 async function go(page, route) {
   await page.evaluate((route) => go(route), route);
+  if (await page.locator('#opOfflineClose').isVisible())
+    await page.locator('#opOfflineClose').click();
 }
 async function fill(page, values) {
   for (const [id, value] of Object.entries(values)) await page.locator('#' + id).fill(value);
@@ -90,7 +92,7 @@ async function result(page, text) {
 test('calculator navigation preserves result, and history persists across reload', () =>
   withPage(async (page) => {
     await go(page, 'level');
-    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1000' });
+    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1' });
     await result(page, '900 м');
     await go(page, 'home');
     await page.evaluate(() => goBack());
@@ -115,9 +117,9 @@ test('manual stopwatch suspends UI updates on navigation, interval wheels surviv
     await page.locator('#timerBtn').click();
     await page.waitForFunction(() => Number(document.getElementById('seconds').value) > 60);
     await page.locator('#timerBtn').click();
-    await page.locator('#saveManual').click();
+    await page.evaluate(() => manualSaveCurrent());
     await go(page, 'history');
-    assert.equal(await page.locator('.history-item').count(), 2);
+    assert.equal(await page.locator('.history-item').count(), 1);
     await go(page, 'manual');
     await page.locator('#manualIntervalMode').check();
     await page.locator('[data-day="0"]').click();
@@ -164,6 +166,7 @@ test('shell, VNR index and every station photo work offline', () =>
     await go(page, 'vnr');
     await page.frameLocator('iframe').locator('#vnr-search').waitFor();
     await go(page, 'operators');
+    await page.locator('#opOfflineOpen').click();
     await page.locator('#opOfflineDownload').click();
     await page.waitForFunction(
       () => document.getElementById('opOfflineStatus').textContent.includes('Доступны офлайн.'),
@@ -418,10 +421,14 @@ test(
           const page = doc.getElementById('page-' + target[1]);
           if (
             !page ||
-            (Math.abs(page.getBoundingClientRect().top - 104) > 3 &&
+            (Math.abs(
+              page.getBoundingClientRect().top -
+                parseFloat(win.getComputedStyle(page).scrollMarginTop),
+            ) > 3 &&
               !(
                 win.scrollY + win.innerHeight >= doc.documentElement.scrollHeight - 3 &&
-                page.getBoundingClientRect().top >= 101 &&
+                page.getBoundingClientRect().top >=
+                  parseFloat(win.getComputedStyle(page).scrollMarginTop) - 3 &&
                 page.getBoundingClientRect().top < win.innerHeight
               ))
           )
@@ -445,10 +452,10 @@ test('manual timer continues across navigation/reload, units convert, reset paus
   withPage(async (page) => {
     await go(page, 'manual');
     await fill(page, { liters: '100', seconds: '60' });
-    await page.locator('#manualMinutesMode').check();
+    await page.locator('[data-minutes="true"]').click();
     assert.equal(await page.locator('#seconds').inputValue(), '1');
     await result(page, '144 м³/сут');
-    await page.locator('#manualMinutesMode').uncheck();
+    await page.locator('[data-minutes="false"]').click();
     assert.equal(await page.locator('#seconds').inputValue(), '60');
     await page.locator('#timerBtn').click();
     await go(page, 'home');
@@ -551,7 +558,6 @@ test('SKO and tap choices and geometry survive reload; level extension and origi
     await result(page, tap);
     assert.equal(await page.locator('#filter').isChecked(), true);
     await go(page, 'level');
-    await page.locator('#densityUnit').selectOption('g');
     await fill(page, { depth: '1000', extension: '20', pz: '10', pd: '20', density: '1' });
     await result(page, '880 м');
     await page.locator('#density').fill('1xyz');
@@ -646,7 +652,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v22'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.0'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -675,7 +681,7 @@ test('blocked storage does not crash startup or calculations and reports history
     await page.goto(base);
     await page.locator('#continueFirst').click();
     await go(page, 'level');
-    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1000' });
+    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1' });
     await result(page, '900 м');
     assert.ok(await page.locator('#storageNotice').isVisible());
     await go(page, 'history');
@@ -708,11 +714,11 @@ test('manual calendar dates save complete interval history and survive reload', 
         (wheel) =>
           Math.abs(
             wheel.scrollTop -
-              Number(wheel.querySelector('[aria-selected="true"]').dataset.value) * 48,
+              Number(wheel.querySelector('[aria-selected="true"]').dataset.value) * 44,
           ) < 2,
       ),
     );
-    await page.locator('#saveManual').click();
+    await page.evaluate(() => manualSaveCurrent());
     await go(page, 'history');
     assert.match(await page.locator('.history-item .hint').textContent(), /2026-10-18.*2026-10-19/);
     await page.reload();
@@ -745,14 +751,223 @@ test('history retains older entries beyond 150, paginates and deletes individual
     await page.locator('#moreHistory').click();
     assert.equal(await page.locator('.history-item').count(), 151);
     await go(page, 'level');
-    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1000' });
+    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1' });
     await result(page, '900 м');
     await go(page, 'history');
     assert.equal(await page.locator('.history-item').count(), 152);
     await page.locator('[data-history-delete]').first().click();
-    assert.equal(await page.evaluate(() => history().length), 151);
+    assert.equal(await page.evaluate(() => calculationHistory().length), 151);
     assert.equal(
-      await page.evaluate(() => history().some((entry) => entry.id === 'saved-150')),
+      await page.evaluate(() => calculationHistory().some((entry) => entry.id === 'saved-150')),
       true,
     );
   }));
+
+test('version 3: fifth Technologist tab contains all six Android tools; level units and order match', () =>
+  withPage(async (page) => {
+    assert.equal(await page.locator('.bottom-nav .nav-btn').count(), 5);
+    await page.locator('.bottom-nav button').filter({ hasText: 'Технолог' }).click();
+    for (const route of ['rpd', 'flow', 'upr', 'apv', 'sko', 'temperatureSetpoint'])
+      assert.equal(await page.locator(`[onclick="go('${route}')"]`).count(), 1);
+    await go(page, 'level');
+    assert.equal(await page.locator('#densityUnit').count(), 0);
+    assert.deepEqual(
+      await page.locator('main input').evaluateAll((nodes) => nodes.map((n) => n.id)),
+      ['depth', 'pz', 'pd', 'density', 'extension'],
+    );
+    assert.match(await page.locator('label[for="density"]').textContent(), /г\/см³/);
+    await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1', extension: '20' });
+    await result(page, '880 м');
+    await page.goBack();
+    await page.waitForFunction(() => state.route === 'technologist');
+    await page.goForward();
+    await result(page, '880 м');
+  }));
+
+test('version 3: manual autosave updates one session; new timer survives a fresh app tab and has mini window', () =>
+  withPage(async (page, context) => {
+    await go(page, 'manual');
+    assert.equal(await page.locator('#saveManual').count(), 0);
+    await fill(page, { liters: '100', seconds: '60' });
+    await page.waitForFunction(() => calculationHistory().length === 1);
+    await page.locator('#seconds').fill('120');
+    await page.waitForFunction(() => calculationHistory()[0]?.result === '72 м³/сут');
+    assert.equal(await page.evaluate(() => calculationHistory().length), 1);
+    await page.locator('#timerBtn').click();
+    await go(page, 'home');
+    await page.locator('#manualMini:not([hidden])').waitFor();
+    const before = await page.evaluate(() => manualElapsed());
+    await page.close();
+    const reopened = await context.newPage();
+    await reopened.goto(base);
+    await reopened.locator('.hero').waitFor();
+    await reopened.locator('#manualMini:not([hidden])').waitFor();
+    await reopened.locator('#manualMini').click();
+    await reopened.waitForFunction(() => manualTimerRunning && manualElapsed() > 0);
+    assert.ok((await reopened.evaluate(() => manualElapsed())) >= before);
+    await reopened.locator('#timerBtn').click();
+    assert.equal(await reopened.locator('[data-minutes="true"]').isEnabled(), true);
+    await reopened.locator('#resetBtn').click();
+    await fill(reopened, { liters: '100', seconds: '60' });
+    await reopened.waitForFunction(() => calculationHistory().length === 2);
+    await reopened.close();
+  }));
+
+test('version 3: wheels select nearest time during scroll, are compact, and highlight stays fixed', () =>
+  withPage(async (page) => {
+    await go(page, 'manual');
+    await page.locator('#manualIntervalMode').check();
+    const wheel = page.locator('#startMinutes');
+    assert.equal(Math.round((await wheel.boundingBox()).height), 132);
+    await wheel.evaluate((el) => {
+      el.scrollTop = 20 * 44;
+      el.dispatchEvent(new Event('scroll'));
+    });
+    assert.equal(await wheel.locator('[aria-selected="true"]').getAttribute('data-value'), '20');
+    const frame = await page
+      .locator('.time-wheel-column')
+      .first()
+      .evaluate((el) => ({
+        height: getComputedStyle(el, '::after').height,
+        bottom: getComputedStyle(el, '::after').bottom,
+      }));
+    assert.deepEqual(frame, { height: '44px', bottom: '44px' });
+  }));
+
+test('version 3: VNR slider, persistent bookmarks, duplicate prevention and dismissible download panel', () =>
+  withPage(async (page) => {
+    await go(page, 'vnr');
+    const frame = page.frameLocator('iframe');
+    await frame.locator('#vnr-position').waitFor();
+    await frame.locator('#vnr-offline-open').click();
+    await frame.locator('.vnr-download-close').click();
+    assert.equal(await frame.locator('.vnr-offline').isVisible(), false);
+    await frame.locator('#vnr-page').fill('80');
+    await frame.locator('#vnr-page-go').click();
+    await frame.locator('#vnr-bookmarks-toggle').click();
+    await frame.locator('#vnr-bookmark-add').click();
+    await frame.locator('#vnr-bookmark-add').click();
+    assert.equal(await frame.locator('.vnr-bookmark-row').count(), 1);
+    await frame.locator('#vnr-bookmarks-close').click();
+    await frame.locator('#vnr-position').evaluate((el) => {
+      el.value = '1000';
+      el.dispatchEvent(new Event('input'));
+    });
+    await page.waitForFunction(() =>
+      document
+        .querySelector('iframe')
+        .contentDocument.querySelector('#vnr-position-label')
+        .textContent.startsWith('207/'),
+    );
+    await page.reload();
+    await page.locator('.hero').waitFor();
+    await go(page, 'vnr');
+    await frame.locator('#vnr-bookmarks-toggle').click();
+    assert.equal(await frame.locator('.vnr-bookmark-row').count(), 1);
+    await frame.locator('.open-bookmark').click();
+    await page.waitForFunction(() =>
+      document
+        .querySelector('iframe')
+        .contentDocument.querySelector('#vnr-position-label')
+        .textContent.startsWith('80/'),
+    );
+    await frame.locator('#vnr-bookmarks-toggle').click();
+    await frame.locator('[aria-label="Удалить закладку 80"]').click();
+    assert.equal(await frame.locator('.vnr-bookmark-row').count(), 0);
+    assert.equal(await frame.locator('.vnr-offline').isVisible(), false);
+  }));
+
+test('version 3: station photo download prompt closes and stays dismissed, top button reopens it', () =>
+  withPage(async (page) => {
+    await page.evaluate(() => go('operators'));
+    await page.locator('#opOfflineDialog[open]').waitFor();
+    await page.locator('#opOfflineClose').click();
+    await go(page, 'home');
+    await page.evaluate(() => go('operators'));
+    assert.equal(await page.locator('#opOfflineDialog').isVisible(), false);
+    await page.locator('#opOfflineOpen').click();
+    assert.equal(await page.locator('#opOfflineDownload').isVisible(), true);
+    await page.locator('#opOfflineClose').click();
+  }));
+
+test('version 3: PED selection moves focus to revealed calculation; assistant topics always open at top', () =>
+  withPage(async (page) => {
+    await go(page, 'ped');
+    await page.locator('#pedDia').selectOption('95');
+    await page.locator('#pedPower').selectOption('16');
+    await page.locator('#pedCasing').selectOption('114');
+    await page.locator('#pedWall').selectOption('5.2');
+    await page.locator('[data-ped]').first().click();
+    assert.equal(await page.evaluate(() => document.activeElement.id), 'pedDetails');
+    await page.waitForFunction(
+      () => document.getElementById('pedDetails').getBoundingClientRect().top < innerHeight - 150,
+    );
+    await go(page, 'assistant');
+    await page.locator('.assistant-topic').last().click();
+    await page.waitForFunction(() => scrollY === 0);
+    await page.evaluate(() => scrollTo(0, document.body.scrollHeight));
+    await page.locator('.back').click();
+    await page.waitForFunction(() => scrollY === 0);
+    await page.locator('.assistant-topic').first().click();
+    await page.waitForFunction(() => scrollY === 0);
+  }));
+
+test(
+  'version 3: original Android document bookmark JS with simulated native storage',
+  {
+    skip: !fs.existsSync(
+      path.resolve(__dirname, '../../sanich6-android/app/src/main/assets/vnr/reglament.html'),
+    ),
+  },
+  () =>
+    withPage(async (page, context) => {
+      const androidRoot = path.resolve(__dirname, '../../sanich6-android/app/src/main/assets/vnr');
+      // Browser verifies the actual Android HTML; native SharedPreferences and APK require Android tooling.
+      const documentFile = path.join(androidRoot, 'reglament.html');
+      const script = fs.readFileSync(path.join(androidRoot, 'bookmarks.js'), 'utf8');
+      // Real JavascriptInterface is synchronous; simulate the same contract in localStorage across reload.
+      await context.addInitScript(() => {
+        window.SanichBookmarks = {
+          read: () => localStorage.getItem('native_test_bookmarks') || '[]',
+          write: (value) => {
+            localStorage.setItem('native_test_bookmarks', value);
+            return true;
+          },
+        };
+      });
+      await page.route('**/android-vnr/reglament.html', (route) =>
+        route.fulfill({
+          contentType: 'text/html',
+          body: fs
+            .readFileSync(documentFile, 'utf8')
+            .replace(
+              /<script src="bookmarks.js[^\"]*"><\/script>/,
+              '<script src="bookmarks.js"></script>',
+            ),
+        }),
+      );
+      await page.route('**/android-vnr/bookmarks.js', (route) =>
+        route.fulfill({ contentType: 'text/javascript', body: script }),
+      );
+      await page.route('**/android-vnr/pages/*', (route) =>
+        route.fulfill({
+          contentType: 'image/jpeg',
+          body: fs.readFileSync(
+            path.resolve(__dirname, '../vnr/pages', route.request().url().split('/').pop()),
+          ),
+        }),
+      );
+      await page.goto('http://sanich-android.test/android-vnr/reglament.html');
+      await page.evaluate(() => jumpPage(15));
+      await page.locator('#vnr-bookmarks-toggle').click();
+      await page.locator('#vnr-bookmark-add').click();
+      assert.equal(await page.locator('.vnr-bookmark-row').count(), 1);
+      await page.reload();
+      await page.locator('#vnr-bookmarks-toggle').click();
+      assert.equal(await page.locator('.vnr-bookmark-row').count(), 1);
+      await page.locator('.open-bookmark').click();
+      await page.waitForFunction(() =>
+        document.getElementById('vnr-position-label').textContent.startsWith('15/'),
+      );
+    }),
+);

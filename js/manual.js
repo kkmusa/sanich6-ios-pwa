@@ -18,17 +18,14 @@ try {
   ) {
     manualTimerElapsed = saved.elapsed + (saved.running ? Math.max(0, Date.now() - saved.wall) : 0);
     manualTimerRunning = saved.running === true;
-    manualTimerStart = performance.now();
+    manualTimerStart = Date.now();
     manualSavedLiters = typeof saved.liters === 'string' ? saved.liters : '';
     manualSavedSeconds = typeof saved.seconds === 'string' ? saved.seconds : '';
     manualSavedMinutes = saved.minutes === true;
   }
 } catch {}
 function manualElapsed() {
-  return (
-    manualTimerElapsed +
-    (manualTimerRunning ? Math.max(0, performance.now() - manualTimerStart) : 0)
-  );
+  return manualTimerElapsed + (manualTimerRunning ? Math.max(0, Date.now() - manualTimerStart) : 0);
 }
 function persistManualTimer() {
   if (state.route === 'manual' && document.getElementById('liters')) {
@@ -76,30 +73,32 @@ function wheelHTML(id, label, max, initial) {
 }
 function initWheel(id, initial, onChange) {
   const el = document.getElementById(id),
-    rowHeight = 48,
+    rowHeight = 44,
     max = el.children.length;
-  let current = initial,
-    scrollTimer = null;
-  function select(value, animate = true) {
-    if (!el.isConnected) return;
-    current = Math.max(0, Math.min(max - 1, value));
+  let current = initial;
+  function update(value) {
+    const next = Math.max(0, Math.min(max - 1, value));
+    if (
+      next === current &&
+      el.querySelector('[aria-selected="true"]')?.dataset.value === String(next)
+    )
+      return;
+    current = next;
     el.querySelectorAll('.time-wheel-option').forEach((node, i) =>
       node.setAttribute('aria-selected', String(i === current)),
     );
-    el.scrollTo({ top: current * rowHeight, behavior: 'auto' });
     onChange();
     snapshotRoute();
+  }
+  function select(value) {
+    if (!el.isConnected) return;
+    update(value);
+    el.scrollTo({ top: current * rowHeight, behavior: 'auto' });
   }
   el.addEventListener(
     'scroll',
     () => {
-      if (!el.getClientRects().length) return;
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        if (!el.isConnected || !el.getClientRects().length) return;
-        const next = Math.max(0, Math.min(max - 1, Math.round(el.scrollTop / rowHeight)));
-        select(next, false);
-      }, 110);
+      if (el.getClientRects().length) update(Math.round(el.scrollTop / rowHeight));
     },
     { passive: true },
   );
@@ -142,7 +141,7 @@ function renderManual() {
     <label class="switchline card"><span><b>Расчёт по временному интервалу</b></span><input id="manualIntervalMode" type="checkbox"></label>
     <section id="manualStopwatch" class="stack">
       ${field('seconds', 'Время замера, с')}
-      <label class="switchline card"><span>Время в минутах</span><input id="manualMinutesMode" type="checkbox" ${minutesInitially ? 'checked' : ''}></label>
+      <input id="manualMinutesMode" type="checkbox" hidden ${minutesInitially ? 'checked' : ''}><div class="chips" id="manualUnitChoices"><button type="button" class="chip" data-minutes="false">Секунды</button><button type="button" class="chip" data-minutes="true">Минуты</button></div>
       <div class="row"><button class="btn" id="timerBtn">Старт</button><button class="btn secondary" id="resetBtn">Сброс времени</button></div>
     </section>
     <section id="manualInterval" class="stack" hidden>
@@ -152,7 +151,7 @@ function renderManual() {
       <div class="hint" id="intervalDuration">Выберите время начала и окончания</div>
     </section>
     <div id="liveResult">${resultCard('Дебит скважины', '', 'Введите объём и время')}</div>
-    <button class="btn full" id="saveManual">Сохранить замер в историю</button>
+    <div class="hint">Корректный замер сохраняется в историю автоматически.</div>
     <button class="btn secondary full" id="clear">Очистить</button>
   </main>`);
   const byId = (id) => document.getElementById(id),
@@ -170,6 +169,13 @@ function renderManual() {
     lastEntry = null;
   let savedHistoryId = null,
     savedHistoryKey = null;
+  try {
+    const savedHistory = JSON.parse(
+      localStorage.getItem('sanich_manual_history_session') || 'null',
+    );
+    savedHistoryId = savedHistory?.id || null;
+    savedHistoryKey = savedHistory?.key || null;
+  } catch {}
   function calc() {
     const liters = num(volume.value),
       isInterval = toggle.checked;
@@ -211,7 +217,6 @@ function renderManual() {
       lastEntry?.result || '',
       lastEntry ? undefined : 'Введите положительный объём и корректное время',
     );
-    byId('saveManual').disabled = !lastEntry;
   }
   getSH = initWheel('startHours', initial('startHours', hour, 24), calc);
   getSM = initWheel('startMinutes', initial('startMinutes', minute, 60), calc);
@@ -261,7 +266,7 @@ function renderManual() {
           const selected = Number(
             wheel.querySelector('[aria-selected="true"]')?.dataset.value || 0,
           );
-          wheel.scrollTo({ top: selected * 48, behavior: 'auto' });
+          wheel.scrollTo({ top: selected * 44, behavior: 'auto' });
         });
       });
     calc();
@@ -306,13 +311,18 @@ function renderManual() {
     } else {
       manualTimerElapsed =
         (num(seconds.value) || 0) * (byId('manualMinutesMode').checked ? 60000 : 1000);
-      manualTimerStart = performance.now();
+      manualTimerStart = Date.now();
       manualTimerRunning = true;
       showRunning();
       persistManualTimer();
     }
   });
   byId('resetBtn').addEventListener('click', () => {
+    manualSaveCurrent?.();
+    savedHistoryId = savedHistoryKey = null;
+    try {
+      localStorage.removeItem('sanich_manual_history_session');
+    } catch {}
     pauseManualTimer();
     manualTimerElapsed = 0;
     seconds.disabled = false;
@@ -345,18 +355,53 @@ function renderManual() {
     if (!id) return false;
     savedHistoryId = id;
     savedHistoryKey = key;
+    try {
+      localStorage.setItem('sanich_manual_history_session', JSON.stringify({ id, key }));
+    } catch {}
     resetHistoryDraft();
     return true;
   }
   manualSaveCurrent = () => saveMeasurement(false);
-  byId('saveManual').addEventListener('click', () => {
-    if (!saveMeasurement(true)) return;
-    byId('saveManual').textContent = 'Сохранено ✓';
-    setTimeout(() => {
-      const button = byId('saveManual');
-      if (button) button.textContent = 'Сохранить замер в историю';
-    }, 1200);
+  let autoSaveHandle;
+  function scheduleAutoSave() {
+    clearTimeout(autoSaveHandle);
+    if (!manualTimerRunning)
+      autoSaveHandle = setTimeout(() => {
+        if (volume.isConnected) manualSaveCurrent?.();
+      }, 2000);
+  }
+  bind(
+    ['liters', 'seconds', 'manualStartDate', 'manualEndDate', 'manualIntervalMode'],
+    scheduleAutoSave,
+  );
+  byId('timerBtn').addEventListener('click', () => {
+    if (!manualTimerRunning) manualSaveCurrent?.();
   });
+  byId('manualInterval').addEventListener('scroll', scheduleAutoSave, true);
+  byId('manualInterval').addEventListener('click', scheduleAutoSave);
+  byId('manualUnitChoices').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-minutes]');
+    if (!button || manualTimerRunning) return;
+    byId('manualMinutesMode').checked = button.dataset.minutes === 'true';
+    byId('manualMinutesMode').dispatchEvent(new Event('change', { bubbles: true }));
+    scheduleAutoSave();
+  });
+  function showUnits() {
+    byId('manualUnitChoices')
+      .querySelectorAll('button')
+      .forEach((button) => {
+        button.classList.toggle(
+          'active',
+          (button.dataset.minutes === 'true') === byId('manualMinutesMode').checked,
+        );
+        button.disabled = manualTimerRunning;
+      });
+  }
+  toggle.addEventListener('change', showUnits);
+  byId('manualMinutesMode').addEventListener('change', showUnits);
+  byId('timerBtn').addEventListener('click', showUnits);
+  byId('resetBtn').addEventListener('click', showUnits);
+  showUnits();
   byId('clear').addEventListener('click', () => {
     volume.value = '';
     byId('resetBtn').click();
@@ -375,3 +420,25 @@ function renderManual() {
     }
   });
 }
+
+function updateManualMini() {
+  let mini = document.getElementById('manualMini');
+  if (!mini) {
+    mini = document.createElement('button');
+    mini.id = 'manualMini';
+    mini.className = 'manual-mini';
+    mini.onclick = () => go('manual');
+    document.body.appendChild(mini);
+  }
+  mini.hidden = !manualTimerRunning || state.route === 'manual' || !hasPrivacySeen();
+  const seconds = Math.floor(manualElapsed() / 1000);
+  mini.textContent = `Замер ${String(Math.floor(seconds / 3600)).padStart(2, '0')}:${String(Math.floor(seconds / 60) % 60).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')} ›`;
+}
+setInterval(() => {
+  updateManualMini();
+  if (manualTimerRunning) persistManualTimer();
+}, 1000);
+document.addEventListener('visibilitychange', () => {
+  persistManualTimer();
+  if (document.hidden && state.route === 'manual') manualSaveCurrent?.();
+});

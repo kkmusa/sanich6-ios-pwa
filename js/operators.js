@@ -51,11 +51,19 @@ async function operatorOfflineStatus() {
       const response = await cache.match(new URL(path, document.baseURI));
       if (response?.ok && /^image\//i.test(response.headers.get('content-type') || '')) saved++;
     }
-    if (label.isConnected)
+    if (label.isConnected) {
       label.textContent =
         saved === OPERATOR_PHOTOS.length
           ? `Все ${saved} фотографий доступны офлайн`
           : `Сохранено ${saved} из ${OPERATOR_PHOTOS.length} фотографий`;
+      if (saved === OPERATOR_PHOTOS.length) {
+        const dialog = document.getElementById('opOfflineDialog');
+        if (dialog?.open && !dialog.dataset.userOpened) dialog.close();
+        try {
+          localStorage.setItem('sanich_operator_photos_complete', '1');
+        } catch {}
+      }
+    }
   } catch {}
 }
 function opNumber(value) {
@@ -155,6 +163,10 @@ async function downloadOperatorPhotos() {
           status.textContent = `Сохранено ${m.saved} из ${m.total} фотографий`;
         if (m.type === 'complete') {
           status.textContent = `Фотографии сохранены: ${m.saved} из ${m.total}. Доступны офлайн.`;
+          try {
+            localStorage.setItem('sanich_operator_photos_complete', '1');
+          } catch {}
+          document.getElementById('opOfflineDialog')?.close();
           finish();
         }
         if (m.type === 'error') {
@@ -213,9 +225,30 @@ function renderOperator() {
           ['lowMinutes', 'Время на пониженной частоте, мин'],
         ];
   app.innerHTML = screen(
-    `${topbar('Операторы — ' + title)}<main class="content stack"><div class="chips"><button class="chip ${mode === 'ramp' ? 'active' : ''}" data-opmode="ramp">Разгон</button><button class="chip ${mode === 'rich' ? 'active' : ''}" data-opmode="rich">РИЧ</button></div><div class="card stack"><h2>Введите свои значения</h2>${fields.map(([key, label]) => `<div class="field"><label for="op-${key}">${label}</label><input id="op-${key}" type="text" inputmode="decimal" value="${esc(v[key])}" autocomplete="off"></div>`).join('')}<div class="field"><label for="opStation">Станция управления</label><select id="opStation">${OP_STATIONS.map((s) => `<option ${s === v.station ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></div><div id="opUnderload" class="hint">${mode === 'rich' && calc ? `Время срабатывания недогрузки: ${calc.uv} с` : ''}</div><div id="opValidation" class="hint"></div><button class="btn full" id="opStart" ${calc ? '' : 'disabled'}>Перейти к инструкции</button></div><div class="card stack"><h3>Фотографии станций офлайн</h3><p class="hint">Загрузите фотографии при наличии интернета.</p><button class="btn secondary full" id="opOfflineDownload">↓ Скачать фотографии</button><p id="opOfflineStatus" class="hint" role="status"></p></div></main>`,
+    `${topbar('Операторы — ' + title)}<main class="content stack"><button class="btn secondary full" id="opOfflineOpen">↓ Фотографии для офлайна</button><div class="chips"><button class="chip ${mode === 'ramp' ? 'active' : ''}" data-opmode="ramp">Разгон</button><button class="chip ${mode === 'rich' ? 'active' : ''}" data-opmode="rich">РИЧ</button></div><div class="card stack"><h2>Введите свои значения</h2>${fields.map(([key, label]) => `<div class="field"><label for="op-${key}">${label}</label><input id="op-${key}" type="text" inputmode="decimal" value="${esc(v[key])}" autocomplete="off"></div>`).join('')}<div class="field"><label for="opStation">Станция управления</label><select id="opStation">${OP_STATIONS.map((s) => `<option ${s === v.station ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></div><div id="opUnderload" class="hint">${mode === 'rich' && calc ? `Время срабатывания недогрузки: ${calc.uv} с` : ''}</div><div id="opValidation" class="hint"></div><button class="btn full" id="opStart" ${calc ? '' : 'disabled'}>Перейти к инструкции</button></div><dialog id="opOfflineDialog" class="offline-dialog"><div class="stack"><button class="btn secondary" id="opOfflineClose" aria-label="Закрыть загрузку фотографий">Закрыть ×</button><h3>Фотографии станций офлайн</h3><p class="hint">Загрузите фотографии при наличии интернета.</p><button class="btn secondary full" id="opOfflineDownload">↓ Скачать фотографии</button><p id="opOfflineStatus" class="hint" role="status"></p></div></dialog></main>`,
   );
   document.getElementById('opOfflineDownload').onclick = downloadOperatorPhotos;
+  const offlineDialog = document.getElementById('opOfflineDialog');
+  document.getElementById('opOfflineOpen').onclick = () => {
+    offlineDialog.dataset.userOpened = '1';
+    offlineDialog.showModal();
+    operatorOfflineStatus();
+  };
+  function dismissPhotos() {
+    offlineDialog.close();
+    try {
+      localStorage.setItem('sanich_operator_photos_dismissed', '1');
+    } catch {}
+  }
+  document.getElementById('opOfflineClose').onclick = dismissPhotos;
+  offlineDialog.addEventListener('cancel', dismissPhotos);
+  try {
+    if (
+      !localStorage.getItem('sanich_operator_photos_complete') &&
+      !localStorage.getItem('sanich_operator_photos_dismissed')
+    )
+      offlineDialog.showModal();
+  } catch {}
   operatorOfflineStatus();
   document.querySelectorAll('[data-opmode]').forEach(
     (b) =>

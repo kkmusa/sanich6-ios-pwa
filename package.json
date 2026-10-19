@@ -1,6 +1,6 @@
 {
   "name": "sanich6-ios-pwa",
-  "version": "2.8.1-web.22",
+  "version": "3.0.0",
   "private": true,
   "description": "Саныч-6: офлайн инженерные расчёты и регламент ВНР",
   "scripts": {

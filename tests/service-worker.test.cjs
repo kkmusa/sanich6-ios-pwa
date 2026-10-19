@@ -21,7 +21,7 @@ test('service worker upgrade preserves document, photos and unrelated applicatio
     caches: {
       keys: async () => [
         'operator-dng-pwa-v21',
-        'operator-dng-pwa-v22',
+        'operator-dng-pwa-v3.0.0',
         'operator-dng-vnr-pages-v1',
         'operator-dng-photos-v1',
         'another-app-cache',
@@ -71,10 +71,10 @@ test('VNR download rejects HTML pages, reports failure and resumes without repea
   };
   vm.runInNewContext(fs.readFileSync(path.resolve(__dirname, '../sw.js'), 'utf8'), context);
   const download = handlers.message[0];
-  async function run() {
+  async function run(type = 'VNR_DOWNLOAD') {
     let task;
     download({
-      data: { type: 'VNR_DOWNLOAD' },
+      data: { type },
       ports: [{ postMessage: (m) => messages.push(m), close() {} }],
       waitUntil: (promise) => {
         task = promise;
@@ -94,6 +94,19 @@ test('VNR download rejects HTML pages, reports failure and resumes without repea
   assert.equal(requests.length, 206);
   assert.equal(messages.at(-1).type, 'complete');
   assert.equal(messages.at(-1).saved, 207);
+  requests.length = 0;
+  await run();
+  assert.equal(requests.length, 0);
+  await run('VNR_REFRESH');
+  assert.equal(requests.length, 207);
+  assert.equal(messages.at(-1).type, 'complete');
+  const old = saved.get('https://example.test/app/vnr/pages/002.jpg');
+  fail = true;
+  messages.length = 0;
+  await run('VNR_REFRESH');
+  assert.equal(messages.at(-1).type, 'error');
+  assert.equal(saved.get('https://example.test/app/vnr/pages/002.jpg'), old);
+  assert.ok(!messages.some((message) => message.type === 'complete'));
 });
 test('offline quota errors are reported without claiming completion', async () => {
   const handlers = {},

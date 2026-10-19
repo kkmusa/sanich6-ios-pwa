@@ -8,11 +8,12 @@ ${menuCard('manual', 'Ручной замер дебита', 'Перевод л�
 ${menuCard('⚡', 'Расчёт отпайки ТМПН', 'Для СУ без ЧРП и для СУ с ЧРП', 'tap')}
 ${menuCard('↻', 'Перевод ПР в УПР', 'Расчёт времени работы и остановки', 'upr')}
 ${menuCard('↻', 'Перевод УПР в АПВ', 'Проверка цикла с учётом времени слива', 'apv')}
-${menuCard('⚙', 'Операторы — Разгон и РИЧ', 'Настройка режимов станций управления', 'operators')}
+${menuCard('ramp', 'Разгон', 'Настройка разгона станций управления', 'ramp')}
+${menuCard('FF', 'РИЧ', 'Режим изменения частоты', 'rich')}
 ${menuCard('sko', 'Объём СКО', 'Четыре варианта расчёта кислотной обработки', 'sko')}
-${menuCard('⚙', 'Коэффициент двигателя 2А', 'Перевод обычной частоты и частоты станции', 'motorCoefficient')}
+${menuCard('2А', 'Коэффициент двигателя 2А', 'Перевод обычной частоты и частоты станции', 'motorCoefficient')}
 ${menuCard('🌡', 'Уставка температуры ТМС', 'Расчёт по рабочей температуре и группе двигателя', 'temperatureSetpoint')}
-${menuCard('◷', 'Потенциал скважины', 'Добыча с учётом цикла и задержки подачи', 'wellPotential')}
+${menuCard('Q', 'Потенциал скважины', 'Добыча с учётом цикла и задержки подачи', 'wellPotential')}
 ${menuCard('↻', 'Расчёт РПД', 'Цикл откачки, накопления и давления на приёме', 'rpd')}
 ${menuCard('⚙', 'Технолог', 'РПД, режимы УПР/АПВ и кислотная обработка', 'technologist')}</main>`,
     'home',
@@ -21,12 +22,9 @@ ${menuCard('⚙', 'Технолог', 'РПД, режимы УПР/АПВ и к�
 
 function renderLevel() {
   app.innerHTML = screen(
-    `${topbar('Расчёт уровня жидкости')}<main class="content stack">${field('depth', 'Глубина спуска насоса, м')}${field('extension', 'Удлинение, м (необязательно)')}<div class="row">${field('pz', 'Pз')}${field('pd', 'Pд')}</div><div class="field"><label for="densityUnit">Единицы плотности</label><select id="densityUnit"><option value="kg">кг/м³</option><option value="g">г/см³</option></select></div>${field('density', 'Плотность жидкости, кг/м³')}<div id="liveResult">${resultCard('Уровень жидкости', '', 'Заполните все параметры')}</div><button class="btn secondary full" id="clear">Очистить</button></main>`,
+    `${topbar('Расчёт уровня жидкости')}<main class="content stack">${field('depth', 'Глубина спуска насоса, м')}<div class="row">${field('pz', 'Pз')}${field('pd', 'Pд')}</div>${field('density', 'Плотность жидкости, г/см³')}${field('extension', 'Удлинение, м (необязательно)')}<div id="liveResult">${resultCard('Уровень жидкости', '', 'Заполните все параметры')}</div><button class="btn secondary full" id="clear">Очистить</button></main>`,
   );
   const calc = () => {
-    const unit = document.getElementById('densityUnit').value;
-    document.querySelector('label[for="density"]').textContent =
-      unit === 'g' ? 'Плотность жидкости, г/см³' : 'Плотность жидкости, кг/м³';
     const d = num(depth.value),
       z = num(pz.value),
       p = num(pd.value),
@@ -36,7 +34,7 @@ function renderLevel() {
     const extensionText = document.getElementById('extension').value,
       extensionValue = extensionText.trim() === '' ? 0 : num(extensionText);
     if (extensionValue === null) return setResult('Уровень жидкости', '', 'Проверьте удлинение');
-    const level = DngMath.liquidLevel(d - extensionValue, z, p, unit === 'g' ? rho * 1000 : rho);
+    const level = DngMath.liquidLevel(d - extensionValue, z, p, rho * 1000);
     if (level === null)
       return setResult('Уровень жидкости', '', 'Результат выходит за числовой диапазон');
     setResult('Уровень жидкости', `${fmt(level)} м`);
@@ -44,10 +42,10 @@ function renderLevel() {
       title: 'Уровень жидкости',
       method: 'Автоматический расчёт',
       result: `${fmt(level)} м`,
-      details: `Глубина=${d} м; Pз=${z}; Pд=${p}; плотность=${rho} ${unit === 'g' ? 'г/см³' : 'кг/м³'}; удлинение=${extensionValue} м`,
+      details: `Глубина=${d} м; Pз=${z}; Pд=${p}; плотность=${rho} г/см³; удлинение=${extensionValue} м`,
     };
   };
-  bind(['depth', 'extension', 'pz', 'pd', 'density', 'densityUnit'], calc);
+  bind(['depth', 'extension', 'pz', 'pd', 'density'], calc);
   clear.onclick = () => {
     ['depth', 'extension', 'pz', 'pd', 'density'].forEach(
       (i) => (document.getElementById(i).value = ''),
@@ -370,7 +368,7 @@ function renderTap() {
 
 let historyVisibleCount = 50;
 function renderHistory() {
-  const list = history(),
+  const list = calculationHistory(),
     visible = list.slice(0, historyVisibleCount);
   app.innerHTML = screen(
     `${topbar('История расчётов')}<main class="content stack">${list.length ? `<button class="btn danger full" id="clearHistory">Очистить историю</button><div class="hint">Показано ${visible.length} из ${list.length}</div>${visible.map((entry) => `<div class="card history-item"><div class="title">${esc(entry.title)}</div><div class="date">${new Date(entry.ts).toLocaleString('ru-RU')}</div><div class="history-result">${esc(entry.result)}</div><div class="subtle">${esc(entry.method || '')}</div><div class="hint">${esc(entry.details || '')}</div>${entry.id ? `<button class="btn danger" data-history-delete="${esc(entry.id)}" aria-label="Удалить запись ${esc(entry.title)}">Удалить запись</button>` : ''}</div>`).join('')}${visible.length < list.length ? '<button class="btn secondary full" id="moreHistory">Показать ещё</button>' : ''}` : '<div class="empty">История пока пустая.<br>Выполненные расчёты будут сохраняться на этом устройстве.</div>'}</main>`,
@@ -470,10 +468,15 @@ function renderOperating(mode) {
 }
 
 function renderTechnologist() {
-  app.innerHTML = screen(`${topbar('Технолог')}<main class="content stack">
+  app.innerHTML = screen(
+    `${topbar('Технолог')}<main class="content stack">
     ${menuCard('↻', 'Расчёт РПД', 'Цикл откачки, накопления и давления на приёме', 'rpd')}
+    ${menuCard('flow', 'Определение притока', 'Три режима ОК, Vкп по таблице или геометрии', 'flow')}
     ${menuCard('↻', 'Перевод ПР в УПР', 'Расчёт времени работы и остановки', 'upr')}
     ${menuCard('↻', 'Перевод УПР в АПВ', 'Проверка цикла с учётом времени слива', 'apv')}
     ${menuCard('sko', 'Объём СКО', 'Четыре варианта расчёта кислотной обработки', 'sko')}
-  </main>`);
+    ${menuCard('🌡', 'Настройка температуры ТМС', 'Расчёт уставки по рабочей и максимальной температуре', 'temperatureSetpoint')}
+  </main>`,
+    'technologist',
+  );
 }

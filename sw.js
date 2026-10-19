@@ -1,27 +1,28 @@
-const CACHE = 'operator-dng-pwa-v22';
+const CACHE = 'operator-dng-pwa-v3.0.0';
 const VNR_CACHE = 'operator-dng-vnr-pages-v1';
 const VNR_TOTAL = 207;
 const OP_CACHE = 'operator-dng-photos-v1';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=22',
-  './js/core.js?v=22',
-  './js/ui-components.js?v=22',
-  './js/math.js?v=22',
-  './js/calculators.js?v=22',
-  './js/manual.js?v=22',
-  './js/engineering.js?v=22',
-  './js/reference-data.js?v=22',
-  './js/reference-ui.js?v=22',
-  './js/ped.js?v=22',
-  './js/operator-data.js?v=22',
-  './js/operators.js?v=22',
-  './js/bootstrap.js?v=22',
+  './styles.css?v=3.0.0',
+  './js/core.js?v=3.0.0',
+  './js/ui-components.js?v=3.0.0',
+  './js/math.js?v=3.0.0',
+  './js/calculators.js?v=3.0.0',
+  './js/manual.js?v=3.0.0',
+  './js/engineering.js?v=3.0.0',
+  './js/reference-data.js?v=3.0.0',
+  './js/reference-ui.js?v=3.0.0',
+  './js/ped.js?v=3.0.0',
+  './js/operator-data.js?v=3.0.0',
+  './js/operators.js?v=3.0.0',
+  './js/bootstrap.js?v=3.0.0',
   './manifest.webmanifest',
   './assets/logo.png',
   './assets/PedCoolingDatabase.json',
   './assets/ic_manual_debit.png',
+  './assets/ic_ped_cooling.png',
   './assets/ic_well_inflow.png',
   './assets/icons/icon-180.png',
   './assets/icons/icon-192.png',
@@ -37,10 +38,11 @@ self.addEventListener('install', (event) =>
         try {
           await cache.addAll([
             './vnr/index.html',
-            './vnr/search-data.js?v=22',
-            './vnr/reader.js?v=22',
-            './vnr/toolbar.js?v=22',
-            './vnr/offline.js?v=22',
+            './vnr/search-data.js?v=3.0.0',
+            './vnr/reader.js?v=3.0.0',
+            './vnr/toolbar.js?v=3.0.0',
+            './vnr/offline.js?v=3.0.0',
+            './vnr/bookmarks.js?v=3.0.0',
           ]);
         } catch {}
       })
@@ -137,7 +139,7 @@ self.addEventListener('fetch', (event) => {
 // Explicit offline download; keep the document cache independent of app releases.
 let vnrDownloadRunning = false;
 self.addEventListener('message', (event) => {
-  if (!event.data || event.data.type !== 'VNR_DOWNLOAD') return;
+  if (!event.data || !['VNR_DOWNLOAD', 'VNR_REFRESH'].includes(event.data.type)) return;
   const port = event.ports && event.ports[0];
   if (!port) return;
   if (vnrDownloadRunning) {
@@ -156,7 +158,7 @@ self.addEventListener('message', (event) => {
             self.registration.scope,
           );
           const old = await cache.match(url);
-          if (isImage(old)) {
+          if (isImage(old) && event.data.type !== 'VNR_REFRESH') {
             saved++;
             port.postMessage({ type: 'progress', saved, total: VNR_TOTAL });
             continue;

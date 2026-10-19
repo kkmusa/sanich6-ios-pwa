@@ -115,6 +115,15 @@ function renderPedBody(db) {
         pedSaved.nominal = '';
         persistPed();
         renderPedDetails(results[Number(el.dataset.ped)]);
+        const details = document.getElementById('pedDetails');
+        details.setAttribute('tabindex', '-1');
+        details.setAttribute('role', 'region');
+        details.setAttribute('aria-label', 'Расчёт охлаждения выбранного ПЭД');
+        details.focus({ preventScroll: true });
+        details.scrollIntoView({
+          block: 'start',
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+        });
       }),
   );
   const selected = results.find((p) => pedKey(p) === pedSaved.selectedKey);
@@ -184,6 +193,10 @@ function renderPedDetails(p) {
 }
 
 function renderAssistant() {
+  window.scrollTo(0, 0);
+  requestAnimationFrame(() => {
+    if (state.route === 'assistant') window.scrollTo(0, 0);
+  });
   const selected = state.assistantIndex;
   if (selected === undefined || selected === null) {
     app.innerHTML = screen(

@@ -1,4 +1,4 @@
-const APP_VERSION = '2.8.1-web.22';
+const APP_VERSION = '3.0.0';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -38,7 +38,7 @@ function storageNotice(message) {
   }
   notice.textContent = message;
 }
-function history() {
+function calculationHistory() {
   try {
     const saved = JSON.parse(localStorage.getItem(historyKey) || '[]');
     return Array.isArray(saved)
@@ -64,13 +64,13 @@ function writeHistory(list) {
   }
 }
 function saveHistory(entry) {
-  const list = history(),
+  const list = calculationHistory(),
     id = crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   list.unshift({ ...entry, id, ts: Date.now() });
   return writeHistory(list) ? id : null;
 }
 function updateHistory(id, entry) {
-  const list = history();
+  const list = calculationHistory();
   const i = list.findIndex((x) => x.id === id);
   if (i < 0) return false;
   list[i] = { ...list[i], ...entry, ts: Date.now() };
@@ -101,7 +101,7 @@ function resetHistoryDraft() {
   state._last = null;
 }
 function deleteHistory(id) {
-  const list = history();
+  const list = calculationHistory();
   return writeHistory(list.filter((entry) => entry.id !== id));
 }
 function clearHistory() {
@@ -136,13 +136,30 @@ try {
             fields[newId] = { value: String(Number(old.value.replace(',', '.')) / 60) };
           delete fields[oldId];
         }
+      if (route === 'level' && fields.densityUnit) {
+        if (fields.densityUnit.value === 'kg' && fields.density?.value) {
+          const density = Number(fields.density.value.replace(',', '.'));
+          if (Number.isFinite(density)) fields.density.value = String(density / 1000);
+        }
+        delete fields.densityUnit;
+      }
       routeDrafts.set(route, fields);
     }
   }
 } catch {
   /* storage may be disabled in private browsing */
 }
+try {
+  if (!routeDrafts.has('manual')) {
+    const savedManual = JSON.parse(localStorage.getItem('sanich_manual_form_v3') || 'null');
+    if (savedManual && typeof savedManual === 'object') routeDrafts.set('manual', savedManual);
+  }
+} catch {}
 function persistDrafts() {
+  try {
+    if (routeDrafts.has('manual'))
+      localStorage.setItem('sanich_manual_form_v3', JSON.stringify(routeDrafts.get('manual')));
+  } catch {}
   try {
     sessionStorage.setItem(DRAFTS_KEY, JSON.stringify(Object.fromEntries(routeDrafts)));
   } catch {}
@@ -262,7 +279,7 @@ function saveRouteScroll() {
   if (state.route) routeScroll.set(state.route, window.scrollY || 0);
 }
 function restoreRouteScroll(route) {
-  const position = routeScroll.get(route) || 0;
+  const position = route === 'assistant' ? 0 : routeScroll.get(route) || 0;
   requestAnimationFrame(() => window.scrollTo(0, position));
 }
 
@@ -294,12 +311,21 @@ function go(route) {
   resetHistoryDraft();
   state.route = route;
   routeScroll.set(route, 0);
+  window.history.pushState(
+    {
+      sanich: true,
+      route,
+      stack: [...state.navStack],
+      index: (window.history.state?.index || 0) + 1,
+    },
+    '',
+  );
   render();
   scrollTo(0, 0);
 }
 function goBack() {
   if (state.route === 'manual') manualSaveCurrent?.();
-  if (state.route === 'operators' && operatorViewing) {
+  if (['operators', 'ramp', 'rich'].includes(state.route) && operatorViewing) {
     operatorViewing = false;
     operatorStep = 0;
     renderOperator();
@@ -313,6 +339,10 @@ function goBack() {
     state.assistantIndex = null;
     renderAssistant();
     scrollTo(0, 0);
+    return;
+  }
+  if (window.history.state?.sanich && window.history.state.index > 0) {
+    window.history.back();
     return;
   }
   snapshotRoute();
@@ -343,14 +373,24 @@ function setResult(title, value, error) {
 }
 function iconSvg(type) {
   const common = 'class="menu-svg" viewBox="0 0 48 48" aria-hidden="true"';
-  if (type === 'level')
-    return `<svg ${common}><path d="M10 30c6-7 22-7 28 0v8H10z" fill="#39a9db"/><path d="M10 30c7 4 21 4 28 0" fill="none" stroke="#fff" stroke-width="2.5"/><text x="24" y="23" text-anchor="middle" font-size="20" font-weight="900" fill="#171717">H</text></svg>`;
-  if (type === 'frequency')
-    return `<svg ${common}><rect x="7" y="7" width="34" height="34" rx="11" fill="#fff3cd" stroke="#f28c00" stroke-width="2"/><text x="24" y="31" text-anchor="middle" font-size="27" font-weight="900" font-style="italic" fill="#171717">F</text></svg>`;
+  const paths = {
+    level: 'M7 2H10V22H7Z M10 4H17V6H10Z M10 9H15V11H10Z M10 14H17V16H10Z M10 19H15V21H10Z',
+    ramp: 'M3 17L9 11L13 15L21 7V12H23V3H14V5H19L13 11L9 7L1 15Z',
+    frequency:
+      'M20.38 8.57 21.83 6.39 20.17 5.28 18.72 7.46A10 10 0 0 0 2.02 18H21.98A10 10 0 0 0 20.38 8.57ZM12 16A2 2 0 1 1 12 12L18 7 14 14A2 2 0 0 1 12 16Z',
+    '⚡': 'M11 21H9L10 14H5L13 3H15L14 10H19Z',
+    '↻': 'M12 6V3L8 7L12 11V8A4 4 0 0 1 16 12C16 12.6 15.9 13.2 15.6 13.7L17.1 15.2A6 6 0 0 0 12 6ZM6.9 8.8A6 6 0 0 0 12 18V21L16 17L12 13V16A4 4 0 0 1 8 12C8 11.4 8.1 10.8 8.4 10.3Z',
+    sko: 'M6 22A2 2 0 0 1 4.3 19L9 11V4H8V2H16V4H15V11L19.7 19A2 2 0 0 1 18 22ZM8 16H16L13 11V4H11V11Z',
+    '🌡': 'M15 13.76V5A3 3 0 0 0 9 5V13.76A5 5 0 1 0 15 13.76ZM11 5A1 1 0 0 1 13 5V15L14 15.7A3 3 0 1 1 10 15.7L11 15Z',
+    '⚙': 'M19.43 12.98A7.4 7.4 0 0 0 19.43 11.02L21.54 9.37L19.54 5.91L17.05 6.91A8 8 0 0 0 15.36 5.93L15 3H9L8.64 5.93A8 8 0 0 0 6.95 6.91L4.46 5.91L2.46 9.37L4.57 11.02A7.4 7.4 0 0 0 4.57 12.98L2.46 14.63L4.46 18.09L6.95 17.09A8 8 0 0 0 8.64 18.07L9 21H15L15.36 18.07A8 8 0 0 0 17.05 17.09L19.54 18.09L21.54 14.63ZM12 15.5A3.5 3.5 0 1 1 12 8.5A3.5 3.5 0 0 1 12 15.5Z',
+  };
+  if (paths[type])
+    return `<svg class="menu-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="#f28c00" fill-rule="evenodd" d="${paths[type]}"/></svg>`;
+  if (['2А', 'Q', 'FF'].includes(type))
+    return `<svg ${common}><text x="24" y="33" text-anchor="middle" font-size="28" font-weight="800" fill="#f28c00">${type}</text></svg>`;
+  if (type === 'pedCooling') return '<img class="menu-img" src="assets/ic_ped_cooling.png" alt="">';
   if (type === 'manual') return `<img class="menu-img" src="assets/ic_manual_debit.png" alt="">`;
   if (type === 'flow') return `<img class="menu-img" src="assets/ic_well_inflow.png" alt="">`;
-  if (type === 'sko')
-    return `<svg ${common}><path d="M17 7h14v4l-4 6v5l9 15c1 2-.4 4-2.8 4H14.8c-2.4 0-3.8-2-2.8-4l9-15v-5l-4-6z" fill="#fff" stroke="#171717" stroke-width="2.4"/><path d="M15 34h18l3 5H12z" fill="#38a95a"/><path d="M18 31c4-2 8 2 13 0" fill="none" stroke="#38a95a" stroke-width="4"/></svg>`;
   if (type === 'zsp')
     return `<svg ${common}><rect x="5" y="9" width="38" height="30" rx="9" fill="#fff3cd" stroke="#f28c00" stroke-width="2"/><text x="24" y="30" text-anchor="middle" font-size="17" font-weight="900" fill="#171717">ЗСП</text></svg>`;
   if (type === 'pipeLarge')
@@ -375,4 +415,18 @@ document.addEventListener('keydown', (event) => {
     event.preventDefault();
     button.click();
   }
+});
+
+window.addEventListener('popstate', (event) => {
+  const target = event.state;
+  if (!target?.sanich || typeof target.route !== 'string') return;
+  if (state.route === 'manual') manualSaveCurrent?.();
+  snapshotRoute();
+  saveRouteScroll();
+  parkCurrentScreen();
+  resetHistoryDraft();
+  state.route = target.route;
+  state.navStack = Array.isArray(target.stack) ? [...target.stack] : [];
+  render();
+  restoreRouteScroll(state.route);
 });

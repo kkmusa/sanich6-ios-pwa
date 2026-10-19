@@ -17,6 +17,7 @@ function acceptPrivacy() {
 function openHomeFromStart() {
   state.route = 'home';
   state.navStack = [];
+  window.history.replaceState({ sanich: true, route: 'home', stack: [], index: 0 }, '');
   render();
   scrollTo(0, 0);
 }
@@ -89,6 +90,11 @@ function renderScreen() {
       return renderPed();
     case 'assistant':
       return renderAssistant();
+    case 'ramp':
+    case 'rich':
+      operatorMode = state.route;
+      operatorViewing = false;
+      return renderOperator();
     case 'operators':
       return renderOperator();
     case 'casingReference':

@@ -29,7 +29,7 @@ vm.runInNewContext(read('sw.js') + '\n;globalThis.shell=SHELL;globalThis.version
 for (const asset of context.shell) if (asset !== './') exists(asset);
 const version = read('js/core.js').match(/APP_VERSION\s*=\s*['"]([^'"]+)/)?.[1];
 assert.ok(version);
-assert.equal(context.version.split('-v').at(-1), version.split('.').at(-1));
+assert.equal(context.version.split('-v').at(-1), version);
 for (const directory of ['js', 'vnr'])
   for (const file of fs.readdirSync(path.join(root, directory)))
     if (file.endsWith('.js'))
