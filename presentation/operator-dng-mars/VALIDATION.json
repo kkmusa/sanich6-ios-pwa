@@ -1,0 +1,15 @@
+{
+  "slides": 22,
+  "embedded_mp4": "ppt/media/media1.mp4",
+  "autoplay_delay": 0,
+  "video_embedded_integrity": true,
+  "actual_powerpoint_playback_tested": false,
+  "other_slides_xml_unchanged_in_presentation_order": 21,
+  "full_video_decode_passed": true,
+  "codec": "H.264",
+  "pixel_format": "yuv420p",
+  "resolution": "1920x1080",
+  "duration_seconds": 9,
+  "frames_per_second": 30,
+  "libreoffice_pdf_export_pages": 21
+}
