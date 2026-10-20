@@ -1,0 +1,33 @@
+{
+  "total_slides": 21,
+  "slides_with_full_frame_photo_or_video": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+  ],
+  "all_text_preserved": true,
+  "silhouettes": 250,
+  "valid_internal_links": 20,
+  "opening_and_seam_unchanged": true,
+  "embedded_video_integrity": true,
+  "pdf_pages": 20,
+  "powerpoint_playback_tested": false
+}
