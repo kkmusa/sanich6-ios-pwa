@@ -9,6 +9,8 @@
   "seam_matches_decoded_final_frame": true,
   "unchanged_other_text": true,
   "people": 250,
-  "internal_links": 20,
-  "actual_powerpoint_playback_tested": false
+  "internal_links": 8,
+  "actual_powerpoint_playback_tested": false,
+  "overview_cards_hyperlinks_removed": true,
+  "closing_product_name_removed": true
 }
