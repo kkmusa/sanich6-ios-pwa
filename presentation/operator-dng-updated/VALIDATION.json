@@ -12,5 +12,12 @@
   "internal_links": 8,
   "actual_powerpoint_playback_tested": false,
   "overview_cards_hyperlinks_removed": true,
-  "closing_product_name_removed": true
+  "closing_product_name_removed": true,
+  "intro_title_only_before_zoom": true,
+  "description_only_after_reveal": true,
+  "remaining_19_slides_xml_unchanged": true,
+  "embedded_movie_count": 1,
+  "embedded_movie_integrity": true,
+  "following_frame_matches": true,
+  "full_video_decode_passed": true
 }
