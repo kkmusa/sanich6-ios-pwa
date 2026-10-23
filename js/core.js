@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.4';
+const APP_VERSION = '3.0.5';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',

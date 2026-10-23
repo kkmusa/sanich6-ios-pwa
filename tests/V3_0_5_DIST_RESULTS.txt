@@ -1,0 +1,10 @@
+✔ manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening (8330.441005ms)
+✔ manual time readout is large and all three control buttons match on narrow phones (2154.436181ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11115.12028

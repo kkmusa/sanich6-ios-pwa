@@ -1,0 +1,13 @@
+✔ manual stopwatch suspends UI updates on navigation, interval wheels survive navigation and reload (4969.635926ms)
+✔ manual timer continues across navigation/reload, units convert, reset pauses it (3641.431289ms)
+✔ manual calendar dates save complete interval history and survive reload (5468.237715ms)
+✔ manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening (6501.517499ms)
+✔ manual time readout is large and all three control buttons match on narrow phones (2100.817422ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23285.328211

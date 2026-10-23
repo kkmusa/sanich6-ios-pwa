@@ -381,16 +381,7 @@ function renderManual() {
     item.textContent = `Круг ${++lapNumber}: ${fmt(duration)} с · ${fmt(liters)} л · ${fmt(debit)} м³/сут`;
     byId('manualLapList').appendChild(item);
     byId('manualLaps').hidden = false;
-    // Finish this interval and immediately begin the next, without stopping.
-    stoppedForSave = false;
-    clearTimeout(saveTimer);
-    manualTimerElapsed = 0;
-    manualTimerStart = Date.now();
-    volume.value = '';
-    savedHistoryId = savedHistoryKey = null;
-    try {
-      localStorage.removeItem('sanich_manual_history_session');
-    } catch {}
+    // A lap is a snapshot of the shared running timer, not a new measurement.
     tick();
     persistManualTimer();
     snapshotRoute();

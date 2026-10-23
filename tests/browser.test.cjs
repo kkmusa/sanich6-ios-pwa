@@ -709,7 +709,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.4'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.5'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -855,15 +855,23 @@ test('manual laps stay on screen; final result saves only on stop without a save
     assert.equal(await page.locator('#lapBtn').isEnabled(), false);
     await page.locator('#timerBtn').click();
     assert.equal(await page.locator('#saveManual').count(), 0);
+    const elapsedBeforeLap = await page.evaluate(() => manualElapsed());
     await page.locator('#lapBtn').click();
+    assert.ok(
+      (await page.evaluate(() => manualElapsed())) >= elapsedBeforeLap,
+      'lap must not reset elapsed time',
+    );
     assert.match(
       await page.locator('#manualLapList li').first().textContent(),
       /Круг 1:.*100 л.*м³\/сут/,
     );
-    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.locator('#liters').inputValue(), '100');
     assert.equal(await page.evaluate(() => manualTimerRunning), true);
-    await page.locator('#liters').fill('50');
+    await page.locator('#liters').fill('150');
+    const secondLapStart = await page.evaluate(() => manualElapsed());
     await page.locator('#lapBtn').click();
+    assert.ok((await page.evaluate(() => manualElapsed())) >= secondLapStart);
+    assert.equal(await page.locator('#liters').inputValue(), '150');
     assert.equal(await page.locator('#manualLapList li').count(), 2);
     assert.equal(await page.evaluate(() => calculationHistory().length), 0);
     await page.locator('#liters').fill('100');
