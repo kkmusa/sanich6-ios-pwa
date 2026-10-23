@@ -117,7 +117,8 @@ test('manual stopwatch suspends UI updates on navigation, interval wheels surviv
     await page.locator('#timerBtn').click();
     await page.waitForFunction(() => Number(document.getElementById('seconds').value) > 60);
     await page.locator('#timerBtn').click();
-    await page.evaluate(() => manualSaveCurrent());
+    if (await page.evaluate(() => manualTimerRunning)) await page.locator('#timerBtn').click();
+    await page.locator('#saveManual').click();
     await go(page, 'history');
     assert.equal(await page.locator('.history-item').count(), 1);
     await go(page, 'manual');
@@ -627,6 +628,56 @@ test('VNR zoom/page controls and search survive reload', () =>
       '125%',
     );
   }));
+test('VNR zoom preserves the actual reading location after scrolling, page jumps and search', () =>
+  withPage(async (page) => {
+    await page.goto(base + '/vnr/');
+    await page.locator('#vnr-search').waitFor({ state: 'visible' });
+    await page.waitForFunction(() => !document.querySelector('#vnr-search').disabled);
+    const position = (number) =>
+      page.evaluate((number) => {
+        const p = document.getElementById('page-' + number);
+        const line = document.querySelector('.vnr-position').getBoundingClientRect().bottom + 8;
+        return (scrollY + line - p.offsetTop) / p.offsetHeight;
+      }, number);
+    // Ordinary scrolling deliberately leaves the old reader page variable stale.
+    await page.evaluate(() => {
+      const p = document.getElementById('page-87');
+      const line = document.querySelector('.vnr-position').getBoundingClientRect().bottom + 8;
+      scrollTo(0, p.offsetTop + p.offsetHeight * 0.37 - line);
+    });
+    await page.waitForFunction(
+      () => document.querySelector('#vnr-position-label').textContent === '87/207',
+    );
+    const before = await position(87);
+    for (const control of [
+      '#vnr-zoom-in',
+      '#vnr-zoom-in',
+      '#vnr-zoom-in',
+      '#vnr-zoom-out',
+      '#vnr-zoom-out',
+    ]) {
+      await page.locator(control).click();
+      assert.ok(
+        Math.abs((await position(87)) - before) < 0.015,
+        'same paragraph stays beneath the toolbar',
+      );
+      assert.equal(await page.locator('#vnr-page').inputValue(), '87');
+    }
+    await page.locator('#vnr-page').fill('120');
+    await page.locator('#vnr-page-go').click();
+    const jumped = await position(120);
+    await page.locator('#vnr-zoom-in').click();
+    assert.ok(Math.abs((await position(120)) - jumped) < 0.015);
+    await page.locator('#vnr-search').fill('технологическая инструкция');
+    await page.locator('#vnr-next').click();
+    const activePage = Number(await page.locator('#vnr-page').inputValue());
+    const searchPosition = await position(activePage);
+    const count = await page.locator('#vnr-count').textContent();
+    await page.locator('#vnr-zoom-out').click();
+    assert.ok(Math.abs((await position(activePage)) - searchPosition) < 0.015);
+    assert.equal(await page.locator('#vnr-count').textContent(), count);
+    assert.ok((await page.locator('.hit.current').count()) > 0);
+  }));
 test('new shell activation preserves existing VNR, photos and unrelated caches', async () => {
   const context = await browser.newContext();
   try {
@@ -656,7 +707,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.2'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.3'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -722,7 +773,8 @@ test('manual calendar dates save complete interval history and survive reload', 
           ) < 2,
       ),
     );
-    await page.evaluate(() => manualSaveCurrent());
+    if (await page.evaluate(() => manualTimerRunning)) await page.locator('#timerBtn').click();
+    await page.locator('#saveManual').click();
     await go(page, 'history');
     assert.match(await page.locator('.history-item .hint').textContent(), /2026-10-18.*2026-10-19/);
     await page.reload();
@@ -788,32 +840,45 @@ test('version 3: fifth Technologist tab contains all six Android tools; level un
     await result(page, '880 м');
   }));
 
-test('version 3: manual autosave updates one session; new timer survives a fresh app tab and has mini window', () =>
+test('manual laps stay on screen; only an explicit stopped result enters history; timer survives reopening', () =>
   withPage(async (page, context) => {
     await go(page, 'manual');
-    assert.equal(await page.locator('#saveManual').count(), 0);
     await fill(page, { liters: '100', seconds: '60' });
-    await page.waitForFunction(() => calculationHistory().length === 1);
-    await page.locator('#seconds').fill('120');
-    await page.waitForFunction(() => calculationHistory()[0]?.result === '72 м³/сут');
-    assert.equal(await page.evaluate(() => calculationHistory().length), 1);
+    await page.waitForTimeout(2200);
+    assert.equal(await page.evaluate(() => calculationHistory().length), 0);
+    assert.equal(await page.locator('#lapBtn').isEnabled(), false);
     await page.locator('#timerBtn').click();
+    assert.equal(await page.locator('#saveManual').isEnabled(), false);
+    await page.locator('#lapBtn').click();
+    assert.match(
+      await page.locator('#manualLapList li').first().textContent(),
+      /Круг 1:.*100 л.*м³\/сут/,
+    );
+    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.evaluate(() => manualTimerRunning), true);
+    await page.locator('#liters').fill('50');
+    await page.locator('#lapBtn').click();
+    assert.equal(await page.locator('#manualLapList li').count(), 2);
+    assert.equal(await page.evaluate(() => calculationHistory().length), 0);
+    await page.locator('#liters').fill('100');
     await go(page, 'home');
     await page.locator('#manualMini:not([hidden])').waitFor();
+    assert.equal(await page.evaluate(() => calculationHistory().length), 0);
     const before = await page.evaluate(() => manualElapsed());
     await page.close();
     const reopened = await context.newPage();
     await reopened.goto(base);
     await reopened.locator('.hero').waitFor();
-    await reopened.locator('#manualMini:not([hidden])').waitFor();
-    await reopened.locator('#manualMini').click();
+    await reopened.locator('#manualMini:not([hidden])').click();
     await reopened.waitForFunction(() => manualTimerRunning && manualElapsed() > 0);
     assert.ok((await reopened.evaluate(() => manualElapsed())) >= before);
     await reopened.locator('#timerBtn').click();
-    assert.equal(await reopened.locator('[data-minutes="true"]').isEnabled(), true);
-    await reopened.locator('#resetBtn').click();
-    await fill(reopened, { liters: '100', seconds: '60' });
-    await reopened.waitForFunction(() => calculationHistory().length === 2);
+    assert.equal(await reopened.evaluate(() => calculationHistory().length), 0);
+    await reopened.locator('#saveManual').click();
+    await reopened.locator('#saveManual').click();
+    assert.equal(await reopened.evaluate(() => calculationHistory().length), 1);
+    await reopened.locator('#manualIntervalMode').check();
+    assert.equal(await reopened.locator('#lapBtn').isEnabled(), false);
     await reopened.close();
   }));
 

@@ -888,3 +888,28 @@ button {
   font-size: 12px;
   margin: -4px 3px 8px;
 }
+
+/* Prominent stopwatch controls; laps remain unavailable in interval mode. */
+.manual-timer-button {
+  min-height: 64px;
+  background: #875b00;
+  color: #fff;
+  font-size: 23px;
+  font-weight: 800;
+  border: 2px solid #654300;
+}
+.manual-lap-button {
+  min-height: 56px;
+  background: #a56a00;
+  color: #fff;
+  font-size: 21px;
+  font-weight: 800;
+}
+.manual-actions > button {
+  flex: 1;
+}
+#manualLapList {
+  padding-left: 24px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}

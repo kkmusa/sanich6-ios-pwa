@@ -1,0 +1,13 @@
+✔ shell, VNR index and every station photo work offline (5715.955131ms)
+✔ all routes render; operating screens use existing mathematical functions (2379.156784ms)
+✔ VNR zoom preserves the actual reading location after scrolling, page jumps and search (3144.530633ms)
+✔ manual calendar dates save complete interval history and survive reload (3647.579248ms)
+✔ manual laps stay on screen; only an explicit stopped result enters history; timer survives reopening (7796.497757ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 23923.023544

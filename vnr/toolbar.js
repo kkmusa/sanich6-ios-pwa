@@ -11,10 +11,29 @@
     persistViewer();
   }
   function zoom(change) {
+    // The saved page can lag behind ordinary scrolling. Anchor the content
+    // actually beneath the fixed controls before changing document geometry.
+    const line =
+      (document.querySelector('.vnr-position')?.getBoundingClientRect().bottom || 162) + 8;
+    const pages = [...document.querySelectorAll('.page')];
+    const page = pages.find((node) => node.getBoundingClientRect().bottom > line) || pages.at(-1);
+    if (!page) return;
+    const rect = page.getBoundingClientRect();
+    const y = Math.max(0, Math.min(1, (line - rect.top) / rect.height));
+    const left = scrollX;
+    viewerPage = Number(page.id.slice(5));
+    document.getElementById('vnr-page').value = viewerPage;
     viewerZoom = Math.max(0.75, Math.min(3, viewerZoom + change));
     updateZoom();
     if (selected >= 0) renderHits(false);
-    jumpPage(viewerPage);
+    // Read the new dimensions synchronously so repeated taps cannot restore
+    // an earlier position in a later animation frame.
+    const resized = page.getBoundingClientRect();
+    window.scrollTo({
+      top: scrollY + resized.top + y * resized.height - line,
+      left,
+      behavior: 'auto',
+    });
   }
   document.getElementById('vnr-zoom-out').onclick = () => zoom(-0.25);
   document.getElementById('vnr-zoom-in').onclick = () => zoom(0.25);

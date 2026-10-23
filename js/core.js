@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.2';
+const APP_VERSION = '3.0.3';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -303,7 +303,6 @@ function clearScreenCache() {
 }
 function go(route) {
   if (route === state.route) return;
-  if (state.route === 'manual') manualSaveCurrent?.();
   if (state.route) state.navStack.push(state.route);
   snapshotRoute();
   saveRouteScroll();
@@ -324,7 +323,6 @@ function go(route) {
   scrollTo(0, 0);
 }
 function goBack() {
-  if (state.route === 'manual') manualSaveCurrent?.();
   if (['operators', 'ramp', 'rich'].includes(state.route) && operatorViewing) {
     operatorViewing = false;
     operatorStep = 0;
@@ -420,7 +418,6 @@ document.addEventListener('keydown', (event) => {
 window.addEventListener('popstate', (event) => {
   const target = event.state;
   if (!target?.sanich || typeof target.route !== 'string') return;
-  if (state.route === 'manual') manualSaveCurrent?.();
   snapshotRoute();
   saveRouteScroll();
   parkCurrentScreen();
