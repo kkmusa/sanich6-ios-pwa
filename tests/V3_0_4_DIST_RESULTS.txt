@@ -1,0 +1,14 @@
+✔ manual stopwatch suspends UI updates on navigation, interval wheels survive navigation and reload (4600.53316ms)
+✔ manual timer continues across navigation/reload, units convert, reset pauses it (3788.753174ms)
+✔ VNR zoom preserves the actual reading location after scrolling, page jumps and search (3147.030449ms)
+✔ manual calendar dates save complete interval history and survive reload (5836.193724ms)
+✔ manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening (7447.044045ms)
+✔ manual time readout is large and all three control buttons match on narrow phones (1905.444006ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27337.116866

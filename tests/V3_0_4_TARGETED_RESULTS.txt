@@ -1,0 +1,12 @@
+✔ VNR zoom preserves the actual reading location after scrolling, page jumps and search (3568.424096ms)
+✔ manual calendar dates save complete interval history and survive reload (5603.449027ms)
+✔ manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening (6398.947303ms)
+✔ manual time readout is large and all three control buttons match on narrow phones (2016.767686ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18233.384662

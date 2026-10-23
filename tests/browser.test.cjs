@@ -118,7 +118,9 @@ test('manual stopwatch suspends UI updates on navigation, interval wheels surviv
     await page.waitForFunction(() => Number(document.getElementById('seconds').value) > 60);
     await page.locator('#timerBtn').click();
     if (await page.evaluate(() => manualTimerRunning)) await page.locator('#timerBtn').click();
-    await page.locator('#saveManual').click();
+    await page.waitForFunction(() =>
+      calculationHistory().some((entry) => entry.title === 'Ручной замер дебита'),
+    );
     await go(page, 'history');
     assert.equal(await page.locator('.history-item').count(), 1);
     await go(page, 'manual');
@@ -707,7 +709,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.3'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.4'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -774,7 +776,11 @@ test('manual calendar dates save complete interval history and survive reload', 
       ),
     );
     if (await page.evaluate(() => manualTimerRunning)) await page.locator('#timerBtn').click();
-    await page.locator('#saveManual').click();
+    await page.waitForFunction(() =>
+      calculationHistory().some(
+        (entry) => entry.method === 'Временной интервал' && entry.result === '7.2 м³/сут',
+      ),
+    );
     await go(page, 'history');
     assert.match(await page.locator('.history-item .hint').textContent(), /2026-10-18.*2026-10-19/);
     await page.reload();
@@ -840,7 +846,7 @@ test('version 3: fifth Technologist tab contains all six Android tools; level un
     await result(page, '880 м');
   }));
 
-test('manual laps stay on screen; only an explicit stopped result enters history; timer survives reopening', () =>
+test('manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening', () =>
   withPage(async (page, context) => {
     await go(page, 'manual');
     await fill(page, { liters: '100', seconds: '60' });
@@ -848,7 +854,7 @@ test('manual laps stay on screen; only an explicit stopped result enters history
     assert.equal(await page.evaluate(() => calculationHistory().length), 0);
     assert.equal(await page.locator('#lapBtn').isEnabled(), false);
     await page.locator('#timerBtn').click();
-    assert.equal(await page.locator('#saveManual').isEnabled(), false);
+    assert.equal(await page.locator('#saveManual').count(), 0);
     await page.locator('#lapBtn').click();
     assert.match(
       await page.locator('#manualLapList li').first().textContent(),
@@ -873,13 +879,52 @@ test('manual laps stay on screen; only an explicit stopped result enters history
     await reopened.waitForFunction(() => manualTimerRunning && manualElapsed() > 0);
     assert.ok((await reopened.evaluate(() => manualElapsed())) >= before);
     await reopened.locator('#timerBtn').click();
-    assert.equal(await reopened.evaluate(() => calculationHistory().length), 0);
-    await reopened.locator('#saveManual').click();
-    await reopened.locator('#saveManual').click();
+    assert.equal(await reopened.evaluate(() => calculationHistory().length), 1);
+    assert.equal(await reopened.locator('#saveManual').count(), 0);
+    await reopened.locator('#timerBtn').click();
+    await reopened.locator('#timerBtn').click();
     assert.equal(await reopened.evaluate(() => calculationHistory().length), 1);
     await reopened.locator('#manualIntervalMode').check();
     assert.equal(await reopened.locator('#lapBtn').isEnabled(), false);
     await reopened.close();
+  }));
+
+test('manual time readout is large and all three control buttons match on narrow phones', () =>
+  withPage(async (page) => {
+    await page.setViewportSize({ width: 320, height: 844 });
+    await go(page, 'manual');
+    const controls = await page.locator('.manual-actions > button').evaluateAll((nodes) =>
+      nodes.map((node) => {
+        const style = getComputedStyle(node),
+          box = node.getBoundingClientRect();
+        return { width: box.width, height: box.height, top: box.top, font: style.fontSize };
+      }),
+    );
+    assert.equal(controls.length, 3);
+    assert.ok(
+      controls.every(
+        (control) =>
+          Math.abs(control.width - controls[0].width) < 1 &&
+          control.height === 46 &&
+          Math.abs(control.top - controls[0].top) < 1 &&
+          control.font === '15px',
+      ),
+    );
+    assert.equal(
+      await page.locator('#seconds').evaluate((node) => getComputedStyle(node).fontSize),
+      '42px',
+    );
+    assert.ok(
+      await page.locator('#seconds').evaluate((node) => node.getBoundingClientRect().height >= 84),
+    );
+    assert.equal(await page.locator('#saveManual').count(), 0);
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+    await page.locator('#manualIntervalMode').check();
+    assert.equal(await page.locator('#lapBtn').isVisible(), false);
+    assert.equal(await page.locator('#timerBtn').isVisible(), false);
+    await page.locator('#manualIntervalMode').uncheck();
+    assert.equal(await page.locator('#lapBtn').isVisible(), true);
+    assert.equal(await page.locator('#timerBtn').isVisible(), true);
   }));
 
 test('version 3: wheels select nearest time during scroll, are compact, and highlight stays fixed', () =>

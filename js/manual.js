@@ -138,7 +138,6 @@ function renderManual() {
     <section id="manualStopwatch" class="stack">
       ${field('seconds', 'Время замера, с')}
       <input id="manualMinutesMode" type="checkbox" hidden ${minutesInitially ? 'checked' : ''}><div class="chips" id="manualUnitChoices"><button type="button" class="chip" data-minutes="false">Секунды</button><button type="button" class="chip" data-minutes="true">Минуты</button></div>
-      <button class="btn manual-timer-button full" id="timerBtn">Старт</button>
     </section>
     <section id="manualInterval" class="stack" hidden>
       <div class="card stack"><div class="section-title">Начало</div><div class="field"><label for="manualStartDate">Дата начала</label><input id="manualStartDate" type="date" value="${esc(startDateValue)}"></div><div class="chips" id="startDayChoices"><button type="button" class="chip" data-day="0">Вчера</button><button type="button" class="chip active" data-day="1">Сегодня</button></div>
@@ -146,10 +145,10 @@ function renderManual() {
       <div class="card stack"><div class="section-title">Конец</div><div class="field"><label for="manualEndDate">Дата окончания</label><input id="manualEndDate" type="date" value="${esc(endDateValue)}"></div><div class="time-wheel-pair">${wheelHTML('endHours', 'Часы', 24, hour)}${wheelHTML('endMinutes', 'Минуты', 60, minute)}</div></div>
       <div class="hint" id="intervalDuration">Выберите время начала и окончания</div>
     </section>
-    <div class="row manual-actions"><button class="btn manual-lap-button" id="lapBtn" disabled>Круг</button><button class="btn secondary" id="resetBtn">Сброс времени</button></div>
+    <div class="row manual-actions"><button class="btn" id="timerBtn">Старт</button><button class="btn" id="lapBtn" disabled>Круг</button><button class="btn" id="resetBtn" aria-label="Сброс времени">Сброс</button></div>
     <section id="manualLaps" class="card" hidden><b>Круги текущего замера</b><ol id="manualLapList"></ol></section>
     <div id="liveResult">${resultCard('Дебит скважины', '', 'Введите объём и время')}</div>
-    <button class="btn full" id="saveManual" disabled>Сохранить замер</button><div class="hint" id="manualSaveStatus" role="status">В историю сохраняется только результат по кнопке. Круги остаются на этом экране.</div>
+    <div class="hint" id="manualSaveStatus" role="status">Итоговый замер сохраняется автоматически. Круги в историю не записываются.</div>
     <button class="btn secondary full" id="clear">Очистить</button>
   </main>`);
   const byId = (id) => document.getElementById(id),
@@ -174,7 +173,9 @@ function renderManual() {
     savedHistoryId = savedHistory?.id || null;
     savedHistoryKey = savedHistory?.key || null;
   } catch {}
-  let lapNumber = 0;
+  let lapNumber = 0,
+    stoppedForSave = !manualTimerRunning && manualElapsed() > 0,
+    saveTimer;
   function calc() {
     const liters = num(volume.value),
       isInterval = toggle.checked;
@@ -211,8 +212,10 @@ function renderManual() {
             result: `${fmt(debit)} м³/сут`,
             details,
           };
+    byId('timerBtn').hidden = toggle.checked;
+    byId('lapBtn').hidden = toggle.checked;
+    byId('timerBtn').disabled = toggle.checked;
     byId('lapBtn').disabled = toggle.checked || !manualTimerRunning || !lastEntry;
-    byId('saveManual').disabled = manualTimerRunning || !lastEntry;
     setResult(
       'Дебит скважины',
       lastEntry?.result || '',
@@ -271,6 +274,7 @@ function renderManual() {
         });
       });
     calc();
+    persistDraft();
   });
   function tick() {
     if (!volume.isConnected) return;
@@ -307,9 +311,13 @@ function renderManual() {
       seconds.disabled = false;
       byId('manualMinutesMode').disabled = false;
       byId('timerBtn').textContent = 'Продолжить';
+      stoppedForSave = true;
       calc();
+      saveFinal();
       snapshotRoute();
     } else {
+      stoppedForSave = false;
+      clearTimeout(saveTimer);
       manualTimerElapsed =
         (num(seconds.value) || 0) * (byId('manualMinutesMode').checked ? 60000 : 1000);
       manualTimerStart = Date.now();
@@ -319,6 +327,8 @@ function renderManual() {
     }
   });
   byId('resetBtn').addEventListener('click', () => {
+    stoppedForSave = false;
+    clearTimeout(saveTimer);
     savedHistoryId = savedHistoryKey = null;
     try {
       localStorage.removeItem('sanich_manual_history_session');
@@ -343,7 +353,7 @@ function renderManual() {
     if (manualTimerRunning) tick();
     else calc();
     if (!lastEntry) return false;
-    const key = toggle.checked ? lastEntry.details : 'stopwatch';
+    const key = toggle.checked ? 'interval' : 'stopwatch';
     if (savedHistoryId && savedHistoryKey === key && updateHistory(savedHistoryId, lastEntry))
       return true;
     const id = saveHistory(lastEntry);
@@ -356,11 +366,11 @@ function renderManual() {
     resetHistoryDraft();
     return true;
   }
-  // Navigation, visibility and pagehide persist the timer/draft, never history.
-  byId('saveManual').addEventListener('click', () => {
+  function saveFinal() {
     if (manualTimerRunning || !lastEntry) return;
-    if (saveMeasurement()) byId('manualSaveStatus').textContent = 'Замер сохранён в историю.';
-  });
+    if (saveMeasurement())
+      byId('manualSaveStatus').textContent = 'Итоговый замер сохранён в историю.';
+  }
   byId('lapBtn').addEventListener('click', () => {
     if (toggle.checked || !manualTimerRunning || !lastEntry) return;
     const liters = num(volume.value),
@@ -372,6 +382,8 @@ function renderManual() {
     byId('manualLapList').appendChild(item);
     byId('manualLaps').hidden = false;
     // Finish this interval and immediately begin the next, without stopping.
+    stoppedForSave = false;
+    clearTimeout(saveTimer);
     manualTimerElapsed = 0;
     manualTimerStart = Date.now();
     volume.value = '';
@@ -385,6 +397,11 @@ function renderManual() {
   });
   function persistDraft() {
     persistManualTimer();
+    clearTimeout(saveTimer);
+    if (!manualTimerRunning && (toggle.checked || stoppedForSave))
+      saveTimer = setTimeout(() => {
+        if (volume.isConnected && !manualTimerRunning) saveFinal();
+      }, 2000);
   }
   bind(
     ['liters', 'seconds', 'manualStartDate', 'manualEndDate', 'manualIntervalMode'],

@@ -889,24 +889,35 @@ button {
   margin: -4px 3px 8px;
 }
 
-/* Prominent stopwatch controls; laps remain unavailable in interval mode. */
-.manual-timer-button {
-  min-height: 64px;
-  background: #875b00;
-  color: #fff;
-  font-size: 23px;
+/* Large time readout, compact matching stopwatch controls. */
+#manualStopwatch #seconds {
+  min-height: 84px;
+  font-size: 42px;
+  line-height: 1.15;
   font-weight: 800;
-  border: 2px solid #654300;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: #171717;
+  background: #fff;
+  -webkit-text-fill-color: #171717;
+  opacity: 1;
 }
-.manual-lap-button {
-  min-height: 56px;
-  background: #a56a00;
-  color: #fff;
-  font-size: 21px;
-  font-weight: 800;
+.manual-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
 }
-.manual-actions > button {
+.manual-actions > .btn {
   flex: 1;
+  min-width: 0;
+  height: 46px;
+  min-height: 46px;
+  padding: 6px 4px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #ffcf00;
+  color: #171717;
 }
 #manualLapList {
   padding-left: 24px;
