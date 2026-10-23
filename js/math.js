@@ -7,6 +7,12 @@ function androidRound(value) {
   return value - floor === 0.5 ? (floor % 2 === 0 ? floor : floor + 1) : Math.round(value);
 }
 const DngMath = Object.freeze({
+  // Head at the requested frequency; passport head is specified at 50 Hz.
+  headAtFrequency(headAt50, frequency) {
+    if (![headAt50, frequency].every(Number.isFinite) || headAt50 <= 0 || frequency < 0)
+      return null;
+    return finiteOrNull(headAt50 * (frequency / 50) ** 2);
+  },
   casingInnerDiameter(casing, wall) {
     if (![casing, wall].every(Number.isFinite) || casing <= 0 || wall <= 0) return null;
     return casing - 2 * wall > 0 ? casing - 2 * wall : null;

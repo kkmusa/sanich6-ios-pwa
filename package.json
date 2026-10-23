@@ -1,6 +1,6 @@
 {
   "name": "operator-dng-pwa",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "private": true,
   "description": "Оператор ДНГ: офлайн инженерные расчёты и регламент ВНР",
   "scripts": {

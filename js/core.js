@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.5';
+const APP_VERSION = '3.0.6';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -261,6 +261,7 @@ window.addEventListener('pagehide', snapshotRoute);
 const CACHED_CALCULATOR_ROUTES = new Set([
   'level',
   'frequency',
+  'headAtFrequency',
   'flow',
   'upr',
   'apv',
@@ -372,6 +373,8 @@ function setResult(title, value, error) {
 function iconSvg(type) {
   const common = 'class="menu-svg" viewBox="0 0 48 48" aria-hidden="true"';
   const paths = {
+    technologist:
+      'M6.36,18.78L6.61,21l1.62-1.54l2.77-7.6c-0.68-0.17-1.28-0.51-1.77-0.98L6.36,18.78z M14.77,10.88c-0.49,0.47-1.1,0.81-1.77,0.98l2.77,7.6L17.39,21l0.26-2.22L14.77,10.88z M15,8c0-1.3-0.84-2.4-2-2.82V3h-2v2.18C9.84,5.6,9,6.7,9,8c0,1.66,1.34,3,3,3S15,9.66,15,8z M12,9c-0.55,0-1-0.45-1-1 c0-0.55,0.45-1,1-1s1,0.45,1,1C13,8.55,12.55,9,12,9z',
     level: 'M7 2H10V22H7Z M10 4H17V6H10Z M10 9H15V11H10Z M10 14H17V16H10Z M10 19H15V21H10Z',
     ramp: 'M3 17L9 11L13 15L21 7V12H23V3H14V5H19L13 11L9 7L1 15Z',
     frequency:
@@ -383,8 +386,12 @@ function iconSvg(type) {
     '⚙': 'M19.43 12.98A7.4 7.4 0 0 0 19.43 11.02L21.54 9.37L19.54 5.91L17.05 6.91A8 8 0 0 0 15.36 5.93L15 3H9L8.64 5.93A8 8 0 0 0 6.95 6.91L4.46 5.91L2.46 9.37L4.57 11.02A7.4 7.4 0 0 0 4.57 12.98L2.46 14.63L4.46 18.09L6.95 17.09A8 8 0 0 0 8.64 18.07L9 21H15L15.36 18.07A8 8 0 0 0 17.05 17.09L19.54 18.09L21.54 14.63ZM12 15.5A3.5 3.5 0 1 1 12 8.5A3.5 3.5 0 0 1 12 15.5Z',
   };
   if (paths[type])
-    return `<svg class="menu-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="#f28c00" fill-rule="evenodd" d="${paths[type]}"/></svg>`;
-  if (['2А', 'Q', 'FF'].includes(type))
+    return `<svg class="menu-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="${type === 'technologist' ? 'currentColor' : '#f28c00'}" fill-rule="evenodd" d="${paths[type]}"/></svg>`;
+  if (type === 'FF')
+    return `<svg ${common}><text x="7" y="34" font-size="32" font-weight="600" fill="#f28c00">F</text><text x="27" y="34" font-size="19.5" font-weight="600" fill="#f28c00">F</text></svg>`;
+  if (type === 'headAtFrequency')
+    return `<svg class="menu-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v17h17M7 17Q14 16 20 5M16 5h4v4" fill="none" stroke="#f28c00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  if (['2А', 'Q'].includes(type))
     return `<svg ${common}><text x="24" y="33" text-anchor="middle" font-size="28" font-weight="800" fill="#f28c00">${type}</text></svg>`;
   if (type === 'pedCooling') return '<img class="menu-img" src="assets/ic_ped_cooling.png" alt="">';
   if (type === 'manual') return `<img class="menu-img" src="assets/ic_manual_debit.png" alt="">`;

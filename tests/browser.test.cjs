@@ -181,6 +181,9 @@ test('shell, VNR index and every station photo work offline', () =>
     await context.setOffline(true);
     await page.reload();
     await page.locator('.hero').waitFor();
+    await go(page, 'headAtFrequency');
+    await fill(page, { passportHead: '2100', workingFrequency: '54' });
+    await result(page, '2449.44 м');
     const assets = await page.evaluate(async () => {
       const results = [];
       for (const url of OPERATOR_PHOTOS) {
@@ -249,6 +252,7 @@ test('all routes render; operating screens use existing mathematical functions',
   withPage(async (page) => {
     for (const route of [
       'frequency',
+      'headAtFrequency',
       'sko',
       'tap',
       'reference',
@@ -709,7 +713,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.5'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.6'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1068,6 +1072,12 @@ test(
             ),
         }),
       );
+      await page.route('**/android-vnr/viewer-controls.js', (route) =>
+        route.fulfill({
+          contentType: 'text/javascript',
+          body: fs.readFileSync(path.join(androidRoot, 'viewer-controls.js'), 'utf8'),
+        }),
+      );
       await page.route('**/android-vnr/bookmarks.js', (route) =>
         route.fulfill({ contentType: 'text/javascript', body: script }),
       );
@@ -1115,6 +1125,7 @@ test('home is compact, product identity is Operator DNG, and technologist tools 
       'level',
       'frequency',
       'manual',
+      'headAtFrequency',
       'tap',
       'ramp',
       'rich',
@@ -1142,6 +1153,7 @@ test('Android question buttons show formulas and terms, retain inputs and close 
     const topics = [
       ['level', 1, 'Плотность'],
       ['frequency', 1, 'частота'],
+      ['headAtFrequency', 1, 'напор'],
       ['manual', 1, 'время'],
       ['flow', 3, 'Vкп'],
       ['tap', 5, 'кабел'],
@@ -1187,4 +1199,54 @@ test('Android question buttons show formulas and terms, retain inputs and close 
     await page.getByRole('button', { name: 'Закрыть пояснения' }).click();
     await go(page, 'ramp');
     assert.equal(await page.locator('#calculationHelpOpen').count(), 0);
+  }));
+
+test('head at frequency retains data, records one result and uses distinct RICH letters and compass', () =>
+  withPage(async (page) => {
+    const sizes = await page
+      .locator('.menu-card[onclick="go(\'rich\')"] svg text')
+      .evaluateAll((nodes) => nodes.map((n) => Number(n.getAttribute('font-size'))));
+    assert.equal(sizes.length, 2);
+    assert.ok(sizes[0] > sizes[1]);
+    assert.equal(
+      await page
+        .locator('.bottom-nav button')
+        .filter({ hasText: 'Технолог' })
+        .locator('svg path')
+        .count(),
+      1,
+    );
+    await go(page, 'headAtFrequency');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    await fill(page, { passportHead: '2100', workingFrequency: '54' });
+    await result(page, '2449.44 м');
+    assert.equal(
+      await page.evaluate(
+        () => calculationHistory().filter((x) => x.title === 'Напор на частоте').length,
+      ),
+      1,
+    );
+    await go(page, 'home');
+    await page.evaluate(() => goBack());
+    await result(page, '2449.44 м');
+    await page.reload();
+    await page.locator('.hero').waitFor();
+    await go(page, 'headAtFrequency');
+    await result(page, '2449.44 м');
+    assert.equal(await page.locator('#passportHead').inputValue(), '2100');
+    await fill(page, { workingFrequency: '0' });
+    await result(page, '0 м');
+    await fill(page, { workingFrequency: '-1' });
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    await fill(page, { workingFrequency: '50' });
+    await result(page, '2100 м');
+    await go(page, 'history');
+    const entries = await page.evaluate(() =>
+      calculationHistory().filter((x) => x.title === 'Напор на частоте'),
+    );
+    assert.equal(entries[0].result, '2100 м');
+    await go(page, 'headAtFrequency');
+    await page.locator('#clearHead').click();
+    assert.equal(await page.locator('#passportHead').inputValue(), '');
+    assert.equal(await page.locator('#workingFrequency').inputValue(), '');
   }));

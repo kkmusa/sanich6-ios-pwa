@@ -64,6 +64,8 @@ function renderScreen() {
       return renderWellPotential();
     case 'level':
       return renderLevel();
+    case 'headAtFrequency':
+      return renderHeadAtFrequency();
     case 'frequency':
       return renderFrequency();
     case 'flow':

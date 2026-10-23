@@ -183,3 +183,22 @@ test('operator ramp and RICH use original time units and validation', () => {
   });
   assert.equal(math.operatorRich(40, 50, 10, 5), null);
 });
+
+test('head at frequency: quadratic example, zero, invalid inputs and overflow', () => {
+  assert.ok(Math.abs(math.headAtFrequency(2100, 54) - 2449.44) < 1e-9);
+  assert.equal(math.headAtFrequency(2100, 50), 2100);
+  assert.ok(Math.abs(math.headAtFrequency(2100, 40) - 1344) < 1e-9);
+  assert.equal(math.headAtFrequency(2100, 75), 4725);
+  assert.equal(math.headAtFrequency(2100, 0), 0);
+  for (const [head, frequency] of [
+    [0, 50],
+    [-1, 50],
+    [2100, -1],
+    [null, 50],
+    [2100, null],
+    [NaN, 50],
+    [2100, Infinity],
+    [1e308, 1e308],
+  ])
+    assert.equal(math.headAtFrequency(head, frequency), null);
+});

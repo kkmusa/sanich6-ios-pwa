@@ -924,3 +924,9 @@ button {
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
+
+.nav-btn .menu-svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+}

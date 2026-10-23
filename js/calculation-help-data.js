@@ -1,6 +1,19 @@
-// Explanations and formulas copied from Android CalculationTopBar.kt.
+// Android explanations from CalculationTopBar.kt; headAtFrequency was requested by the author.
 // Source SHA-256: b24e27cb82f40ccbad27e4403038bd40ad972fe065e169b71e85299ba53ac8af
 const CALCULATION_HELP = {
+  headAtFrequency: {
+    intro: 'Пересчёт паспортного напора при 50 Гц на заданную рабочую частоту.',
+    formulas: ['H = H₅₀ × (f / 50)²'],
+    terms: [
+      'H — напор на рабочей частоте, м.',
+      'H₅₀ — паспортный напор при 50 Гц, м.',
+      'f — рабочая частота, Гц.',
+    ],
+    notes: [
+      'Пример: 2100 × (54 / 50)² = 2449,44 м.',
+      'Расчёт по квадратичной зависимости для той же установки.',
+    ],
+  },
   temperatureSetpoint: {
     intro:
       'Уставка максимальной температуры ТМС после выхода УЭЦН на установившийся режим. Берётся более жёсткое из двух ограничений.',

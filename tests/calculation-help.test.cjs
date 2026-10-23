@@ -41,7 +41,7 @@ test('help groups tap fractions without moving cable or motor factors into denom
 });
 test('Android help has complete formulas, terms and explicit route mapping without unrelated screens', () => {
   const c = helpers();
-  assert.equal(Object.keys(c.helpData).length, 10);
+  assert.equal(Object.keys(c.helpData).length, 11);
   assert.equal(c.calculationHelpFor('upr'), c.calculationHelpFor('apv'));
   assert.equal(c.calculationHelpFor('manual').formulas[0], 'Q = Vл × 1440 / (tмин × 1000)');
   assert.equal(c.calculationHelpFor('level').terms[3], 'ρ — плотность жидкости, г/см³.');
@@ -50,4 +50,12 @@ test('Android help has complete formulas, terms and explicit route mapping witho
     assert.equal(c.calculationHelpFor(r), null);
   for (const d of Object.values(c.helpData))
     for (const f of d.formulas) assert.match(c.calculationFormula(f), /<math[^>]+aria-label=/);
+});
+
+test('head formula keeps multiplication outside the squared frequency ratio', () => {
+  const c = helpers();
+  const rendered = c.calculationFormula(c.calculationHelpFor('headAtFrequency').formulas[0]);
+  assert.match(rendered, /<mtext>H₅₀ × <\/mtext><msup>/);
+  assert.match(rendered, /<mfrac><mtext>f<\/mtext><mtext>50<\/mtext><\/mfrac>/);
+  assert.match(rendered, /<mn>2<\/mn><\/msup>/);
 });

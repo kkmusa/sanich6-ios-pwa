@@ -25,7 +25,11 @@ function calculationFormula(formula) {
   const expression = index < 0 ? formula : formula.slice(index + 3);
   let body;
   // Explicit groupings preserve products outside a quotient, especially tap calculations.
-  if (left === 'Hур = ') {
+  if (left === 'H = ' && expression === 'H₅₀ × (f / 50)²') {
+    body =
+      helpMathText('H₅₀ × ') +
+      `<msup><mrow><mo>(</mo>${helpFraction('f', '50')}<mo>)</mo></mrow><mn>2</mn></msup>`;
+  } else if (left === 'Hур = ') {
     body = helpMathText('Hсп − ') + helpFraction('10 × (Pд − Pз)', 'ρ');
   } else if (left === 'f = ') {
     body = helpMathText('50 × ') + `<msqrt>${helpFraction('40 × 9,81 + Hур', 'Hэцн')}</msqrt>`;

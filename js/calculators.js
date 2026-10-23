@@ -4,6 +4,7 @@ function renderHome() {
 ${menuCard('level', 'Уровень жидкости в скважине', '', 'level')}
 ${menuCard('frequency', 'Необходимая частота запуска', '', 'frequency')}
 ${menuCard('manual', 'Ручной замер дебита', '', 'manual')}
+${menuCard('headAtFrequency', 'Напор на частоте', '', 'headAtFrequency')}
 ${menuCard('⚡', 'Расчёт отпайки ТМПН', '', 'tap')}
 ${menuCard('ramp', 'Разгон', '', 'ramp')}
 ${menuCard('FF', 'РИЧ', '', 'rich')}
@@ -11,6 +12,39 @@ ${menuCard('2А', 'Коэффициент двигателя 2А', '', 'motorCoe
 ${menuCard('Q', 'Потенциал скважины', '', 'wellPotential')}</main>`,
     'home',
   );
+}
+
+function renderHeadAtFrequency() {
+  app.innerHTML = screen(`${topbar('Напор на частоте')}<main class="content stack">
+    ${field('passportHead', 'Паспортный напор при 50 Гц, м')}
+    ${field('workingFrequency', 'Рабочая частота, Гц')}
+    <div id="liveResult">${resultCard('Напор', '', 'Введите напор при 50 Гц и рабочую частоту')}</div>
+    <button class="btn secondary full" id="clearHead">Очистить</button>
+  </main>`);
+  const calc = () => {
+    const head = num(document.getElementById('passportHead').value);
+    const frequency = num(document.getElementById('workingFrequency').value);
+    const value = DngMath.headAtFrequency(head, frequency);
+    if (value === null) {
+      state._last = null;
+      return setResult('Напор', '', 'Напор должен быть больше нуля, частота — неотрицательной');
+    }
+    setResult(`Напор на ${fmt(frequency)} Гц`, `${fmt(value)} м`);
+    state.last = {
+      title: 'Напор на частоте',
+      method: 'Квадратичная зависимость от 50 Гц',
+      result: `${fmt(value)} м`,
+      details: `Напор при 50 Гц=${fmt(head)} м; частота=${fmt(frequency)} Гц`,
+    };
+  };
+  bind(['passportHead', 'workingFrequency'], calc);
+  document.getElementById('clearHead').onclick = () => {
+    document.getElementById('passportHead').value = '';
+    document.getElementById('workingFrequency').value = '';
+    resetHistoryDraft();
+    calc();
+    snapshotRoute();
+  };
 }
 
 function renderLevel() {
