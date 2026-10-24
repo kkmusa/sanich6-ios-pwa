@@ -293,6 +293,21 @@ const DngMath = Object.freeze({
       total = productive + s;
     return total < c ? { productive, total, stop: c - total } : null;
   },
+  // Round one duration and derive the other so a whole-minute cycle stays unchanged.
+  roundOperatingTimes(total, cycle) {
+    if (
+      !Number.isFinite(total) ||
+      !Number.isSafeInteger(cycle) ||
+      cycle <= 0 ||
+      total < 0 ||
+      total >= cycle
+    )
+      return null;
+    const rounded = Math.round(total),
+      stop = cycle - rounded;
+    if ((total > 0 && rounded === 0) || stop <= 0) return null;
+    return { total: rounded, stop };
+  },
   // All operating-cycle times are minutes, as in Android OperatingModeCalculator.
   apvCycle(q, p, s, dr, c) {
     if (

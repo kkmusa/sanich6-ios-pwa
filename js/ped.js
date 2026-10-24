@@ -1,19 +1,16 @@
 let pedDb = null;
 const PED_STATE_KEY = 'operator_dng_ped_selection_v1';
 let pedSaved = { selection: {}, selectedKey: null, working: '', nominal: '' };
+// Keep this form only in the current page's memory, across section navigation.
+// Remove the old persisted selection so reopening/reloading starts with a clean form.
 try {
-  const saved = JSON.parse(sessionStorage.getItem(PED_STATE_KEY) || 'null');
-  if (saved && typeof saved === 'object' && saved.selection && typeof saved.selection === 'object')
-    pedSaved = { ...pedSaved, ...saved };
+  sessionStorage.removeItem(PED_STATE_KEY);
 } catch {}
 function pedKey(p) {
   return JSON.stringify([p.manufacturer, p.name, p.diameter, p.power, p.speed, p.casing, p.wall]);
 }
-function persistPed() {
-  pedSaved.selection = state.pedSel || {};
-  try {
-    sessionStorage.setItem(PED_STATE_KEY, JSON.stringify(pedSaved));
-  } catch {}
+function rememberPed() {
+  pedSaved.selection = { ...(state.pedSel || {}) };
 }
 
 async function loadPedDb() {
@@ -30,9 +27,18 @@ function uniqueSorted(a, numeric = true) {
 }
 async function renderPed() {
   app.innerHTML = screen(
-    `${topbarTo('Охлаждение ПЭД')}<main class="content stack"><div class="card"><b>Необходимый приток для охлаждения ПЭД</b><div class="hint">Выберите параметры своего ПЭД для расчёта необходимого притока.</div></div><div id="pedBody" class="stack"><div class="card">Загрузка справочника…</div></div></main>`,
+    `${topbarTo('Охлаждение ПЭД')}<main class="content stack"><div class="card"><b>Необходимый приток для охлаждения ПЭД</b><div class="hint">Выберите параметры своего ПЭД для расчёта необходимого притока.</div></div><div id="pedBody" class="stack"><div class="card">Загрузка справочника…</div></div><button type="button" class="btn secondary full" id="resetPed">Сбросить</button></main>`,
     'reference',
   );
+  document.getElementById('resetPed').onclick = () => {
+    pedSaved = { selection: {}, selectedKey: null, working: '', nominal: '' };
+    state.pedSel = {};
+    resetHistoryDraft();
+    routeDrafts.delete('ped');
+    persistDrafts();
+    if (pedDb) renderPedBody(pedDb);
+    window.scrollTo(0, 0);
+  };
   const body = document.getElementById('pedBody');
   try {
     const db = await loadPedDb();
@@ -113,7 +119,7 @@ function renderPedBody(db) {
         pedSaved.selectedKey = pedKey(results[Number(el.dataset.ped)]);
         pedSaved.working = '';
         pedSaved.nominal = '';
-        persistPed();
+        rememberPed();
         renderPedDetails(results[Number(el.dataset.ped)]);
         const details = document.getElementById('pedDetails');
         details.setAttribute('tabindex', '-1');
@@ -153,7 +159,7 @@ function bindPedSelects(db) {
       pedSaved.selectedKey = null;
       pedSaved.working = '';
       pedSaved.nominal = '';
-      persistPed();
+      rememberPed();
       renderPedBody(db);
     };
   });
@@ -186,7 +192,7 @@ function renderPedDetails(p) {
   bind(['pedWork', 'pedNom'], () => {
     pedSaved.working = document.getElementById('pedWork').value;
     pedSaved.nominal = document.getElementById('pedNom').value;
-    persistPed();
+    rememberPed();
     calc();
   });
   calc();

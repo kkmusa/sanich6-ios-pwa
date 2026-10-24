@@ -121,11 +121,19 @@ function renderManual() {
   const minutesInitially = draft?.manualMinutesMode?.checked ?? manualSavedMinutes;
   const calendarDate = (date) =>
     `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-  const yesterdayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1),
-    today = calendarDate(now),
-    yesterday = calendarDate(yesterdayDate);
-  const startDateValue =
-      draft?.manualStartDate?.value || (saved?.startDay === 0 ? yesterday : today),
+  function calendarDays() {
+    const date = new Date();
+    return {
+      today: calendarDate(date),
+      yesterday: calendarDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() - 1)),
+    };
+  }
+  const { today, yesterday } = calendarDays();
+  if (draft && saved?.datesEdited === false) {
+    draft.manualStartDate = { value: today };
+    draft.manualEndDate = { value: today };
+  }
+  const startDateValue = draft?.manualStartDate?.value || today,
     endDateValue = draft?.manualEndDate?.value || today;
 
   const initial = (id, fallback, max) =>
@@ -139,7 +147,7 @@ function renderManual() {
       ${field('seconds', 'Время замера, с')}
       <input id="manualMinutesMode" type="checkbox" hidden ${minutesInitially ? 'checked' : ''}><div class="chips" id="manualUnitChoices"><button type="button" class="chip" data-minutes="false">Секунды</button><button type="button" class="chip" data-minutes="true">Минуты</button></div>
     </section>
-    <section id="manualInterval" class="stack" hidden>
+    <section id="manualInterval" class="stack" data-dates-edited="${saved?.datesEdited === true}" hidden>
       <div class="card stack"><div class="section-title">Начало</div><div class="field"><label for="manualStartDate">Дата начала</label><input id="manualStartDate" type="date" value="${esc(startDateValue)}"></div><div class="chips" id="startDayChoices"><button type="button" class="chip" data-day="0">Вчера</button><button type="button" class="chip active" data-day="1">Сегодня</button></div>
       <div class="time-wheel-pair">${wheelHTML('startHours', 'Часы', 24, hour)}${wheelHTML('startMinutes', 'Минуты', 60, minute)}</div></div>
       <div class="card stack"><div class="section-title">Конец</div><div class="field"><label for="manualEndDate">Дата окончания</label><input id="manualEndDate" type="date" value="${esc(endDateValue)}"></div><div class="time-wheel-pair">${wheelHTML('endHours', 'Часы', 24, hour)}${wheelHTML('endMinutes', 'Минуты', 60, minute)}</div></div>
@@ -158,7 +166,7 @@ function renderManual() {
   let lastMinutesMode = minutesInitially;
   volume.value = manualSavedLiters;
   seconds.value = manualSavedSeconds;
-  let startDay = saved?.startDay === 0 ? 0 : 1,
+  let startDay = startDateValue === yesterday ? 0 : 1,
     getSH = () => hour,
     getSM = () => minute,
     getEH = () => hour,
@@ -226,37 +234,50 @@ function renderManual() {
   getSM = initWheel('startMinutes', initial('startMinutes', minute, 60), calc);
   getEH = initWheel('endHours', initial('endHours', hour, 24), calc);
   getEM = initWheel('endMinutes', initial('endMinutes', minute, 60), calc);
-  byId('startDayChoices')
-    .querySelectorAll('[data-day]')
-    .forEach((b) => b.classList.toggle('active', Number(b.dataset.day) === startDay));
-  byId('startDayChoices').addEventListener('click', (e) => {
-    const b = e.target.closest('[data-day]');
-    if (!b) return;
-    startDay = Number(b.dataset.day);
-    byId('manualStartDate').value = startDay === 0 ? yesterday : today;
-    byId('manualEndDate').value = today;
-    byId('startDayChoices')
-      .querySelectorAll('button')
-      .forEach((x) => x.classList.toggle('active', x === b));
-    calc();
-    snapshotRoute();
-  });
-  bind(['manualStartDate', 'manualEndDate'], () => {
-    const value = byId('manualStartDate').value;
-    startDay = value === yesterday ? 0 : 1;
+  function syncStartDayChoices() {
+    const dates = calendarDays(),
+      value = byId('manualStartDate').value;
+    startDay = value === dates.yesterday ? 0 : 1;
     byId('startDayChoices')
       .querySelectorAll('[data-day]')
       .forEach((button) =>
         button.classList.toggle(
           'active',
-          value === (Number(button.dataset.day) === 0 ? yesterday : today),
+          value === (Number(button.dataset.day) === 0 ? dates.yesterday : dates.today),
         ),
       );
+  }
+  syncStartDayChoices();
+  byId('startDayChoices').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-day]');
+    if (!b) return;
+    byId('manualInterval').dataset.datesEdited = 'true';
+    startDay = Number(b.dataset.day);
+    const dates = calendarDays();
+    byId('manualStartDate').value = startDay === 0 ? dates.yesterday : dates.today;
+    byId('manualEndDate').value = dates.today;
+    syncStartDayChoices();
     calc();
     snapshotRoute();
   });
-  toggle.addEventListener('change', () => {
-    if (toggle.checked) pauseManualTimer();
+  bind(['manualStartDate', 'manualEndDate'], () => {
+    byId('manualInterval').dataset.datesEdited = 'true';
+    syncStartDayChoices();
+    calc();
+    snapshotRoute();
+  });
+  toggle.addEventListener('change', (event) => {
+    if (toggle.checked) {
+      // Refresh automatic defaults, but keep dates explicitly chosen by the user.
+      // Draft restoration dispatches an untrusted event and preserves its values.
+      if (event.isTrusted && byId('manualInterval').dataset.datesEdited !== 'true') {
+        const currentToday = calendarDays().today;
+        byId('manualStartDate').value = currentToday;
+        byId('manualEndDate').value = currentToday;
+        syncStartDayChoices();
+      }
+      pauseManualTimer();
+    }
     stopManualTimer();
     byId('timerBtn').textContent = 'Старт';
     seconds.disabled = false;
@@ -274,6 +295,7 @@ function renderManual() {
         });
       });
     calc();
+    snapshotRoute();
     persistDraft();
   });
   function tick() {
@@ -425,6 +447,11 @@ function renderManual() {
   showUnits();
   byId('clear').addEventListener('click', () => {
     volume.value = '';
+    byId('manualInterval').dataset.datesEdited = 'false';
+    const currentToday = calendarDays().today;
+    byId('manualStartDate').value = currentToday;
+    byId('manualEndDate').value = currentToday;
+    syncStartDayChoices();
     byId('manualLapList').replaceChildren();
     byId('manualLaps').hidden = true;
     lapNumber = 0;

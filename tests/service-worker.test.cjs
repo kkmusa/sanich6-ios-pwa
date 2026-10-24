@@ -23,7 +23,7 @@ test('service worker upgrade preserves document, photos and unrelated applicatio
         'operator-dng-pwa-v21',
         'operator-dng-pwa-v3.0.0',
         'operator-dng-pwa-v3.0.1',
-        'operator-dng-pwa-v3.0.6',
+        'operator-dng-pwa-v3.0.7',
         'operator-dng-vnr-pages-v1',
         'operator-dng-photos-v1',
         'another-app-cache',

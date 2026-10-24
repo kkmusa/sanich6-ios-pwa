@@ -202,3 +202,37 @@ test('head at frequency: quadratic example, zero, invalid inputs and overflow', 
   ])
     assert.equal(math.headAtFrequency(head, frequency), null);
 });
+
+test('operating modes: user example matches the original formula and gives 61/59 whole minutes', () => {
+  const apv = math.apvCycle(70, 24, 20, 43, 120);
+  assert.ok(Math.abs(apv.total - 61.142857142857146) < 1e-12);
+  assert.ok(Math.abs(apv.stop - 58.857142857142854) < 1e-12);
+  assert.ok(Math.abs(apv.required - 95.8695652173913) < 1e-12);
+  assert.equal(apv.minimum, 120);
+  assert.equal(apv.suitable, true);
+  const upr = math.operatingCycle(70, 24, 20, 120);
+  assert.equal(upr.total, apv.total);
+  for (const r of [upr, apv]) {
+    const minutes = math.roundOperatingTimes(r.total, 120);
+    assert.deepEqual(minutes, { total: 61, stop: 59 });
+    assert.equal(minutes.total + minutes.stop, 120);
+  }
+});
+
+test('operating minute rounding preserves half-minute cycle totals and rejects unrepresentable times', () => {
+  assert.deepEqual(math.roundOperatingTimes(60.5, 120), { total: 61, stop: 59 });
+  assert.deepEqual(math.roundOperatingTimes(60.49, 120), { total: 60, stop: 60 });
+  assert.deepEqual(math.roundOperatingTimes(0, 120), { total: 0, stop: 120 });
+  for (const [total, cycle] of [
+    [0.1, 120],
+    [119.9, 120],
+    [120, 120],
+    [-1, 120],
+    [60, 120.5],
+    [60, 0],
+    [NaN, 120],
+    [60, Infinity],
+    [60, null],
+  ])
+    assert.equal(math.roundOperatingTimes(total, cycle), null);
+});

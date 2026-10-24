@@ -16,6 +16,7 @@ assert.match(index, /<title>Оператор ДНГ<\/title>/);
 assert.equal(manifest.short_name, 'Оператор ДНГ');
 assert.equal(manifest.start_url, './');
 assert.equal(manifest.scope, './');
+assert.equal(manifest.orientation, 'any');
 for (const [, ref] of index.matchAll(/(?:src|href)="([^"]+)"/g))
   if (!/^(https?:|data:|#)/.test(ref)) exists(ref);
 for (const icon of manifest.icons) {
@@ -42,6 +43,7 @@ assert.deepEqual(
   Array.from({ length: 207 }, (_, i) => i + 1),
 );
 for (const [, ref] of viewer.matchAll(/<script src="([^"]+)"/g)) exists(`vnr/${ref}`);
+for (const [, ref] of viewer.matchAll(/<link[^>]+href="([^"]+)"/g)) exists(`vnr/${ref}`);
 const images = [...viewer.matchAll(/<img src="pages\/(\d{3}\.jpg)" width="(\d+)" height="(\d+)"/g)];
 assert.equal(images.length, 207);
 for (const [, name] of images) {

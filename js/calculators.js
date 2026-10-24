@@ -136,13 +136,33 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
   function rebuildVkp() {
     const src = source.value;
     if (src === 'По справочнику') {
-      vkpBox.innerHTML = `<div class="row">${selectField('casing', 'ЭК', ['139.7', '146', '168', '178'], '168')}${selectField('tubing', 'НКТ', ['60', '73', '89'], '73')}</div><div class="hint" id="vkpText"></div>`;
+      vkpBox.innerHTML = `<div class="row">${selectField(
+        'casing',
+        'ЭК',
+        ['139.7', '146', '168', '178'].sort((a, b) => Number(a) - Number(b)),
+        '168',
+      )}${selectField(
+        'tubing',
+        'НКТ',
+        Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
+        '73',
+      )}</div><div class="hint" id="vkpText"></div>`;
     } else {
-      vkpBox.innerHTML = `<div class="row">${selectField('tubing', 'НКТ', ['60', '73', '89'], '73')}${selectField('casingOuter', 'D ЭК', Object.keys(casingWalls), '146')}</div><div id="wallHolder"></div><div class="hint" id="vkpText"></div>`;
+      vkpBox.innerHTML = `<div class="row">${selectField(
+        'tubing',
+        'НКТ',
+        Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
+        '73',
+      )}${selectField(
+        'casingOuter',
+        'D ЭК',
+        Object.keys(casingWalls).sort((a, b) => Number(a) - Number(b)),
+        '146',
+      )}</div><div id="wallHolder"></div><div class="hint" id="vkpText"></div>`;
       buildWall();
     }
-    bind(['casing', 'tubing', 'casingOuter'], () => {
-      if (document.getElementById('casingOuter')) buildWall();
+    bind(['casing', 'tubing', 'casingOuter'], (event) => {
+      if (event.target.id === 'casingOuter') buildWall();
       calc();
     });
     calc();
@@ -150,7 +170,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
   function buildWall() {
     const co = document.getElementById('casingOuter');
     if (!co) return;
-    const vals = casingWalls[co.value] || [];
+    const vals = [...(casingWalls[co.value] || [])].sort((a, b) => Number(a) - Number(b));
     wallHolder.innerHTML = selectField('wall', 'Стенка ЭК', vals, vals[0]);
     bind(['wall'], calc);
   }
@@ -435,8 +455,9 @@ function renderOperating(mode) {
     ${isApv ? field('drainMinutes', 'Время слива, мин', 'value="60"') : ''}
     <div id="liveResult">${resultCard(title, '', 'Заполните параметры')}</div>
     <button class="btn full" id="useMinimumCycle" hidden>Использовать минимальный цикл</button>
-    <p class="hint">${isApv ? 'Минимальный цикл рассчитывается независимо от выбранного и округляется вверх до 60 минут. Отстой считается для выбранного цикла.' : 'Время работы = цикл × потенциал / дебит + время появления подачи. Остаток цикла — время остановки.'}</p>
+    <p class="hint">${isApv ? 'Минимальный цикл рассчитывается независимо от выбранного и округляется вверх до 60 минут. Отстой считается для выбранного цикла.' : 'Время работы = цикл × потенциал / дебит + время появления подачи.'} Время работы округляется до ближайшей целой минуты, время остановки — остаток выбранного цикла.</p>
   </main>`);
+  document.getElementById('cycleMinutes').inputMode = 'numeric';
   const ids = [
     'operatingRate',
     'inflowRate',
@@ -446,13 +467,16 @@ function renderOperating(mode) {
   ];
   let minimum = null;
   function calc() {
+    state._last = null;
     const [q, p, start, cycle, drain] = ids.map((id) => num(document.getElementById(id).value));
     const button = document.getElementById('useMinimumCycle');
     button.hidden = true;
     minimum = null;
-    let value;
+    if (cycle !== null && (!Number.isSafeInteger(cycle) || cycle <= 0))
+      return setResult(title, '', 'Выбранный цикл задаётся положительным целым числом минут');
+    let result;
     if (isApv) {
-      const result = DngMath.apvCycle(q, p, start, drain, cycle);
+      result = DngMath.apvCycle(q, p, start, drain, cycle);
       if (!result)
         return setResult(title, '', 'Подача должна быть больше потенциала; проверьте время');
       minimum = result.minimum;
@@ -464,17 +488,31 @@ function renderOperating(mode) {
           `Минимально допустимый цикл: ${minimum} мин`,
         );
       }
-      value = `Работа: ${fmt(result.total)} мин\nОтстой: ${fmt(result.stop)} мин\nВремя слива: ${fmt(drain)} мин\nМинимальный цикл: ${minimum} мин\nВыбранный цикл подходит`;
     } else {
-      const result = DngMath.operatingCycle(q, p, start, cycle);
+      result = DngMath.operatingCycle(q, p, start, cycle);
       if (!result)
         return setResult(
           title,
           '',
           'Проверьте параметры: время работы должно быть меньше выбранного цикла',
         );
-      value = `Работа: ${fmt(result.total)} мин\nОстановка: ${fmt(result.stop)} мин`;
     }
+    const rounded = DngMath.roundOperatingTimes(result.total, cycle);
+    if (!rounded || (rounded.total > 0 && rounded.total < start))
+      return setResult(
+        title,
+        '',
+        'Режим нельзя выразить целыми минутами для этого цикла. Увеличьте выбранный цикл',
+      );
+    if (isApv && rounded.stop < drain)
+      return setResult(
+        title,
+        '',
+        'После округления отстой меньше времени слива. Увеличьте выбранный цикл',
+      );
+    const value = isApv
+      ? `Работа: ${rounded.total} мин\nОтстой: ${rounded.stop} мин\nВремя слива: ${fmt(drain)} мин\nМинимальный цикл: ${minimum} мин\nВыбранный цикл подходит`
+      : `Работа: ${rounded.total} мин\nОстановка: ${rounded.stop} мин`;
     setResult(title, value);
     state.last = {
       title,

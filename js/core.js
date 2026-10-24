@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.6';
+const APP_VERSION = '3.0.7';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -119,6 +119,7 @@ const routeDrafts = new Map();
 try {
   const saved = JSON.parse(sessionStorage.getItem(DRAFTS_KEY) || '{}');
   for (const [route, fields] of Object.entries(saved)) {
+    if (route === 'ped') continue;
     if (fields && typeof fields === 'object' && !Array.isArray(fields)) {
       // web.20/21 stored these fields in seconds; migrate explicitly to minutes.
       if (['upr', 'apv'].includes(route))
@@ -165,7 +166,7 @@ function persistDrafts() {
   } catch {}
 }
 function snapshotRoute() {
-  if (!state.route || !app) return;
+  if (!state.route || !app || state.route === 'ped') return;
   const fields = {};
   app.querySelectorAll('input[id],select[id],textarea[id]').forEach((el) => {
     if (['password', 'file', 'hidden'].includes(el.type)) return;
@@ -187,6 +188,7 @@ function snapshotRoute() {
         ]),
       ),
       startDay: Number(app.querySelector('[data-day].active')?.dataset.day ?? 1),
+      datesEdited: app.querySelector('#manualInterval')?.dataset.datesEdited === 'true',
     };
   }
   if (Object.keys(fields).length) {

@@ -930,3 +930,28 @@ button {
   height: 24px;
   display: block;
 }
+
+/* Make room for the document on a phone held sideways. Back stays available. */
+@media (orientation: landscape) and (max-height: 500px) {
+  .vnr-screen {
+    height: 100dvh;
+  }
+  .vnr-screen + .bottom-nav {
+    display: none;
+  }
+  .vnr-screen .topbar {
+    min-height: calc(44px + var(--safe-top));
+    padding: var(--safe-top) max(8px, env(safe-area-inset-right)) 0
+      max(8px, env(safe-area-inset-left));
+  }
+  .vnr-screen .topbar .back {
+    height: 44px;
+  }
+  .vnr-screen .topbar h1 {
+    font-size: 18px;
+  }
+  .vnr-screen .vnr-host {
+    padding-left: env(safe-area-inset-left) !important;
+    padding-right: env(safe-area-inset-right) !important;
+  }
+}

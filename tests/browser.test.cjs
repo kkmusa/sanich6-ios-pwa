@@ -55,11 +55,12 @@ after(async () => {
     await once(server, 'exit');
   }
 });
-async function withPage(run) {
+async function withPage(run, options = {}) {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
     isMobile: true,
     hasTouch: true,
+    ...options,
   });
   try {
     const page = await context.newPage();
@@ -199,6 +200,17 @@ test('shell, VNR index and every station photo work offline', () =>
       return r.ok && (await r.text()).includes('page-207');
     });
     assert.equal(documentAvailable, true);
+    const layoutAvailable = await page.evaluate(async () => {
+      const css = await fetch(`vnr/layout.css?v=${APP_VERSION}`);
+      const js = await fetch(`vnr/layout.js?v=${APP_VERSION}`);
+      return (
+        css.ok &&
+        css.headers.get('content-type').includes('text/css') &&
+        js.ok &&
+        /javascript/.test(js.headers.get('content-type'))
+      );
+    });
+    assert.equal(layoutAvailable, true);
     const db = await page.evaluate(async () => {
       const r = await fetch('assets/PedCoolingDatabase.json');
       return Object.keys(await r.json()).length;
@@ -484,7 +496,7 @@ test('manual timer continues across navigation/reload, units convert, reset paus
     assert.equal(await page.evaluate(() => manualTimerRunning), false);
     assert.equal(await page.locator('#seconds').inputValue(), '');
   }));
-test('PED selection/current and operator station/mode survive navigation and reload', () =>
+test('PED selection survives navigation and resets on reload; operator station/mode survives reload', () =>
   withPage(async (page) => {
     await go(page, 'ped');
     await page.locator('#pedDia').waitFor();
@@ -502,8 +514,10 @@ test('PED selection/current and operator station/mode survive navigation and rel
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'ped');
-    await page.locator('#pedCalc .value').waitFor();
-    assert.equal(await page.locator('#pedWork').inputValue(), '50');
+    await page.locator('#pedDia').waitFor();
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    assert.equal(await page.locator('#pedWork').count(), 0);
+    assert.equal(await page.locator('#pedCalc').count(), 0);
     await go(page, 'operators');
     await page.locator('[data-opmode="rich"]').click();
     await fill(page, {
@@ -713,7 +727,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.6'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.7'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1249,4 +1263,250 @@ test('head at frequency retains data, records one result and uses distinct RICH 
     await page.locator('#clearHead').click();
     assert.equal(await page.locator('#passportHead').inputValue(), '');
     assert.equal(await page.locator('#workingFrequency').inputValue(), '');
+  }));
+
+test('operating modes round work and stop to whole minutes, retain the cycle and save the displayed result', () =>
+  withPage(async (page) => {
+    for (const mode of ['apv', 'upr']) {
+      await go(page, mode);
+      const values = {
+        operatingRate: '70',
+        inflowRate: '24',
+        startupMinutes: '20',
+        cycleMinutes: '120',
+      };
+      if (mode === 'apv') values.drainMinutes = '43';
+      await fill(page, values);
+      const text =
+        mode === 'apv'
+          ? 'Работа: 61 мин\nОтстой: 59 мин\nВремя слива: 43 мин\nМинимальный цикл: 120 мин\nВыбранный цикл подходит'
+          : 'Работа: 61 мин\nОстановка: 59 мин';
+      await result(page, text);
+      await go(page, 'home');
+      await page.evaluate(() => goBack());
+      await result(page, text);
+      await fill(page, { operatingRate: '100', inflowRate: '50', startupMinutes: '0.5' });
+      assert.match(
+        await page.locator('#liveResult .value').textContent(),
+        /Работа: 61 мин\n(?:Отстой|Остановка): 59 мин/,
+      );
+      await fill(page, { cycleMinutes: '120.5' });
+      assert.match(await page.locator('#liveResult .error').textContent(), /целым числом минут/);
+      assert.equal(await page.locator('#liveResult .value').count(), 0);
+      if (mode === 'apv') {
+        await fill(page, { cycleMinutes: '120', startupMinutes: '0.8', drainMinutes: '59.1' });
+        assert.match(
+          await page.locator('#liveResult .error').textContent(),
+          /После округления отстой меньше/,
+        );
+      } else {
+        await fill(page, { cycleMinutes: '1', startupMinutes: '0', inflowRate: '24' });
+        assert.match(await page.locator('#liveResult .error').textContent(), /целыми минутами/);
+      }
+      await fill(page, values);
+      await result(page, text);
+    }
+    await page.setViewportSize({ width: 320, height: 568 });
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    await go(page, 'history');
+    const entries = await page.evaluate(() => calculationHistory());
+    for (const [title, label] of [
+      ['Перевод ПР в УПР', 'Остановка'],
+      ['Перевод УПР в АПВ', 'Отстой'],
+    ]) {
+      const entry = entries.find((x) => x.title === title);
+      assert.ok(entry);
+      assert.match(entry.result, new RegExp(`Работа: 61 мин\\n${label}: 59 мин`));
+    }
+  }));
+
+test('flow selectors list casing, tubing and every wall thickness in ascending numeric order', () =>
+  withPage(async (page) => {
+    await go(page, 'flow');
+    const options = (id) =>
+      page.locator(`#${id} option`).evaluateAll((nodes) => nodes.map((n) => Number(n.value)));
+    assert.deepEqual(await options('casing'), [139.7, 146, 168, 178]);
+    assert.deepEqual(await options('tubing'), [60, 73, 89]);
+    await page.locator('#source').selectOption('По геометрии');
+    const casings = await options('casingOuter');
+    assert.deepEqual(casings, [102, 114, 139.7, 146, 168, 178, 194]);
+    assert.deepEqual(await options('tubing'), [60, 73, 89]);
+    for (const casing of casings) {
+      await page.locator('#casingOuter').selectOption(String(casing));
+      const walls = await options('wall');
+      assert.ok(walls.length > 0);
+      assert.deepEqual(
+        walls,
+        [...walls].sort((a, b) => a - b),
+      );
+    }
+    await page.locator('#casingOuter').selectOption('139.7');
+    await page.locator('#wall').selectOption('9.2');
+    await page.locator('#tubing').selectOption('60');
+    await go(page, 'home');
+    await page.evaluate(() => goBack());
+    assert.equal(await page.locator('#casingOuter').inputValue(), '139.7');
+    assert.equal(await page.locator('#wall').inputValue(), '9.2');
+    assert.equal(await page.locator('#tubing').inputValue(), '60');
+  }));
+
+test('manual interval starts with today at both ends in local time and preserves explicitly edited dates on return', () =>
+  withPage(
+    async (page) => {
+      // UTC still says October 24, while the operator's local date is October 25.
+      await page.clock.setFixedTime(new Date('2026-10-24T20:30:00Z'));
+      await go(page, 'manual');
+      await page.locator('#manualIntervalMode').check();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-25');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-25');
+      await page.locator('#manualStartDate').fill('2026-10-23');
+      await page.locator('#manualEndDate').fill('2026-10-24');
+      await go(page, 'home');
+      await go(page, 'manual');
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-24');
+      await page.reload();
+      await page.locator('.hero').waitFor();
+      await go(page, 'manual');
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-24');
+      await page.locator('#manualIntervalMode').uncheck();
+      await page.locator('#manualIntervalMode').check();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-24');
+      await page.locator('#clear').click();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-25');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-25');
+      // Even a screen kept open across midnight must use the new local day.
+      await page.clock.setFixedTime(new Date('2026-10-25T20:30:00Z'));
+      await page.locator('#manualIntervalMode').uncheck();
+      await page.locator('#manualIntervalMode').check();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-26');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-26');
+      await page.locator('#startDayChoices [data-day="0"]').click();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-25');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-26');
+      await page.locator('#startDayChoices [data-day="1"]').click();
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-26');
+    },
+    { timezoneId: 'Asia/Yekaterinburg' },
+  ));
+
+test('PED reset clears partial or complete selections and currents while keeping completed history', () =>
+  withPage(async (page) => {
+    await go(page, 'ped');
+    await page.locator('#pedDia').selectOption('95');
+    await page.locator('#resetPed').click();
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    assert.equal(await page.locator('#pedPower').count(), 0);
+    await page.locator('#pedDia').selectOption('95');
+    await page.locator('#pedPower').selectOption('16');
+    await page.locator('#pedCasing').selectOption('114');
+    await page.locator('#pedWall').selectOption('5.2');
+    await page.locator('[data-ped]').first().click();
+    await fill(page, { pedWork: '50', pedNom: '100' });
+    const expected = await page.locator('#pedCalc .value').textContent();
+    const name = await page.locator('#pedDetails h3').textContent();
+    await go(page, 'home');
+    await go(page, 'ped');
+    await page.locator('#pedWork').waitFor();
+    assert.equal(await page.locator('#pedWork').inputValue(), '50');
+    assert.equal(await page.locator('#pedNom').inputValue(), '100');
+    assert.equal(await page.locator('#pedDetails h3').textContent(), name);
+    assert.equal(await page.locator('#pedCalc .value').textContent(), expected);
+    const historyBeforeReset = await page.evaluate(() => calculationHistory());
+    await page.locator('#resetPed').click();
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    for (const id of [
+      'pedPower',
+      'pedCasing',
+      'pedWall',
+      'pedDetails',
+      'pedCalc',
+      'pedWork',
+      'pedNom',
+    ])
+      assert.equal(await page.locator('#' + id).count(), 0, id);
+    assert.deepEqual(await page.evaluate(() => calculationHistory()), historyBeforeReset);
+    await go(page, 'home');
+    await go(page, 'ped');
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    assert.equal(await page.evaluate(() => sessionStorage.getItem(PED_STATE_KEY)), null);
+  }));
+
+test('VNR landscape keeps the reading paragraph and zoom, with compact controls and usable document height', () =>
+  withPage(async (page) => {
+    const manifest = await page.evaluate(async () => (await fetch('manifest.webmanifest')).json());
+    assert.equal(manifest.orientation, 'any');
+    await go(page, 'vnr');
+    const reader = page.frameLocator('iframe');
+    await reader.locator('#vnr-offline-open').click();
+    await reader.getByRole('button', { name: 'Закрыть загрузку' }).click();
+    await reader.locator('#vnr-zoom-in').click();
+    await reader.locator('#vnr-zoom-in').click();
+    const frame = page.frames().find((f) => f.url().includes('/vnr/index.html'));
+    await frame.evaluate(() => {
+      const p = document.getElementById('page-87');
+      const line = document.querySelector('.vnr-position').getBoundingClientRect().bottom + 8;
+      scrollTo(0, p.offsetTop + p.offsetHeight * 0.35 - line);
+    });
+    const settle = () =>
+      frame.evaluate(
+        () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+      );
+    await settle();
+    const position = () =>
+      frame.evaluate(() => {
+        const p = document.getElementById('page-87');
+        const rect = p.getBoundingClientRect();
+        const line = document.querySelector('.vnr-position').getBoundingClientRect().bottom + 8;
+        return {
+          fraction: (line - rect.top) / rect.height,
+          zoom: viewerZoom,
+          documentHeight: innerHeight - line,
+        };
+      });
+    const before = await position();
+    assert.ok(Math.abs(before.fraction - 0.35) < 0.01);
+    for (const viewport of [
+      { width: 844, height: 390 },
+      { width: 568, height: 320 },
+      { width: 390, height: 844 },
+    ]) {
+      await page.setViewportSize(viewport);
+      await settle();
+      const after = await position();
+      assert.ok(
+        Math.abs(after.fraction - before.fraction) < 0.015,
+        JSON.stringify({ viewport, before, after }),
+      );
+      assert.equal(after.zoom, 1.5);
+      if (viewport.width > viewport.height) {
+        assert.equal(await page.locator('.bottom-nav').isVisible(), false);
+        assert.equal(await page.locator('.topbar .back').isVisible(), true);
+        assert.ok(after.documentHeight > viewport.height - 150);
+        const controlsFit = await frame.evaluate(() =>
+          [
+            ...document.querySelectorAll(
+              '.vnr-tools button, .vnr-page-tools button, .vnr-position button',
+            ),
+          ].every((button) => {
+            const r = button.getBoundingClientRect();
+            return (
+              r.left >= 0 && r.right <= document.documentElement.clientWidth + 1 && r.bottom <= 90
+            );
+          }),
+        );
+        assert.ok(controlsFit, 'Landscape buttons fit the screen');
+      } else assert.equal(await page.locator('.bottom-nav').isVisible(), true);
+    }
+    await reader.locator('#vnr-search').fill('технологическая инструкция');
+    const count = await reader.locator('#vnr-count').textContent();
+    await page.setViewportSize({ width: 844, height: 390 });
+    await settle();
+    assert.equal(await reader.locator('#vnr-count').textContent(), count);
+    assert.ok(await reader.locator('.hit.current').count());
+    await reader.locator('#vnr-bookmarks-toggle').click();
+    assert.equal(await reader.locator('.vnr-bookmarks').isVisible(), true);
+    await reader.locator('#vnr-bookmarks-close').click();
   }));
