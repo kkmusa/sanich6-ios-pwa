@@ -1,5 +1,5 @@
 {
-  "slides": 21,
+  "slides": 20,
   "pdf_pages": 20,
   "requested_text_edits_passed": true,
   "author_heading_larger": true,
@@ -15,9 +15,16 @@
   "closing_product_name_removed": true,
   "intro_title_only_before_zoom": true,
   "description_only_after_reveal": true,
-  "remaining_19_slides_xml_unchanged": true,
   "embedded_movie_count": 1,
   "embedded_movie_integrity": true,
   "following_frame_matches": true,
-  "full_video_decode_passed": true
+  "full_video_decode_passed": true,
+  "hidden_slides": 0,
+  "removed_last_slide": "Примеры расчётов",
+  "closing_is_last_slide": true,
+  "all_remaining_slide_xml_and_relationships_unchanged": true,
+  "all_media_unchanged": true,
+  "all_internal_relationships_resolve": true,
+  "pdf_already_excluded_removed_slide": true,
+  "remaining_18_slides_xml_unchanged": true
 }
