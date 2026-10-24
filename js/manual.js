@@ -154,8 +154,8 @@ function renderManual() {
       <div class="hint" id="intervalDuration">Выберите время начала и окончания</div>
     </section>
     <div class="row manual-actions"><button class="btn" id="timerBtn">Старт</button><button class="btn" id="lapBtn" disabled>Круг</button><button class="btn" id="resetBtn" aria-label="Сброс времени">Сброс</button></div>
-    <section id="manualLaps" class="card" hidden><b>Круги текущего замера</b><ol id="manualLapList"></ol></section>
     <div id="liveResult">${resultCard('Дебит скважины', '', 'Введите объём и время')}</div>
+    <section id="manualLaps" class="card" hidden><b>Круги текущего замера</b><ol id="manualLapList"></ol></section>
     <div class="hint" id="manualSaveStatus" role="status">Итоговый замер сохраняется автоматически. Круги в историю не записываются.</div>
     <button class="btn secondary full" id="clear">Очистить</button>
   </main>`);
