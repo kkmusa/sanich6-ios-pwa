@@ -23,8 +23,12 @@
   "removed_last_slide": "Примеры расчётов",
   "closing_is_last_slide": true,
   "all_remaining_slide_xml_and_relationships_unchanged": true,
-  "all_media_unchanged": true,
+  "all_media_unchanged": false,
   "all_internal_relationships_resolve": true,
   "pdf_already_excluded_removed_slide": true,
-  "remaining_18_slides_xml_unchanged": true
+  "remaining_18_slides_xml_unchanged": true,
+  "compressed_pptx_bytes": 18514591,
+  "below_20_decimal_MB": true,
+  "background_photos_recompressed": 4,
+  "slide_xml_unchanged_during_compression": 20
 }

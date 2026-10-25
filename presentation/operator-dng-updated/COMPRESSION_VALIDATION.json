@@ -1,0 +1,62 @@
+{
+  "originalBytes": 24767229,
+  "bytes": 18514591,
+  "megabytes": 18.515,
+  "media": [
+    {
+      "old": "ppt/media/image24.png",
+      "new": "ppt/media/image24.jpg",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "originalBytes": 1936441,
+      "bytes": 410288,
+      "jpegQuality": 92,
+      "subsampling": 0
+    },
+    {
+      "old": "ppt/media/image31.png",
+      "new": "ppt/media/image31.jpg",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "originalBytes": 2287022,
+      "bytes": 545478,
+      "jpegQuality": 92,
+      "subsampling": 0
+    },
+    {
+      "old": "ppt/media/image32.png",
+      "new": "ppt/media/image32.jpg",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "originalBytes": 1913926,
+      "bytes": 372915,
+      "jpegQuality": 92,
+      "subsampling": 0
+    },
+    {
+      "old": "ppt/media/image33.png",
+      "new": "ppt/media/image33.jpg",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "originalBytes": 2094452,
+      "bytes": 418446,
+      "jpegQuality": 92,
+      "subsampling": 0
+    }
+  ],
+  "slides": 20,
+  "unchangedSlideXml": 20,
+  "videoUnchanged": true,
+  "examplesSlidePresent": false,
+  "hiddenSlides": 0,
+  "powerPointPlaybackTested": false,
+  "sha256": "d5a0231ad7711846362e2c73bb0241fcf68521152049dd3a6dee36c819fe7582"
+}
