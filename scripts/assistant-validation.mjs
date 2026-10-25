@@ -4,6 +4,24 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 
+export const AUTHOR_ADDITION_TITLES = [
+  'Запуск скважины ВНР',
+  'ППД замер давления',
+  'Остановка водовода зимой',
+  'Промывка',
+];
+
+// Always derive the requested additions from the existing author edition.
+export function authorAdditions(read) {
+  const context = {};
+  vm.runInNewContext(read('js/reference-data.js') + ';globalThis.authored=assistantTopics;', context);
+  return AUTHOR_ADDITION_TITLES.map((title) => {
+    const topic = context.authored.find((item) => item.title === title);
+    assert.ok(topic?.steps?.length, `Author topic not found: ${title}`);
+    return JSON.parse(JSON.stringify(topic));
+  });
+}
+
 const normalize = (text) =>
   text
     .replace(/^\s*\d{1,4}\s*$/gm, '')

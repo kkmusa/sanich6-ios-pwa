@@ -3,7 +3,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { checkAssistant } from './assistant-validation.mjs';
+import { checkAssistant, authorAdditions } from './assistant-validation.mjs';
 const root = path.resolve(process.argv[2] || fileURLToPath(new URL('../', import.meta.url)));
 const read = (name) => fs.readFileSync(path.join(root, name), 'utf8');
 const exists = (ref) => {
@@ -46,6 +46,8 @@ if (edition === 'reglament') {
   const data = {};
   vm.runInNewContext(read('js/assistant-reglament-data.js'), data);
   assert.equal(data.DNG_REG_ASSISTANT.length, 12);
+  vm.runInNewContext(read('js/assistant-author-extra.js'), data);
+  assert.deepEqual(JSON.parse(JSON.stringify(data.DNG_REG_AUTHOR_EXTRA)), authorAdditions(read));
   for (const topic of data.DNG_REG_ASSISTANT) {
     assert.ok(topic.title && topic.steps.length > 0);
     assert.ok(topic.steps.every((step) => typeof step === 'string' && step.trim()));
@@ -54,6 +56,7 @@ if (edition === 'reglament') {
   assert.match(context.version, /^operator-dng-reglament-pwa-/);
 }
 if (edition === 'bez') {
+  assert.ok(!fs.existsSync(path.join(root, 'js/assistant-author-extra.js')));
   assert.ok(!fs.existsSync(path.join(root, 'js/assistant-reglament-data.js')));
   assert.ok(!index.includes('js/assistant-reglament-data.js'));
   const data = {};

@@ -19,3 +19,6 @@ function selectField(id, label, options, value) {
 function resultCard(title, value, error = '') {
   return `<div class="card result"><h4>${esc(title)}</h4>${value ? `<div class="value">${esc(value)}</div>` : `<div class="error">${esc(error || 'Заполните параметры')}</div>`}</div>`;
 }
+function assistantCard(topic, heading = '', className = '') {
+  return `<div class="card warning-card ref-text ${className}">${heading ? `<h2>${esc(heading)}</h2>` : ''}${topic.steps.map((step, index) => `<p>${esc(topic.preserve ? step : `${index + 1}. ${step}`)}</p>`).join('')}</div>`;
+}

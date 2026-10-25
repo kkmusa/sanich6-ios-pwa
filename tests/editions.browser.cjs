@@ -10,6 +10,8 @@ const root = path.resolve(__dirname, '..');
 const built = path.resolve(process.env.PWA_TEST_ROOT || path.join(root, 'dist'));
 const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 const editionNames = { author: 'Оператор ДНГ', reglament: 'Опер ДНГ рег', bez: 'Опер ДНГ без' };
+const authorExtraTitles = ['Запуск скважины ВНР', 'ППД замер давления', 'Остановка водовода зимой', 'Промывка'];
+const paragraphs = topic => topic.steps.map((step, i) => topic.preserve ? step : `${i + 1}. ${step}`);
 let server, browser, base, official, withoutAssistant;
 
 before(async () => {
@@ -146,12 +148,22 @@ test('three editions have separate install identities, correct assistant access 
       assert.equal(await page.locator('.assistant-topic').count(), edition === 'bez' ? 0 : 12);
     }
     assert.equal(new Set(identities).size, 3);
-    const original = await authorPage.evaluate(() => assistantTopics.map(t => ({ title: t.title, steps: t.steps })));
-    const formal = await formalPage.evaluate(() => assistantTopics.map(t => ({ title: t.title, steps: t.steps })));
+    const original = await authorPage.evaluate(() => assistantTopics.map(t => ({ title: t.title, steps: t.steps, preserve: t.preserve })));
+    const formal = await formalPage.evaluate(() => assistantTopics.map(t => ({ title: t.title, steps: t.steps, preserve: t.preserve })));
     assert.deepEqual(formal.map(t => t.title), original.map(t => t.title));
     assert.notDeepEqual(formal, original);
     assert.equal(await authorPage.locator('script[src*="assistant-reglament-data"]').count(), 0);
     assert.equal(await formalPage.locator('script[src*="assistant-reglament-data"]').count(), 1);
+    assert.equal(await formalPage.locator('script[src*="assistant-author-extra"]').count(), 1);
+    assert.equal(fs.existsSync(path.join(built, 'reglament/js/assistant-author-extra.js')), true);
+    assert.deepEqual(
+      await formalPage.evaluate(() => DNG_REG_AUTHOR_EXTRA.map(t => t.title).sort()),
+      [...authorExtraTitles].sort(),
+    );
+    for (const [page, directory] of [[authorPage, ''], [withoutPage, 'bez']]) {
+      assert.equal(await page.locator('script[src*="assistant-author-extra"]').count(), 0);
+      assert.equal(fs.existsSync(path.join(built, directory, 'js/assistant-author-extra.js')), false);
+    }
     assert.equal(await withoutPage.locator('script[src*="assistant-reglament-data"]').count(), 0);
     assert.equal(fs.existsSync(path.join(built, 'bez/js/assistant-reglament-data.js')), false);
     assert.equal(await withoutPage.evaluate(() => assistantTopics.length), 0);
@@ -166,6 +178,23 @@ test('three editions have separate install identities, correct assistant access 
       assert.ok(text.trim().length > 100, formal[index].title);
       assert.doesNotMatch(text, /материал — черновик|в черновике|для обсуждения|Источники:|PDF[- ]страниц/i);
       assert.equal(await formalPage.locator('main a, main .assistant-sources').count(), 0);
+      assert.deepEqual(
+        await formalPage.locator('.assistant-reglament p').allTextContents(),
+        paragraphs(formal[index]),
+        'Documentary paragraphs remain complete for ' + formal[index].title,
+      );
+      const authorBlock = formalPage.locator('.assistant-author');
+      if (authorExtraTitles.includes(formal[index].title)) {
+        const source = original.find(topic => topic.title === formal[index].title);
+        assert.equal(await authorBlock.locator('h2').textContent(), 'Порядок работы');
+        assert.equal(await formalPage.locator('.assistant-reglament h2').textContent(), 'Требования регламента');
+        assert.deepEqual(await authorBlock.locator('p').allTextContents(), paragraphs(source),
+          'Author text and paragraph order are preserved for ' + source.title);
+        assert.equal(await authorBlock.evaluate(node => !!(node.compareDocumentPosition(
+          document.querySelector('.assistant-reglament')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
+      } else {
+        assert.equal(await authorBlock.count(), 0, 'No added author block for ' + formal[index].title);
+      }
     }
     for (const edition of ['reglament', 'bez'])
       assert.deepEqual(
@@ -293,6 +322,10 @@ test('three workers preserve each other’s caches and serve their own edition a
       return (await cache.keys()).some(request => children.some(child => request.url.startsWith(child)));
     }, [official, withoutAssistant]), false, 'Parent worker must not intercept and cache either child');
 
+    const washAuthor = await authorPage.evaluate(() => {
+      const topic = assistantTopics.find(topic => topic.title === 'Промывка');
+      return topic.steps.map((step, i) => topic.preserve ? step : `${i + 1}. ${step}`);
+    });
     await context.setOffline(true);
     for (const [page, edition] of [[authorPage, 'author'], [formalPage, 'reglament'], [withoutPage, 'bez']]) {
       await page.reload();
@@ -307,6 +340,15 @@ test('three workers preserve each other’s caches and serve their own edition a
       } else {
         await page.locator('.assistant-topic').first().click();
         assert.ok((await page.locator('main').textContent()).trim().length > 100);
+        if (edition === 'reglament') {
+          await page.evaluate(() => {
+            state.assistantIndex = null;
+            renderAssistant();
+          });
+          await page.locator('.assistant-topic').filter({ hasText: /^Промывка/ }).click();
+          assert.deepEqual(await page.locator('.assistant-author p').allTextContents(), washAuthor);
+          assert.ok(await page.locator('.assistant-reglament p').count() > 0);
+        }
       }
       const frame = await reader(page);
       assert.equal(await frame.locator('.page').count(), 207);
@@ -334,11 +376,14 @@ test('missing documentary assistant data shows a loading error instead of author
     const page = await context.newPage();
     await openApp(page, official);
     assert.ok(blockedRequests > 0, 'The documentary data request must actually fail');
+    assert.deepEqual(await page.evaluate(() => DNG_REG_AUTHOR_EXTRA.map(topic => topic.title).sort()),
+      [...authorExtraTitles].sort(), 'Author additions load successfully despite missing documentary data');
     await go(page, 'assistant');
     assert.match(await page.locator('main [role="status"]').textContent(),
       /Не удалось загрузить инструкции/);
     assert.equal(await page.locator('.assistant-topic').count(), 0);
     assert.equal(await page.locator('main .ref-text').count(), 0);
+    assert.equal(await page.locator('.assistant-author, .assistant-reglament').count(), 0);
     assert.doesNotMatch(await page.locator('main').textContent(),
       /Назначение: корректное определение обводнённости|В черновике|Выберите ситуацию/i);
   }, { serviceWorkers: 'block' }));

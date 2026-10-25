@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { authorAdditions } from './assistant-validation.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url)),
   destination = path.join(root, 'dist');
 const checked = spawnSync(process.execPath, [path.join(root, 'scripts/check.mjs'), root], {
@@ -51,6 +52,8 @@ function isolateEdition(directory, edition) {
 }
 const version = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 const assistant = 'js/assistant-reglament-data.js';
+const extraAssistant = 'js/assistant-author-extra.js';
+const extraTopics = authorAdditions((name) => fs.readFileSync(path.join(root, name), 'utf8'));
 for (const edition of editions) {
   const folder = path.join(destination, edition.directory);
   fs.mkdirSync(folder);
@@ -68,12 +71,17 @@ for (const edition of editions) {
     assert.ok(fs.statSync(path.join(folder, assistant)).isFile(), 'Document assistant is required');
     index = index.replace(
       `    <script src="js/reference-data.js?v=${version}" defer></script>`,
-      `    <script src="${assistant}?v=${version}" defer></script>\n    <script src="js/reference-data.js?v=${version}" defer></script>`,
+      `    <script src="${assistant}?v=${version}" defer></script>\n    <script src="${extraAssistant}?v=${version}" defer></script>\n    <script src="js/reference-data.js?v=${version}" defer></script>`,
     );
     assert.ok(index.includes(`src="${assistant}?v=${version}"`));
+    fs.writeFileSync(
+      path.join(folder, extraAssistant),
+      '// Author algorithms requested for this edition; generated from reference-data.js.\n' +
+        'globalThis.DNG_REG_AUTHOR_EXTRA = ' + JSON.stringify(extraTopics, null, 2) + ';\n',
+    );
     const worker = read('sw.js').replace(
       'const SHELL = [',
-      `const SHELL = [\n  './${assistant}?v=${version}',`,
+      `const SHELL = [\n  './${assistant}?v=${version}',\n  './${extraAssistant}?v=${version}',`,
     );
     fs.writeFileSync(path.join(folder, 'sw.js'), worker);
   } else {

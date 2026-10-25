@@ -208,7 +208,10 @@ function renderAssistant() {
   requestAnimationFrame(() => {
     if (state.route === 'assistant') window.scrollTo(0, 0);
   });
-  if (APP_EDITION === 'reglament' && !Array.isArray(globalThis.DNG_REG_ASSISTANT)) {
+  if (
+    APP_EDITION === 'reglament' &&
+    (!Array.isArray(globalThis.DNG_REG_ASSISTANT) || !Array.isArray(globalThis.DNG_REG_AUTHOR_EXTRA))
+  ) {
     app.innerHTML = screen(
       `${topbarTo('Помощник оператора')}<main class="content"><div class="card" role="status">Не удалось загрузить инструкции. Подключитесь к интернету и обновите приложение.</div></main>`,
       'reference',
@@ -224,8 +227,11 @@ function renderAssistant() {
     return;
   }
   const t = assistantTopics[selected];
+  const author = APP_EDITION === 'reglament'
+    ? globalThis.DNG_REG_AUTHOR_EXTRA.find((topic) => topic.title === t.title)
+    : null;
   app.innerHTML = screen(
-    `${topbarTo(t.title, 'assistant')}<main class="content${APP_EDITION === 'reglament' ? ' assistant-document' : ''}"><div class="card warning-card ref-text">${t.steps.map((step, i) => `<p>${esc(t.preserve ? step : `${i + 1}. ${step}`)}</p>`).join('')}</div></main>`,
+    `${topbarTo(t.title, 'assistant')}<main class="content${APP_EDITION === 'reglament' ? ' assistant-document stack' : ''}">${author ? assistantCard(author, 'Порядок работы', 'assistant-author') : ''}${assistantCard(t, author ? 'Требования регламента' : '', APP_EDITION === 'reglament' ? 'assistant-reglament' : '')}</main>`,
     'reference',
   );
   document.querySelector('.back').onclick = () => {
