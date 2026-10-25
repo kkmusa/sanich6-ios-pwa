@@ -120,26 +120,7 @@ async function downloadOperatorPhotos() {
   const button = document.getElementById('opOfflineDownload');
   button.disabled = true;
   try {
-    if (!('serviceWorker' in navigator)) throw Error('Service Worker недоступен');
-    const registration = await new Promise((resolve, reject) => {
-      const timeout = setTimeout(
-        () =>
-          reject(Error('Офлайн-модуль не готов. Перезагрузите приложение при наличии интернета.')),
-        10000,
-      );
-      navigator.serviceWorker.ready.then(
-        (r) => {
-          clearTimeout(timeout);
-          resolve(r);
-        },
-        (e) => {
-          clearTimeout(timeout);
-          reject(e);
-        },
-      );
-    });
-    const worker = navigator.serviceWorker.controller || registration.active;
-    if (!worker) throw Error('Перезапустите приложение');
+    const worker = await window.DngOfflineWorker.ready();
     await new Promise((resolve, reject) => {
       const channel = new MessageChannel();
       let timeout;

@@ -2,6 +2,27 @@ html {
   overflow-anchor: none;
 }
 
+body .vnr-position {
+  opacity: 1;
+  transition: opacity 0.15s ease;
+}
+
+body .vnr-position.vnr-position-idle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body .vnr-position:focus-within {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body .vnr-position {
+    transition: none;
+  }
+}
+
 @media (orientation: landscape) and (max-height: 500px) {
   html body {
     padding-top: 96px !important;

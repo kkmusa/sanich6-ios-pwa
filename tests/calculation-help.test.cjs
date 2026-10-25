@@ -34,17 +34,21 @@ test('help groups tap fractions without moving cable or motor factors into denom
   assert.equal((vfd.match(/<mfrac>/g) || []).length, 2);
   assert.match(vfd, /<\/mfrac><mtext> × Uпэд × Kф<\/mtext>/);
   assert.match(
-    render('Hур = Hсп − 10 × (Pд − Pз) / ρ'),
+    render('H = Hсп − 10 × (Pд − Pз) / ρ'),
     /Hсп − <\/mtext><mfrac><mtext>10 × \(Pд − Pз\)<\/mtext><mtext>ρ<\/mtext>/,
   );
-  assert.match(render('f = 50 × √((40 × 9,81 + Hур) / Hэцн)'), /<msqrt><mfrac>/);
+  assert.match(render('f = 50 × √((40 × 9,81 + H) / Hэцн)'), /<msqrt><mfrac>/);
 });
 test('Android help has complete formulas, terms and explicit route mapping without unrelated screens', () => {
   const c = helpers();
-  assert.equal(Object.keys(c.helpData).length, 11);
+  assert.equal(Object.keys(c.helpData).length, 12);
   assert.equal(c.calculationHelpFor('upr'), c.calculationHelpFor('apv'));
   assert.equal(c.calculationHelpFor('manual').formulas[0], 'Q = Vл × 1440 / (tмин × 1000)');
-  assert.equal(c.calculationHelpFor('level').terms[3], 'ρ — плотность жидкости, г/см³.');
+  assert.ok(c.calculationHelpFor('level').terms.includes('ρ — плотность жидкости, г/см³.'));
+  assert.equal(c.calculationHelpFor('motorCoefficient').formulas[1], 'КФ = n × p / 3000');
+  assert.equal(c.calculationHelpFor('motorCoefficient').formulas[2], 'fстанции = fобычная × КФ');
+  assert.equal(c.calculationHelpFor('motorCoefficient').formulas[3], 'fобычная = fстанции / КФ');
+  assert.doesNotMatch(JSON.stringify(c.helpData), /[HН]ур/);
   assert.equal(c.calculationHelpFor('ped').formulas.length, 0);
   for (const r of ['home', 'history', 'ramp', 'rich', 'assistant', 'technologist'])
     assert.equal(c.calculationHelpFor(r), null);

@@ -29,10 +29,10 @@ function calculationFormula(formula) {
     body =
       helpMathText('H₅₀ × ') +
       `<msup><mrow><mo>(</mo>${helpFraction('f', '50')}<mo>)</mo></mrow><mn>2</mn></msup>`;
-  } else if (left === 'Hур = ') {
+  } else if (left === 'H = ' && expression === 'Hсп − 10 × (Pд − Pз) / ρ') {
     body = helpMathText('Hсп − ') + helpFraction('10 × (Pд − Pз)', 'ρ');
   } else if (left === 'f = ') {
-    body = helpMathText('50 × ') + `<msqrt>${helpFraction('40 × 9,81 + Hур', 'Hэцн')}</msqrt>`;
+    body = helpMathText('50 × ') + `<msqrt>${helpFraction('40 × 9,81 + H', 'Hэцн')}</msqrt>`;
   } else if (left === 'ΔUкаб = ') {
     body =
       helpMathText('√3 × Iпэд × cosφ × ') + helpFraction('L', 'S') + helpMathText(' × ρкаб × Kₜ');

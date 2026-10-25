@@ -199,10 +199,22 @@ function renderPedDetails(p) {
 }
 
 function renderAssistant() {
+  if (APP_EDITION === 'bez') {
+    state.route = 'reference';
+    state.assistantIndex = null;
+    return renderReference();
+  }
   window.scrollTo(0, 0);
   requestAnimationFrame(() => {
     if (state.route === 'assistant') window.scrollTo(0, 0);
   });
+  if (APP_EDITION === 'reglament' && !Array.isArray(globalThis.DNG_REG_ASSISTANT)) {
+    app.innerHTML = screen(
+      `${topbarTo('Помощник оператора')}<main class="content"><div class="card" role="status">Не удалось загрузить инструкции. Подключитесь к интернету и обновите приложение.</div></main>`,
+      'reference',
+    );
+    return;
+  }
   const selected = state.assistantIndex;
   if (selected === undefined || selected === null) {
     app.innerHTML = screen(
@@ -213,7 +225,7 @@ function renderAssistant() {
   }
   const t = assistantTopics[selected];
   app.innerHTML = screen(
-    `${topbarTo(t.title, 'assistant')}<main class="content"><div class="card warning-card ref-text">${t.steps.map((step, i) => `<p>${esc(t.preserve ? step : `${i + 1}. ${step}`)}</p>`).join('')}</div></main>`,
+    `${topbarTo(t.title, 'assistant')}<main class="content${APP_EDITION === 'reglament' ? ' assistant-document' : ''}"><div class="card warning-card ref-text">${t.steps.map((step, i) => `<p>${esc(t.preserve ? step : `${i + 1}. ${step}`)}</p>`).join('')}</div></main>`,
     'reference',
   );
   document.querySelector('.back').onclick = () => {
@@ -258,7 +270,7 @@ function renderSkoReference() {
 
 function renderAbout() {
   app.innerHTML = screen(
-    `${topbar('О приложении')}<main class="content stack" style="text-align:center"><img src="assets/logo.png" style="width:min(56vw,240px);margin:0 auto;display:block" alt="Оператор ДНГ"><h2 style="margin-bottom:0">Оператор ДНГ</h2><div class="hint">Расчёты выполняются локально на устройстве.</div><div>Версия ${APP_VERSION}</div><button class="btn full" onclick="go('privacy')">Политика конфиденциальности</button></main>`,
+    `${topbar('О приложении')}<main class="content stack" style="text-align:center"><img src="assets/logo.png" style="width:min(56vw,240px);margin:0 auto;display:block" alt="${esc(APP_NAME)}"><h2 style="margin-bottom:0">${esc(APP_NAME)}</h2>${APP_EDITION === 'reglament' ? '<div class="edition-label">Инструкции по регламенту</div>' : ''}<div class="hint">Расчёты выполняются локально на устройстве.</div><div>Версия ${APP_VERSION}</div><button class="btn full" onclick="go('privacy')">Политика конфиденциальности</button></main>`,
     'reference',
   );
 }

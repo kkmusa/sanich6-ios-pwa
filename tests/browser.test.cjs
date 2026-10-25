@@ -184,7 +184,7 @@ test('shell, VNR index and every station photo work offline', () =>
     await page.locator('.hero').waitFor();
     await go(page, 'headAtFrequency');
     await fill(page, { passportHead: '2100', workingFrequency: '54' });
-    await result(page, '2449.44 м');
+    await result(page, '2449 м');
     const assets = await page.evaluate(async () => {
       const results = [];
       for (const url of OPERATOR_PHOTOS) {
@@ -727,7 +727,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.8'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.9'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -892,6 +892,16 @@ test('manual laps stay on screen; final result saves only on stop without a save
     assert.equal(await page.locator('#liters').inputValue(), '150');
     assert.equal(await page.locator('#manualLapList li').count(), 2);
     assert.equal(await page.evaluate(() => calculationHistory().length), 0);
+    await page.locator('#manualIntervalMode').check();
+    assert.equal(await page.locator('#manualLaps').isVisible(), false);
+    assert.equal(await page.locator('#lapBtn').isVisible(), false);
+    assert.equal(await page.locator('#manualLapList li').count(), 2);
+    await page.locator('#manualIntervalMode').uncheck();
+    assert.equal(await page.locator('#manualLaps').isVisible(), true);
+    assert.equal(await page.locator('#manualLapList li').count(), 2);
+    assert.ok((await page.evaluate(() => manualElapsed())) >= secondLapStart);
+    assert.equal(await page.evaluate(() => calculationHistory().length), 0);
+    await page.locator('#timerBtn').click();
     await page.locator('#liters').fill('100');
     await go(page, 'home');
     await page.locator('#manualMini:not([hidden])').waitFor();
@@ -1162,12 +1172,37 @@ test('home is compact, product identity is Operator DNG, and technologist tools 
     }
   }));
 
+test('VNR position controls hide after idle and return after touch and keyboard input', () =>
+  withPage(async (page) => {
+    await go(page, 'vnr');
+    const frame = page.frameLocator('iframe');
+    await frame.locator('#vnr-position').waitFor();
+    await frame.locator('#vnr-offline-open').click();
+    await frame.locator('.vnr-download-close').click();
+    const bar = frame.locator('.vnr-position');
+    await frame.locator('.vnr-position-idle').waitFor({ state: 'attached' });
+    const before = await bar.boundingBox();
+    await frame.locator('#page-1 img').tap({ position: { x: 40, y: 260 } });
+    assert.equal(await bar.evaluate((node) => node.classList.contains('vnr-position-idle')), false);
+    const after = await bar.boundingBox();
+    assert.equal(after.y, before.y);
+    await frame.locator('.vnr-position-idle').waitFor({ state: 'attached' });
+    await frame.locator('#vnr-position').press('ArrowRight');
+    await page.waitForTimeout(1700);
+    assert.equal(await bar.evaluate((node) => node.classList.contains('vnr-position-idle')), false);
+    await frame.locator('#page-1 img').tap({ position: { x: 40, y: 260 } });
+    await frame.locator('.vnr-position-idle').waitFor({ state: 'attached' });
+    assert.equal(await frame.locator('#vnr-search').isVisible(), true);
+    assert.equal(await frame.locator('#vnr-zoom-in').isVisible(), true);
+  }));
+
 test('Android question buttons show formulas and terms, retain inputs and close accessibly', () =>
   withPage(async (page) => {
     const topics = [
       ['level', 1, 'Плотность'],
       ['frequency', 1, 'частота'],
       ['headAtFrequency', 1, 'напор'],
+      ['motorCoefficient', 4, 'полюсов'],
       ['manual', 1, 'время'],
       ['flow', 3, 'Vкп'],
       ['tap', 5, 'кабел'],
@@ -1233,7 +1268,7 @@ test('head at frequency retains data, records one result and uses distinct RICH 
     await go(page, 'headAtFrequency');
     assert.equal(await page.locator('#liveResult .value').count(), 0);
     await fill(page, { passportHead: '2100', workingFrequency: '54' });
-    await result(page, '2449.44 м');
+    await result(page, '2449 м');
     assert.equal(
       await page.evaluate(
         () => calculationHistory().filter((x) => x.title === 'Напор на частоте').length,
@@ -1242,11 +1277,11 @@ test('head at frequency retains data, records one result and uses distinct RICH 
     );
     await go(page, 'home');
     await page.evaluate(() => goBack());
-    await result(page, '2449.44 м');
+    await result(page, '2449 м');
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'headAtFrequency');
-    await result(page, '2449.44 м');
+    await result(page, '2449 м');
     assert.equal(await page.locator('#passportHead').inputValue(), '2100');
     await fill(page, { workingFrequency: '0' });
     await result(page, '0 м');

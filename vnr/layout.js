@@ -51,4 +51,99 @@
   document.addEventListener('click', () => requestAnimationFrame(remember));
   window.addEventListener('load', remember);
   remember();
+
+  // Keep only the bookmark/download/position bar out of the way while reading.
+  // Opacity preserves its bounds, which the page/zoom anchors above rely on.
+  const controls = document.querySelector('.vnr-position');
+  if (!controls) return;
+  const panels = [
+    document.querySelector('.vnr-bookmarks'),
+    document.querySelector('.vnr-offline'),
+  ].filter(Boolean);
+  const pointers = new Set();
+  let idleTimer = null,
+    touchingControls = false,
+    keyboardInput = true;
+  const inControls = (target) =>
+    target instanceof Element &&
+    (controls.contains(target) || panels.some((panel) => panel.contains(target)));
+  function pinned() {
+    return (
+      pointers.size > 0 ||
+      touchingControls ||
+      (keyboardInput && controls.contains(document.activeElement)) ||
+      panels.some((panel) => !panel.hidden)
+    );
+  }
+  function showControls() {
+    clearTimeout(idleTimer);
+    idleTimer = null;
+    controls.classList.remove('vnr-position-idle');
+    if (document.hidden || pinned()) return;
+    idleTimer = setTimeout(() => {
+      idleTimer = null;
+      if (!pinned()) controls.classList.add('vnr-position-idle');
+    }, 1500);
+  }
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      keyboardInput = false;
+      if (inControls(event.target)) pointers.add(event.pointerId);
+      showControls();
+    },
+    { capture: true, passive: true },
+  );
+  for (const type of ['pointerup', 'pointercancel'])
+    window.addEventListener(
+      type,
+      (event) => {
+        pointers.delete(event.pointerId);
+        showControls();
+      },
+      { capture: true, passive: true },
+    );
+  // Touch events also support WebViews that do not provide pointer events.
+  document.addEventListener(
+    'touchstart',
+    (event) => {
+      keyboardInput = false;
+      if (inControls(event.target)) touchingControls = true;
+      showControls();
+    },
+    { capture: true, passive: true },
+  );
+  for (const type of ['touchend', 'touchcancel'])
+    window.addEventListener(
+      type,
+      (event) => {
+        if (!event.touches.length) touchingControls = false;
+        showControls();
+      },
+      { capture: true, passive: true },
+    );
+  for (const type of ['scroll', 'wheel', 'touchmove', 'pointermove'])
+    window.addEventListener(type, showControls, { capture: true, passive: true });
+  document.addEventListener('keydown', () => {
+    keyboardInput = true;
+    showControls();
+  }, true);
+  document.addEventListener('focusin', showControls, true);
+  document.addEventListener('focusout', () => Promise.resolve().then(showControls), true);
+  const observer = new MutationObserver(showControls);
+  for (const panel of panels)
+    observer.observe(panel, { attributes: true, attributeFilter: ['hidden'] });
+  document.addEventListener('visibilitychange', showControls);
+  window.addEventListener('pageshow', showControls);
+  window.addEventListener('blur', () => {
+    pointers.clear();
+    touchingControls = false;
+    showControls();
+  });
+  window.addEventListener('pagehide', () => {
+    clearTimeout(idleTimer);
+    pointers.clear();
+    touchingControls = false;
+  });
+  showControls();
 })();

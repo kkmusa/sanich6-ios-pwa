@@ -36,7 +36,7 @@ const vnrText = `1)Фактическое время запуска
 19)номинальные и холостые токи
 20)ТМС
 21)изоляция и звезда ( электромонтеры пишут на формуляре обычно)`;
-const assistantTopics = [
+const assistantTopics = Array.isArray(globalThis.DNG_REG_ASSISTANT) ? globalThis.DNG_REG_ASSISTANT : [
   {
     title: 'Отбор проб',
     steps: [

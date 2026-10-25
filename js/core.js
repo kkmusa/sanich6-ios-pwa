@@ -1,4 +1,6 @@
-const APP_VERSION = '3.0.8';
+const APP_VERSION = '3.0.9';
+const APP_EDITION = document.documentElement.dataset.edition || 'author';
+const APP_NAME = document.title || 'Оператор ДНГ';
 const app = document.getElementById('app');
 const state = {
   route: 'splash',
@@ -305,6 +307,7 @@ function clearScreenCache() {
   screenCache.clear();
 }
 function go(route) {
+  if (APP_EDITION === 'bez' && route === 'assistant') route = 'reference';
   if (route === state.route) return;
   if (state.route) state.navStack.push(state.route);
   snapshotRoute();

@@ -1,25 +1,26 @@
-const CACHE = 'operator-dng-pwa-v3.0.8';
+const CACHE = 'operator-dng-pwa-v3.0.9';
 const VNR_CACHE = 'operator-dng-vnr-pages-v1';
 const VNR_TOTAL = 207;
 const OP_CACHE = 'operator-dng-photos-v1';
 const SHELL = [
   './',
   './index.html',
-  './styles.css?v=3.0.8',
-  './js/core.js?v=3.0.8',
-  './js/calculation-help-data.js?v=3.0.8',
-  './js/calculation-help.js?v=3.0.8',
-  './js/ui-components.js?v=3.0.8',
-  './js/math.js?v=3.0.8',
-  './js/calculators.js?v=3.0.8',
-  './js/manual.js?v=3.0.8',
-  './js/engineering.js?v=3.0.8',
-  './js/reference-data.js?v=3.0.8',
-  './js/reference-ui.js?v=3.0.8',
-  './js/ped.js?v=3.0.8',
-  './js/operator-data.js?v=3.0.8',
-  './js/operators.js?v=3.0.8',
-  './js/bootstrap.js?v=3.0.8',
+  './js/offline-worker.js?v=3.0.9',
+  './styles.css?v=3.0.9',
+  './js/core.js?v=3.0.9',
+  './js/calculation-help-data.js?v=3.0.9',
+  './js/calculation-help.js?v=3.0.9',
+  './js/ui-components.js?v=3.0.9',
+  './js/math.js?v=3.0.9',
+  './js/calculators.js?v=3.0.9',
+  './js/manual.js?v=3.0.9',
+  './js/engineering.js?v=3.0.9',
+  './js/reference-data.js?v=3.0.9',
+  './js/reference-ui.js?v=3.0.9',
+  './js/ped.js?v=3.0.9',
+  './js/operator-data.js?v=3.0.9',
+  './js/operators.js?v=3.0.9',
+  './js/bootstrap.js?v=3.0.9',
   './manifest.webmanifest',
   './assets/logo.png',
   './assets/PedCoolingDatabase.json',
@@ -40,13 +41,13 @@ self.addEventListener('install', (event) =>
         try {
           await cache.addAll([
             './vnr/index.html',
-            './vnr/search-data.js?v=3.0.8',
-            './vnr/reader.js?v=3.0.8',
-            './vnr/toolbar.js?v=3.0.8',
-            './vnr/offline.js?v=3.0.8',
-            './vnr/bookmarks.js?v=3.0.8',
-            './vnr/layout.css?v=3.0.8',
-            './vnr/layout.js?v=3.0.8',
+            './vnr/search-data.js?v=3.0.9',
+            './vnr/reader.js?v=3.0.9',
+            './vnr/toolbar.js?v=3.0.9',
+            './vnr/offline.js?v=3.0.9',
+            './vnr/bookmarks.js?v=3.0.9',
+            './vnr/layout.css?v=3.0.9',
+            './vnr/layout.js?v=3.0.9',
           ]);
         } catch {}
       })
@@ -92,6 +93,11 @@ self.addEventListener('fetch', (event) => {
     url = new URL(req.url),
     scope = new URL(self.registration.scope);
   if (req.method !== 'GET' || url.origin !== self.location.origin) return;
+  // Each edition owns its own directory. Never provide the parent shell as
+  // an offline fallback for the second application or another site's paths.
+  if (!url.pathname.startsWith(scope.pathname)) return;
+  if (url.pathname.startsWith(new URL('reglament/', scope).pathname)) return;
+  if (url.pathname.startsWith(new URL('bez/', scope).pathname)) return;
   if (url.pathname.startsWith(new URL('vnr/pages/', scope).pathname)) {
     event.respondWith(cachedImage(req, VNR_CACHE));
     return;

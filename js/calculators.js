@@ -1,6 +1,6 @@
 function renderHome() {
   app.innerHTML = screen(
-    `<section class="hero home-hero"><img src="assets/logo.png" alt="Оператор ДНГ"><h1>Расчёты</h1></section><main class="content stack">
+    `<section class="hero home-hero"><img src="assets/logo.png" alt="Оператор ДНГ"><h1>Расчёты</h1>${APP_EDITION !== 'author' ? `<div class="edition-label">${esc(APP_NAME)}</div>` : ''}</section><main class="content stack">
 ${menuCard('level', 'Уровень жидкости в скважине', '', 'level')}
 ${menuCard('frequency', 'Необходимая частота запуска', '', 'frequency')}
 ${menuCard('manual', 'Ручной замер дебита', '', 'manual')}
@@ -29,11 +29,12 @@ function renderHeadAtFrequency() {
       state._last = null;
       return setResult('Напор', '', 'Напор должен быть больше нуля, частота — неотрицательной');
     }
-    setResult(`Напор на ${fmt(frequency)} Гц`, `${fmt(value)} м`);
+    const displayValue = `${fmt(Math.round(value), 0)} м`;
+    setResult(`Напор на ${fmt(frequency)} Гц`, displayValue);
     state.last = {
       title: 'Напор на частоте',
       method: 'Квадратичная зависимость от 50 Гц',
-      result: `${fmt(value)} м`,
+      result: displayValue,
       details: `Напор при 50 Гц=${fmt(head)} м; частота=${fmt(frequency)} Гц`,
     };
   };

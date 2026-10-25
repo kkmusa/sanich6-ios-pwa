@@ -432,6 +432,19 @@ select {
 .pipe-row:first-of-type {
   border-top: 0;
 }
+.edition-label {
+  display: inline-block;
+  margin-top: 8px;
+  border-radius: 12px;
+  padding: 5px 10px;
+  background: #fff0b3;
+  color: #493900;
+  font-size: 13px;
+  font-weight: 600;
+}
+.assistant-document p {
+  white-space: pre-line;
+}
 .assistant-topic {
   display: flex;
   align-items: center;

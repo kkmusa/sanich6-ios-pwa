@@ -3,6 +3,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
+import { checkAssistant } from './assistant-validation.mjs';
 const root = path.resolve(process.argv[2] || fileURLToPath(new URL('../', import.meta.url)));
 const read = (name) => fs.readFileSync(path.join(root, name), 'utf8');
 const exists = (ref) => {
@@ -10,10 +11,20 @@ const exists = (ref) => {
   assert.ok(fs.statSync(path.join(root, name)).isFile(), name);
   return name;
 };
+// Published bundles contain the display data but no internal audit documents.
+// Validate the source repository before copying it into either edition.
+if (fs.existsSync(path.join(root, 'docs/assistant-sources.json'))) {
+  const assistant = checkAssistant(read);
+  console.log(`Assistant evidence: ${assistant.topics} topics, ${assistant.points} verified display paragraphs${assistant.originalPagesChecked ? '; original source pages matched' : ''}.`);
+}
 const index = read('index.html'),
   manifest = JSON.parse(read('manifest.webmanifest'));
-assert.match(index, /<title>Оператор ДНГ<\/title>/);
-assert.equal(manifest.short_name, 'Оператор ДНГ');
+const edition = index.match(/data-edition="([^"]+)"/)?.[1];
+const names = { author: 'Оператор ДНГ', reglament: 'Опер ДНГ рег', bez: 'Опер ДНГ без' };
+assert.ok(names[edition]);
+assert.ok(index.includes(`<title>${names[edition]}</title>`));
+assert.equal(manifest.short_name, names[edition]);
+assert.equal(manifest.id, './');
 assert.equal(manifest.start_url, './');
 assert.equal(manifest.scope, './');
 assert.equal(manifest.orientation, 'any');
@@ -31,6 +42,25 @@ for (const asset of context.shell) if (asset !== './') exists(asset);
 const version = read('js/core.js').match(/APP_VERSION\s*=\s*['"]([^'"]+)/)?.[1];
 assert.ok(version);
 assert.equal(context.version.split('-v').at(-1), version);
+if (edition === 'reglament') {
+  const data = {};
+  vm.runInNewContext(read('js/assistant-reglament-data.js'), data);
+  assert.equal(data.DNG_REG_ASSISTANT.length, 12);
+  for (const topic of data.DNG_REG_ASSISTANT) {
+    assert.ok(topic.title && topic.steps.length > 0);
+    assert.ok(topic.steps.every((step) => typeof step === 'string' && step.trim()));
+  }
+  assert.ok(index.indexOf('js/assistant-reglament-data.js') < index.indexOf('js/reference-data.js'));
+  assert.match(context.version, /^operator-dng-reglament-pwa-/);
+}
+if (edition === 'bez') {
+  assert.ok(!fs.existsSync(path.join(root, 'js/assistant-reglament-data.js')));
+  assert.ok(!index.includes('js/assistant-reglament-data.js'));
+  const data = {};
+  vm.runInNewContext(read('js/reference-data.js') + ';globalThis.topics=assistantTopics', data);
+  assert.equal(data.topics.length, 0);
+  assert.match(context.version, /^operator-dng-bez-pwa-/);
+}
 for (const directory of ['js', 'vnr'])
   for (const file of fs.readdirSync(path.join(root, directory)))
     if (file.endsWith('.js'))
@@ -96,5 +126,5 @@ for (const row of db) {
     assert.ok(Number.isFinite(row[key]));
 }
 console.log(
-  `OK ${version}: 207 pages, ${words} search words, 335 internal + 3 external links, ${steps} station steps, ${photos.size} photos, ${db.length} PED records; scripts, manifest and cache assets valid.`,
+  `OK ${version} (${edition}): 207 pages, ${words} search words, 335 internal + 3 external links, ${steps} station steps, ${photos.size} photos, ${db.length} PED records; scripts, manifest and cache assets valid.`,
 );

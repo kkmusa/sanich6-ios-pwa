@@ -222,6 +222,7 @@ function renderManual() {
           };
     byId('timerBtn').hidden = toggle.checked;
     byId('lapBtn').hidden = toggle.checked;
+    byId('manualLaps').hidden = toggle.checked || !byId('manualLapList').children.length;
     byId('timerBtn').disabled = toggle.checked;
     byId('lapBtn').disabled = toggle.checked || !manualTimerRunning || !lastEntry;
     setResult(

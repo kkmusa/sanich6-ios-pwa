@@ -68,21 +68,7 @@
       return;
     }
     try {
-      const reg = await new Promise((resolve, reject) => {
-        const timer = setTimeout(() => reject(Error('Офлайн-модуль не готов')), 10000);
-        navigator.serviceWorker.ready.then(
-          (reg) => {
-            clearTimeout(timer);
-            resolve(reg);
-          },
-          (err) => {
-            clearTimeout(timer);
-            reject(err);
-          },
-        );
-      });
-      const worker = navigator.serviceWorker.controller || reg.active;
-      if (!worker) throw new Error('Service Worker ещё не запущен');
+      const worker = await window.DngOfflineWorker.ready();
       const channel = new MessageChannel();
       let timeout;
       const arm = () => {
