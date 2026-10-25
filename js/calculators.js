@@ -176,6 +176,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     bind(['wall'], calc);
   }
   function calc() {
+    state._last = null;
     if (flowType.value === 'Негерметичный ОК в период слива') {
       if (!document.getElementById('hst')) {
         hstWrap.innerHTML = field('hst', 'Hст, м');
@@ -220,12 +221,14 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     if (hs === null || hs < 0) return setResult('Приток', '', 'Введите Hст');
     const r = DngMath.wellFlow(mode, D, vkp, T, vnkt[tub] || 0, hs);
     if (r === null) return setResult('Приток', '', 'Проверьте параметры');
+    if (r < 0)
+      return setResult('Приток', '', 'Расчёт дал отрицательный приток. Проверьте ΔH, Hст, время и соответствие выбранному режиму слива.');
     setResult('Приток', `${fmt(r)} м³/сут`);
     state.last = {
       title: type,
       method: source.value,
       result: `${fmt(r)} м³/сут`,
-      details: `ΔH=${D} м; время=${T} мин; ${detail}; Vкп=${vkp.toFixed(6)} м³/м`,
+      details: `ΔH=${D} м; время=${T} мин; ${detail}; Vкп=${vkp.toFixed(6)} м³/м${mode === 'drain' ? `; Hст=${hs} м` : ''}`,
     };
   }
   bind(['flowType'], () => {

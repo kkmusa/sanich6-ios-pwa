@@ -34,8 +34,8 @@ jobs:
         run: npm test
       - name: Build static application
         run: npm run build
-      - name: Check all three applications and isolated offline data
-        run: node --test tests/editions.browser.cjs
+      - name: Check all editions, inflow, PED cooling and isolated offline data
+        run: node --test tests/editions.browser.cjs tests/inflow-audit.browser.cjs tests/ped-audit.browser.cjs
       - name: Test published subdirectory layout
         env:
           PWA_TEST_ROOT: dist

@@ -419,6 +419,8 @@ test('detailed RPD question appears only in the reglament edition, preserves inp
       await dialog.waitFor();
       assert.equal(await dialog.locator('math').count(), edition === 'reglament' ? 12 : 7);
       assert.equal(await dialog.locator('.help-step').count(), edition === 'reglament' ? 11 : 0);
+      assert.equal(await dialog.locator('#rpd-time-explanation').count(), 0);
+      assert.doesNotMatch(await dialog.innerText(), /Откуда брать|Если значение не задано, его нужно уточнить у специалиста/);
       const fits = await dialog.evaluate(node => {
         const rect = node.getBoundingClientRect();
         const body = node.querySelector('.help-body');
@@ -428,24 +430,14 @@ test('detailed RPD question appears only in the reglament edition, preserves inp
       assert.equal(fits, true, edition + ': help must fit within a 320px phone');
       if (edition === 'reglament') {
         formalPage = page;
-        const explanation = dialog.locator('#rpd-time-explanation');
-        assert.equal(await explanation.count(), 1);
-        const initialTimeText = await explanation.innerText();
-        assert.match(initialTimeText, /предварительно заданная длительность откачки за один цикл/i);
-        assert.match(initialTimeText, /пример, а не универсальная уставка/i);
-        assert.match(initialTimeText, /Если значение не задано, его нужно уточнить у специалиста/i);
-        assert.match(initialTimeText, /не время разгона двигателя/i);
+        assert.equal(await dialog.locator('.help-section h3').first().innerText(), 'Что вводим в расчёт');
         assert.equal(await dialog.locator('.help-step .help-example').count(), 11);
-        assert.equal(await explanation.evaluate(node => !!(node.compareDocumentPosition(
-          document.querySelector('.help-step')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
         const text = await dialog.innerText();
         for (const expression of [/10\s*мин/, /8[,.]5\s*мин/, /20\s*мин/, /28[,.]33/, /30\s*ат/,
           /236(?:[,.]\d+)?\s*л/, /336(?:[,.]\d+)?\s*л/]) assert.match(text, expression);
         assert.match(text, /Верхнюю границу этот калькулятор не подбирает самостоятельно/);
         assert.match(text, /равной введённому проектному давлению/);
         assert.match(text, /236\s*л\s*— убыль накопленного запаса, а не вся поданная насосом жидкость/);
-      } else {
-        assert.equal(await dialog.locator('#rpd-time-explanation').count(), 0);
       }
       await dialog.locator('#calculationHelpDone').click();
       assert.equal(await page.locator('#calculationHelpDialog').count(), 0);
@@ -461,6 +453,8 @@ test('detailed RPD question appears only in the reglament edition, preserves inp
     const offlineDialog = formalPage.locator('#calculationHelpDialog');
     assert.equal(await offlineDialog.locator('.help-step').count(), 11);
     assert.equal(await offlineDialog.locator('math').count(), 12);
+    assert.equal(await offlineDialog.locator('#rpd-time-explanation').count(), 0);
+    assert.doesNotMatch(await offlineDialog.innerText(), /Откуда брать/);
     assert.match(await offlineDialog.innerText(), /28[,.]33/);
     await offlineDialog.locator('#calculationHelpDone').click();
     assert.match(await formalPage.locator('#liveResult .value').textContent(), /Время работы: 8\.5 мин/);

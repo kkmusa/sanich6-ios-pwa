@@ -92,9 +92,15 @@ function renderPedBody(db) {
   const casing = Number(s.casing);
   const walls = uniqueSorted(
     db
-      .filter((x) => x.diameter === dia && x.power === power && x.casing === casing)
+      .filter((x) => x.diameter === dia && x.power === power && x.casing === casing && Number.isFinite(x.flow) && x.flow > 0)
       .map((x) => x.wall),
   );
+  if (!walls.length) {
+    html += '<div class="card error">Для выбранного ПЭД и обсадной колонны подходящие варианты не найдены. Выберите другую колонну или параметры ПЭД.</div>';
+    document.getElementById('pedBody').innerHTML = html;
+    bindPedSelects(db);
+    return;
+  }
   html += pedSelectHtml('pedWall', 'Толщина стенки, мм', walls, s.wall || '');
   if (!s.wall) {
     html += `<div class="card hint">Выберите толщину стенки обсадной колонны.</div>`;
@@ -108,8 +114,9 @@ function renderPedBody(db) {
       x.diameter === dia &&
       x.power === power &&
       x.casing === casing &&
-      Math.abs(x.wall - wall) < 1e-9,
-  );
+      Math.abs(x.wall - wall) < 1e-9 &&
+      Number.isFinite(x.flow) && x.flow > 0,
+  ).sort((a, b) => b.flow - a.flow);
   html += `<div class="section-title">Найдено ПЭД: ${results.length}</div><div class="stack">${results.map((p, i) => `<div class="card ped-result" data-ped="${i}"><b>${esc(p.name)}</b><div class="hint">${esc(p.manufacturer)}</div><div class="ped-flow">Номинальный приток: <b>${fmt(p.flow)} м³/сут</b></div></div>`).join('') || '<div class="card">Подходящие ПЭД не найдены</div>'}</div><div id="pedDetails"></div>`;
   document.getElementById('pedBody').innerHTML = html;
   bindPedSelects(db);
@@ -167,8 +174,14 @@ function bindPedSelects(db) {
 function renderPedDetails(p) {
   const d = document.getElementById('pedDetails');
   if (!d) return;
+  if (!Number.isFinite(p.flow) || p.flow <= 0) {
+    state._last = null;
+    d.innerHTML = '<div class="card error">В справочнике нет положительного номинального притока для этого сочетания ПЭД и колонны.</div>';
+    return;
+  }
   d.innerHTML = `<div class="card stack"><h3 style="margin:0">${esc(p.name)}</h3><div class="row"><div><span class="subtle">Производитель</span><br><b>${esc(p.manufacturer)}</b></div><div><span class="subtle">Номинальный приток</span><br><b>${fmt(p.flow)} м³/сут</b></div></div><div class="row">${field('pedWork', 'Рабочий ток, А')}${field('pedNom', 'Номинальный ток, А')}</div><div id="pedCalc" class="result card"><h4>Необходимый приток</h4><div class="error">Введите рабочий и номинальный ток</div></div></div>`;
   const calc = () => {
+    state._last = null;
     const w = num(document.getElementById('pedWork').value),
       n = num(document.getElementById('pedNom').value);
     const box = document.getElementById('pedCalc');
@@ -178,14 +191,17 @@ function renderPedDetails(p) {
       return;
     }
     const flow = DngMath.pedCooling(p.flow, w, n);
+    if (flow === null) {
+      box.innerHTML = '<h4>Необходимый приток</h4><div class="error">Не удалось рассчитать приток. Проверьте токи и параметры ПЭД.</div>';
+      return;
+    }
     box.innerHTML = `<h4>Необходимый приток при фактической загрузке ПЭД</h4><div class="value">${fmt(flow)} м³/сут</div>`;
-    if (flow !== null)
-      state.last = {
+    state.last = {
         title: 'Охлаждение ПЭД',
         method: 'По фактической загрузке',
         result: `${fmt(flow)} м³/сут`,
         details: `ПЭД=${p.name}; D=${p.diameter} мм; мощность=${p.power} кВт; ЭК=${p.casing} мм; стенка=${p.wall} мм; рабочий ток=${w} А; номинальный ток=${n} А; номинальный приток=${p.flow} м³/сут`,
-      };
+    };
   };
   document.getElementById('pedWork').value = pedSaved.working;
   document.getElementById('pedNom').value = pedSaved.nominal;

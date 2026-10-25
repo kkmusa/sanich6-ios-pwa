@@ -77,9 +77,9 @@ test('expanded RPD explanation is selected only in the regulation edition', () =
   const help = c.calculationHelpFor('rpd');
   assert.equal(help.steps.length, 11);
   assert.equal(help.steps.flatMap((step) => step.formulas).length, 12);
-  assert.equal(help.sections[0].id, 'rpd-time-explanation');
-  assert.match(help.sections[0].paragraphs.join(' '), /предварительно заданная длительность/);
-  assert.match(help.sections[0].paragraphs.join(' '), /не универсальная уставка/);
+  assert.equal(help.sections[0].title, 'Что вводим в расчёт');
+  assert.equal(help.sections.some((section) => section.id === 'rpd-time-explanation'), false);
+  assert.doesNotMatch(JSON.stringify(help), /Откуда брать|Если значение не задано, его нужно уточнить у специалиста/);
   assert.match(help.after.map((section) => section.paragraphs?.join(' ')).join(' '), /разгон отдельно не прибавляет/);
   assert.equal(c.calculationHelpFor('level'), c.helpData.level);
 });
