@@ -1,26 +1,27 @@
-const CACHE = 'operator-dng-pwa-v3.0.10';
+const CACHE = 'operator-dng-pwa-v3.0.11';
 const VNR_CACHE = 'operator-dng-vnr-pages-v1';
 const VNR_TOTAL = 207;
 const OP_CACHE = 'operator-dng-photos-v1';
 const SHELL = [
   './',
   './index.html',
-  './js/offline-worker.js?v=3.0.10',
-  './styles.css?v=3.0.10',
-  './js/core.js?v=3.0.10',
-  './js/calculation-help-data.js?v=3.0.10',
-  './js/calculation-help.js?v=3.0.10',
-  './js/ui-components.js?v=3.0.10',
-  './js/math.js?v=3.0.10',
-  './js/calculators.js?v=3.0.10',
-  './js/manual.js?v=3.0.10',
-  './js/engineering.js?v=3.0.10',
-  './js/reference-data.js?v=3.0.10',
-  './js/reference-ui.js?v=3.0.10',
-  './js/ped.js?v=3.0.10',
-  './js/operator-data.js?v=3.0.10',
-  './js/operators.js?v=3.0.10',
-  './js/bootstrap.js?v=3.0.10',
+  './js/offline-worker.js?v=3.0.11',
+  './styles.css?v=3.0.11',
+  './js/core.js?v=3.0.11',
+  './js/calculation-help-data.js?v=3.0.11',
+  './js/rpd-help-data.js?v=3.0.11',
+  './js/calculation-help.js?v=3.0.11',
+  './js/ui-components.js?v=3.0.11',
+  './js/math.js?v=3.0.11',
+  './js/calculators.js?v=3.0.11',
+  './js/manual.js?v=3.0.11',
+  './js/engineering.js?v=3.0.11',
+  './js/reference-data.js?v=3.0.11',
+  './js/reference-ui.js?v=3.0.11',
+  './js/ped.js?v=3.0.11',
+  './js/operator-data.js?v=3.0.11',
+  './js/operators.js?v=3.0.11',
+  './js/bootstrap.js?v=3.0.11',
   './manifest.webmanifest',
   './assets/logo.png',
   './assets/PedCoolingDatabase.json',
@@ -41,13 +42,13 @@ self.addEventListener('install', (event) =>
         try {
           await cache.addAll([
             './vnr/index.html',
-            './vnr/search-data.js?v=3.0.10',
-            './vnr/reader.js?v=3.0.10',
-            './vnr/toolbar.js?v=3.0.10',
-            './vnr/offline.js?v=3.0.10',
-            './vnr/bookmarks.js?v=3.0.10',
-            './vnr/layout.css?v=3.0.10',
-            './vnr/layout.js?v=3.0.10',
+            './vnr/search-data.js?v=3.0.11',
+            './vnr/reader.js?v=3.0.11',
+            './vnr/toolbar.js?v=3.0.11',
+            './vnr/offline.js?v=3.0.11',
+            './vnr/bookmarks.js?v=3.0.11',
+            './vnr/layout.css?v=3.0.11',
+            './vnr/layout.js?v=3.0.11',
           ]);
         } catch {}
       })

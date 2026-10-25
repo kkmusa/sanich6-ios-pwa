@@ -97,6 +97,11 @@ async function showReaderControls(page) {
   await page.mouse.move(box.x + box.width / 2, box.y + Math.min(200, box.height - 20));
   await page.mouse.wheel(0, 1);
   await page.frameLocator('iframe').locator('.vnr-position:not(.vnr-position-idle)').waitFor();
+  // Enter keyboard interaction so focus keeps the toolbar visible while images settle.
+  // Shift changes neither the slider value nor the document's reading position.
+  const slider = page.frameLocator('iframe').locator('#vnr-position');
+  await slider.focus();
+  await slider.press('Shift');
 }
 async function reader(page) {
   await go(page, 'vnr');
@@ -387,3 +392,76 @@ test('missing documentary assistant data shows a loading error instead of author
     assert.doesNotMatch(await page.locator('main').textContent(),
       /Назначение: корректное определение обводнённости|В черновике|Выберите ситуацию/i);
   }, { serviceWorkers: 'block' }));
+
+test('detailed RPD question appears only in the reglament edition, preserves inputs and result, fits a narrow phone and works offline', () =>
+  withContext(async context => {
+    const values = {
+      rpdCasing: '0.150', rpdTubing: '0.073', rpdOil: '870', rpdWater: '1015',
+      rpdWatercut: '80', rpdInflow: '17', rpdPump: '57', rpdIntake: '30',
+      rpdRun: '10', rpdMaxAccum: '20',
+    };
+    let formalPage;
+    for (const [url, edition] of [[base, 'author'], [official, 'reglament'], [withoutAssistant, 'bez']]) {
+      const page = await context.newPage();
+      await page.setViewportSize({ width: 320, height: 844 });
+      await openApp(page, url);
+      await ownWorker(page, url);
+      await go(page, 'rpd');
+      for (const [id, value] of Object.entries(values)) await page.locator('#' + id).fill(value);
+      await page.waitForFunction(() => document.querySelector('#liveResult .value')?.textContent.includes('28.33'));
+      const resultBefore = await page.locator('#liveResult .value').textContent();
+      assert.match(resultBefore, /Время работы: 8\.5 мин/);
+      const inputSnapshot = () => page.locator('main input').evaluateAll(inputs =>
+        Object.fromEntries(inputs.map(input => [input.id, input.value])));
+      const fieldsBefore = await inputSnapshot();
+      await page.locator('#calculationHelpOpen').click();
+      const dialog = page.locator('#calculationHelpDialog');
+      await dialog.waitFor();
+      assert.equal(await dialog.locator('math').count(), edition === 'reglament' ? 12 : 7);
+      assert.equal(await dialog.locator('.help-step').count(), edition === 'reglament' ? 11 : 0);
+      const fits = await dialog.evaluate(node => {
+        const rect = node.getBoundingClientRect();
+        const body = node.querySelector('.help-body');
+        return rect.left >= -1 && rect.right <= innerWidth + 1 &&
+          body.scrollWidth <= body.clientWidth + 1;
+      });
+      assert.equal(fits, true, edition + ': help must fit within a 320px phone');
+      if (edition === 'reglament') {
+        formalPage = page;
+        const explanation = dialog.locator('#rpd-time-explanation');
+        assert.equal(await explanation.count(), 1);
+        const initialTimeText = await explanation.innerText();
+        assert.match(initialTimeText, /предварительно заданная длительность откачки за один цикл/i);
+        assert.match(initialTimeText, /пример, а не универсальная уставка/i);
+        assert.match(initialTimeText, /Если значение не задано, его нужно уточнить у специалиста/i);
+        assert.match(initialTimeText, /не время разгона двигателя/i);
+        assert.equal(await dialog.locator('.help-step .help-example').count(), 11);
+        assert.equal(await explanation.evaluate(node => !!(node.compareDocumentPosition(
+          document.querySelector('.help-step')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
+        const text = await dialog.innerText();
+        for (const expression of [/10\s*мин/, /8[,.]5\s*мин/, /20\s*мин/, /28[,.]33/, /30\s*ат/,
+          /236(?:[,.]\d+)?\s*л/, /336(?:[,.]\d+)?\s*л/]) assert.match(text, expression);
+        assert.match(text, /Верхнюю границу этот калькулятор не подбирает самостоятельно/);
+        assert.match(text, /равной введённому проектному давлению/);
+        assert.match(text, /236\s*л\s*— убыль накопленного запаса, а не вся поданная насосом жидкость/);
+      } else {
+        assert.equal(await dialog.locator('#rpd-time-explanation').count(), 0);
+      }
+      await dialog.locator('#calculationHelpDone').click();
+      assert.equal(await page.locator('#calculationHelpDialog').count(), 0);
+      assert.deepEqual(await inputSnapshot(), fieldsBefore);
+      assert.equal(await page.locator('#liveResult .value').textContent(), resultBefore);
+    }
+    await context.setOffline(true);
+    await formalPage.reload();
+    await formalPage.locator('.hero').waitFor();
+    await go(formalPage, 'rpd');
+    assert.equal(await formalPage.locator('#rpdRun').inputValue(), '10');
+    await formalPage.locator('#calculationHelpOpen').click();
+    const offlineDialog = formalPage.locator('#calculationHelpDialog');
+    assert.equal(await offlineDialog.locator('.help-step').count(), 11);
+    assert.equal(await offlineDialog.locator('math').count(), 12);
+    assert.match(await offlineDialog.innerText(), /28[,.]33/);
+    await offlineDialog.locator('#calculationHelpDone').click();
+    assert.match(await formalPage.locator('#liveResult .value').textContent(), /Время работы: 8\.5 мин/);
+  }));

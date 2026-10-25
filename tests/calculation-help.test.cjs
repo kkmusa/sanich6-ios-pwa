@@ -3,8 +3,9 @@ const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const fs = require('node:fs');
 const path = require('node:path');
-function helpers() {
+function helpers(edition = 'author') {
   const c = {
+    APP_EDITION: edition,
     state: { route: 'home' },
     esc: (v) =>
       String(v)
@@ -15,6 +16,8 @@ function helpers() {
   };
   vm.runInNewContext(
     fs.readFileSync(path.resolve(__dirname, '../js/calculation-help-data.js'), 'utf8') +
+      '\n' +
+      fs.readFileSync(path.resolve(__dirname, '../js/rpd-help-data.js'), 'utf8') +
       '\n' +
       fs.readFileSync(path.resolve(__dirname, '../js/calculation-help.js'), 'utf8') +
       '\nglobalThis.helpData=CALCULATION_HELP;',
@@ -62,4 +65,35 @@ test('head formula keeps multiplication outside the squared frequency ratio', ()
   assert.match(rendered, /<mtext>H₅₀ × <\/mtext><msup>/);
   assert.match(rendered, /<mfrac><mtext>f<\/mtext><mtext>50<\/mtext><\/mfrac>/);
   assert.match(rendered, /<mn>2<\/mn><\/msup>/);
+});
+
+test('expanded RPD explanation is selected only in the regulation edition', () => {
+  for (const edition of ['author', 'bez']) {
+    const c = helpers(edition);
+    assert.equal(c.calculationHelpFor('rpd').steps, undefined);
+    assert.equal(c.calculationHelpFor('rpd').formulas.length, 7);
+  }
+  const c = helpers('reglament');
+  const help = c.calculationHelpFor('rpd');
+  assert.equal(help.steps.length, 11);
+  assert.equal(help.steps.flatMap((step) => step.formulas).length, 12);
+  assert.equal(help.sections[0].id, 'rpd-time-explanation');
+  assert.match(help.sections[0].paragraphs.join(' '), /предварительно заданная длительность/);
+  assert.match(help.sections[0].paragraphs.join(' '), /не универсальная уставка/);
+  assert.match(help.after.map((section) => section.paragraphs?.join(' ')).join(' '), /разгон отдельно не прибавляет/);
+  assert.equal(c.calculationHelpFor('level'), c.helpData.level);
+});
+
+test('RPD step formulas render density percentages and annular area with correct denominators', () => {
+  const c = helpers('reglament');
+  const steps = c.calculationHelpFor('rpd').steps;
+  const density = c.calculationFormula(steps[7].formulas[0]);
+  assert.match(density, /<mfrac><mtext>ρн × \(100 − B\) \+ ρв × B<\/mtext><mtext>100<\/mtext><\/mfrac>/);
+  const area = c.calculationFormula(steps[5].formulas[0]);
+  assert.match(area, /<mfrac><mtext>π × \(D² − d²\)<\/mtext><mtext>4<\/mtext><\/mfrac>/);
+  for (const step of steps) {
+    assert.ok(step.paragraphs.length && step.example);
+    for (const formula of step.formulas)
+      assert.match(c.calculationFormula(formula), /<math[^>]+aria-label=/);
+  }
 });

@@ -1,5 +1,10 @@
 // Help presentation only. Numeric calculations stay in math.js.
 function calculationHelpFor(route = state.route) {
+  if (
+    route === 'rpd' &&
+    typeof APP_EDITION !== 'undefined' && APP_EDITION === 'reglament' &&
+    typeof RPD_DETAILED_HELP !== 'undefined'
+  ) return RPD_DETAILED_HELP;
   return CALCULATION_HELP[route === 'upr' || route === 'apv' ? 'operating' : route] || null;
 }
 function helpMathText(value) {
@@ -64,6 +69,9 @@ function closeCalculationHelp(restoreFocus = true) {
   dialog.remove();
   if (restoreFocus) document.getElementById('calculationHelpOpen')?.focus({ preventScroll: true });
 }
+function calculationHelpSection(section, step = false) {
+  return `<section class="${step ? 'help-step' : 'help-section'}"${section.id ? ` id="${esc(section.id)}"` : ''}><h3>${esc(section.title)}</h3>${(section.formulas || []).map(calculationFormula).join('')}${(section.paragraphs || []).map((text) => `<p>${esc(text)}</p>`).join('')}${section.items?.length ? `<ul>${section.items.map((text) => `<li>${esc(text)}</li>`).join('')}</ul>` : ''}${section.example ? `<p class="help-example"><b>На примере:</b> ${esc(section.example)}</p>` : ''}</section>`;
+}
 function openCalculationHelp() {
   const help = calculationHelpFor();
   if (!help || document.getElementById('calculationHelpDialog')) return;
@@ -72,7 +80,7 @@ function openCalculationHelp() {
   dialog.id = 'calculationHelpDialog';
   dialog.className = 'calculation-help';
   dialog.setAttribute('aria-labelledby', 'calculationHelpTitle');
-  dialog.innerHTML = `<header class="help-header"><h2 id="calculationHelpTitle">Как выполняется расчёт</h2><button type="button" class="help-close" aria-label="Закрыть пояснения">×</button></header><div class="help-body">${help.intro ? `<p>${esc(help.intro)}</p>` : ''}${help.formulas.length ? `<h3>Формулы</h3>${help.formulas.map(calculationFormula).join('')}` : ''}${help.terms.length ? `<h3>Обозначения</h3>${list(help.terms)}` : ''}${help.notes.length ? `<h3>Важно</h3>${list(help.notes)}` : ''}</div><footer class="help-footer"><button type="button" class="btn full" id="calculationHelpDone">Понятно</button></footer>`;
+  dialog.innerHTML = `<header class="help-header"><h2 id="calculationHelpTitle">Как выполняется расчёт</h2><button type="button" class="help-close" aria-label="Закрыть пояснения">×</button></header><div class="help-body">${help.intro ? `<p>${esc(help.intro)}</p>` : ''}${(help.sections || []).map((section) => calculationHelpSection(section)).join('')}${(help.steps || []).map((step) => calculationHelpSection(step, true)).join('')}${help.formulas.length ? `<h3>Формулы</h3>${help.formulas.map(calculationFormula).join('')}` : ''}${help.terms.length ? `<h3>Обозначения</h3>${list(help.terms)}` : ''}${help.notes.length ? `<h3>Важно</h3>${list(help.notes)}` : ''}${(help.after || []).map((section) => calculationHelpSection(section)).join('')}</div><footer class="help-footer"><button type="button" class="btn full" id="calculationHelpDone">Понятно</button></footer>`;
   document.body.append(dialog);
   dialog.querySelector('.help-close').onclick = () => closeCalculationHelp();
   dialog.querySelector('#calculationHelpDone').onclick = () => closeCalculationHelp();

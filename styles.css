@@ -873,6 +873,11 @@ button {
   margin: 18px 0 10px;
   font-size: 17px;
 }
+.help-example {
+  border-radius: 10px;
+  background: #fff4c6;
+  padding: 10px;
+}
 .help-formula {
   border-radius: 12px;
   background: #fff3c4;
