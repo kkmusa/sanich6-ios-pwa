@@ -139,9 +139,13 @@ function renderFlow() {
 ${selectField('flowType', 'Вид расчёта', ['Герметичный ОК', 'Негерметичный ОК в период слива', 'Негерметичный ОК после слива'], 'Герметичный ОК')}
 ${selectField('source', 'Источник Vкп', ['По справочнику', 'По геометрии'], 'По справочнику')}
 <div class="card stack" id="vkpBox"></div><div class="row">${field('dh', 'ΔH, м')}${field('time', 'Время, мин')}</div><div id="hstWrap"></div><div id="liveResult">${resultCard('Приток', '', 'Заполните параметры')}</div></main>`);
-  const referenceOption = document.getElementById('source').options[0];
+  const flowTypeSelect = document.getElementById('flowType');
+  const sourceSelect = document.getElementById('source');
+  const referenceOption = sourceSelect.options[0];
   referenceOption.value = 'По справочнику';
   referenceOption.textContent = 'По справочнику (приближённо)';
+  const geometryOption = [...sourceSelect.options]
+    .find(option => option.value === 'По геометрии');
   let selectedCasing = '168', selectedTubing = '73', geometryCasing = null;
   const geometryWalls = new Map();
   const cablePresets = {
@@ -149,6 +153,19 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     kppbpt: { name: 'КППБПТ 3×16', dimensions: '15 × 37,4 мм', area: 15 * 37.4 },
   };
   let geometryCable = '', geometryCableType = 'custom';
+  function syncSourceForFlowType() {
+    const hermetic = flowTypeSelect.value === 'Герметичный ОК';
+    // The Vкп geometry calculation belongs only to the hermetic-OK method.
+    // A mode change must not leave a now-inapplicable geometry form visible.
+    geometryOption.disabled = !hermetic;
+    geometryOption.hidden = !hermetic;
+    if (!hermetic && sourceSelect.value !== 'По справочнику') {
+      sourceSelect.value = 'По справочнику';
+      rebuildVkp();
+      return true;
+    }
+    return false;
+  }
   function rememberGeometry() {
     if (!document.getElementById('wall')) return;
     geometryWalls.set(geometryCasing, document.getElementById('wall').value);
@@ -174,7 +191,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       document.getElementById('casingOuter')?.value || selectedCasing;
     selectedTubing = document.getElementById('tubing')?.value || selectedTubing;
     rememberGeometry();
-    const src = source.value;
+    const src = sourceSelect.value;
     if (src === 'По справочнику') {
       if (!['139.7', '146', '168', '178'].includes(selectedCasing)) selectedCasing = '168';
       vkpBox.innerHTML = `<div class="row">${selectField(
@@ -227,7 +244,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
   }
   function calc() {
     state._last = null;
-    if (flowType.value === 'Негерметичный ОК в период слива') {
+    if (flowTypeSelect.value === 'Негерметичный ОК в период слива') {
       if (!document.getElementById('hst')) {
         hstWrap.innerHTML = field('hst', 'Hст, м');
         bind(['hst'], calc);
@@ -238,7 +255,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     const tub = document.getElementById('tubing')?.value || '73';
     let vkp,
       detail = '';
-    if (source.value === 'По справочнику') {
+    if (sourceSelect.value === 'По справочнику') {
       const cas = document.getElementById('casing')?.value;
       vkp = vkpTable[`${cas}-${tub}`];
       detail = `ЭК=${cas} мм; НКТ=${tub} мм`;
@@ -273,7 +290,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       T = num(time.value);
     if (D === null || D < 0 || T === null || T <= 0 || !vkp)
       return setResult('Приток', '', 'Заполните параметры');
-    const type = flowType.value,
+    const type = flowTypeSelect.value,
       mode =
         type === 'Герметичный ОК'
           ? 'hermetic'
@@ -290,17 +307,19 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     setResult('Приток', `${fmt(r)} м³/сут`);
     state.last = {
       title: type,
-      method: source.value,
+      method: sourceSelect.value,
       result: `${fmt(r)} м³/сут`,
       details: `ΔH=${D} м; время=${T} мин; ${detail}; Vкп=${vkp.toFixed(6)} м³/м${mode === 'drain' ? `; Hст=${hs} м` : ''}`,
     };
   }
   bind(['flowType'], () => {
     hstWrap.innerHTML = '';
+    if (syncSourceForFlowType()) return;
     calc();
   });
   bind(['source'], rebuildVkp);
   bind(['dh', 'time'], calc);
+  syncSourceForFlowType();
   rebuildVkp();
 }
 

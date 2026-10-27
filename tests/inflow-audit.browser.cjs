@@ -186,6 +186,15 @@ for (const directory of ['', 'reglament/', 'bez/'])
       await page.locator('#flowCableArea').fill('');
       await result(page, '20.5 м³/сут');
 
+      // Geometry is available only for a hermetic check valve.  A change to
+      // either non-hermetic method immediately returns to the reference
+      // source, so the screen cannot retain the wrong geometry form.
+      await page.locator('#flowType').selectOption('Негерметичный ОК после слива');
+      assert.equal(await page.locator('#source').inputValue(), 'По справочнику');
+      assert.equal(await page.locator('#casing').count(), 1);
+      assert.equal(await page.locator('#casingOuter').count(), 0);
+      await page.locator('#flowType').selectOption('Герметичный ОК');
+
       // 146 mm outer casing / 7 mm wall / 73 mm outer tubing.
       await page.locator('#source').selectOption('По геометрии');
       await page.locator('#casingOuter').selectOption('146');
@@ -199,9 +208,11 @@ for (const directory of ['', 'reglament/', 'bez/'])
       await result(page, '22.8 м³/сут');
       await page.locator('#flowType').selectOption('Негерметичный ОК в период слива');
       await page.locator('#hst').fill('200');
-      await result(page, '8.4 м³/сут');
+      assert.equal(await page.locator('#source').inputValue(), 'По справочнику');
+      assert.equal(await page.locator('#casingOuter').count(), 0);
+      await result(page, '6.48 м³/сут');
       await page.locator('#flowType').selectOption('Негерметичный ОК после слива');
-      await result(page, '30 м³/сут');
+      await result(page, '28.08 м³/сут');
       assert.deepEqual(errors, []);
     } finally {
       await context.close();

@@ -208,7 +208,7 @@ test('manual stopwatch continues while away, and completed interval fields clear
     assert.equal(await page.locator('#liters').inputValue(), '');
     assert.equal(await page.locator('#liveResult .value').count(), 0);
   }));
-test('flow static level can be entered without clearing itself; casing selector works', () =>
+test('flow static level can be entered without clearing itself; geometry is limited to a hermetic valve', () =>
   withPage(async (page) => {
     await go(page, 'flow');
     await page.locator('#flowType').selectOption('Негерметичный ОК в период слива');
@@ -217,6 +217,8 @@ test('flow static level can be entered without clearing itself; casing selector 
     await result(page, '2.9 м³/сут');
     await page.locator('#casing').selectOption('146');
     assert.equal(await page.locator('#hst').inputValue(), '5');
+    assert.equal(await page.locator('#source').inputValue(), 'По справочнику');
+    await page.locator('#flowType').selectOption('Герметичный ОК');
     await page.locator('#source').selectOption('По геометрии');
     await page.locator('#casingOuter').selectOption('168');
     assert.ok(await page.locator('#wall').count());
@@ -806,7 +808,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.17'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.18'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
