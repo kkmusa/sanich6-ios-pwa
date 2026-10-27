@@ -268,12 +268,13 @@ test('privacy, history, stopwatch and bookmarks remain independent across all th
     assert.equal(await formalFrame.locator('.vnr-bookmark-row').count(), 0);
     assert.equal(await authorFrame.locator('.vnr-bookmark-row').count(), 1);
     assert.equal(await withoutFrame.locator('.vnr-bookmark-row').count(), 1);
-    for (const [page, volume] of [[formalPage, '50'], [withoutPage, '25']]) {
+    for (const page of [formalPage, withoutPage]) {
       await page.reload();
       await page.locator('.hero').waitFor();
       await go(page, 'manual');
       assert.equal(await page.evaluate(() => manualTimerRunning), false);
-      assert.equal(await page.locator('#liters').inputValue(), volume);
+      assert.equal(await page.locator('#liters').inputValue(), '');
+      assert.equal(await page.locator('#seconds').inputValue(), '');
       assert.equal(await authorPage.evaluate(() => manualTimerRunning), true);
     }
   }));
@@ -448,7 +449,9 @@ test('detailed RPD question appears only in the reglament edition, preserves inp
     await formalPage.reload();
     await formalPage.locator('.hero').waitFor();
     await go(formalPage, 'rpd');
-    assert.equal(await formalPage.locator('#rpdRun').inputValue(), '10');
+    assert.equal(await formalPage.locator('#rpdRun').inputValue(), '');
+    assert.equal(await formalPage.locator('#liveResult .value').count(), 0);
+    for (const [id, value] of Object.entries(values)) await formalPage.locator('#' + id).fill(value);
     await formalPage.locator('#calculationHelpOpen').click();
     const offlineDialog = formalPage.locator('#calculationHelpDialog');
     assert.equal(await offlineDialog.locator('.help-step').count(), 11);

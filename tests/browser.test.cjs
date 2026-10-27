@@ -129,14 +129,15 @@ test('deep audit: vertical level matches Word example and impossible elongation 
       assert.equal(await page.locator('#liveResult .value').count(),0);
     }
   }));
-test('calculator navigation preserves result, and history persists across reload', () =>
+test('calculator navigation clears the form even on Back, and history persists across reload', () =>
   withPage(async (page) => {
     await go(page, 'level');
     await fill(page, { depth: '1000', pz: '10', pd: '20', density: '1' });
     await result(page, '900 м');
     await go(page, 'home');
     await page.evaluate(() => goBack());
-    await result(page, '900 м');
+    assert.equal(await page.locator('#depth').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
     await go(page, 'history');
     assert.equal(await page.locator('.history-item').count(), 1);
     await page.reload();
@@ -157,7 +158,7 @@ test('deep audit: station change immediately validates whether the instruction c
     await page.locator('#op-stepMinutes').fill('60');
     assert.equal(await page.locator('#opStart').isDisabled(),false);
   }));
-test('manual stopwatch suspends UI updates on navigation, interval wheels survive navigation and reload', () =>
+test('manual stopwatch continues while away, and completed interval fields clear on navigation and reload', () =>
   withPage(async (page) => {
     await go(page, 'frequency');
     await go(page, 'manual');
@@ -177,6 +178,9 @@ test('manual stopwatch suspends UI updates on navigation, interval wheels surviv
     await go(page, 'history');
     assert.equal(await page.locator('.history-item').count(), 1);
     await go(page, 'manual');
+    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.locator('#seconds').inputValue(), '');
+    await page.locator('#liters').fill('100');
     await page.locator('#manualIntervalMode').check();
     await page.locator('[data-day="0"]').click();
     for (const [id, value] of Object.entries({
@@ -195,12 +199,14 @@ test('manual stopwatch suspends UI updates on navigation, interval wheels surviv
     await go(page, 'home');
     assert.equal(await page.evaluate(() => manualTimerHandle), null);
     await go(page, 'manual');
-    await result(page, '7.2 м³/сут');
-    assert.equal(await page.locator('#manualInterval').isVisible(), true);
+    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    assert.equal(await page.locator('#manualInterval').isVisible(), false);
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'manual');
-    await result(page, '7.2 м³/сут');
+    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
   }));
 test('flow static level can be entered without clearing itself; casing selector works', () =>
   withPage(async (page) => {
@@ -391,7 +397,7 @@ test('VNR index: 207 sections, 338 links, phrase search, highlight, arrows and c
     );
     assert.deepEqual(invalid, []);
   }));
-test('Android engineering calculators: motor swap, temperature cap, potential and persistent inputs', () =>
+test('Android engineering calculators: motor swap, temperature cap, potential and fresh entries', () =>
   withPage(async (page) => {
     await page.locator('.menu-card').filter({ hasText: 'Коэффициент двигателя 2А' }).click();
     await fill(page, { motorRpm: '6000', motorPoles: '2', motorFrequency: '50' });
@@ -401,12 +407,15 @@ test('Android engineering calculators: motor swap, temperature cap, potential an
     await result(page, '50 Гц');
     await go(page, 'home');
     await page.evaluate(() => goBack());
-    await result(page, '50 Гц');
+    assert.equal(await page.locator('#motorRpm').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'motorCoefficient');
-    await result(page, '50 Гц');
-    assert.equal(await page.locator('#motorReverse').isChecked(), true);
+    assert.equal(await page.locator('#motorRpm').inputValue(), '');
+    assert.equal(await page.locator('#motorReverse').isChecked(), false);
+    await fill(page, { motorRpm: '6000', motorPoles: '2', motorFrequency: '50' });
+    await result(page, '100 Гц');
     await go(page, 'temperatureSetpoint');
     await fill(page, { workingTemperature: '150' });
     await page.locator('#temperatureGroup').selectOption('Д2');
@@ -548,7 +557,7 @@ test('manual timer continues across navigation/reload, units convert, reset paus
     assert.equal(await page.evaluate(() => manualTimerRunning), false);
     assert.equal(await page.locator('#seconds').inputValue(), '');
   }));
-test('PED selection survives navigation and resets on reload; operator station/mode survives reload', () =>
+test('PED selection and operator calculations clear after navigation and reload; instruction Back keeps the active process', () =>
   withPage(async (page) => {
     await go(page, 'ped');
     await page.locator('#pedDia').waitFor();
@@ -561,8 +570,10 @@ test('PED selection survives navigation and resets on reload; operator station/m
     const expected = await page.locator('#pedCalc .value').textContent();
     await go(page, 'home');
     await go(page, 'ped');
-    await page.locator('#pedCalc .value').waitFor();
-    assert.equal(await page.locator('#pedCalc .value').textContent(), expected);
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    assert.equal(await page.locator('#pedWork').count(), 0);
+    assert.equal(await page.locator('#pedCalc').count(), 0);
+    assert.ok(await page.evaluate(expected => calculationHistory().some(entry => entry.result === expected), expected));
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'ped');
@@ -581,17 +592,19 @@ test('PED selection survives navigation and resets on reload; operator station/m
     await page.locator('#opStation').selectOption('Эталон ЧР');
     await page.locator('#opStart').click();
     await page.locator('#opNext').click();
-    await page.reload();
-    await page.locator('.hero').waitFor();
-    await go(page, 'operators');
-    await page.locator('#opNext').waitFor();
-    assert.ok((await page.locator('h1').textContent()).includes('Эталон ЧР'));
     assert.ok((await page.locator('.subtle').first().textContent()).includes('Шаг 2'));
     await page.locator('.topbar .back').click();
     assert.equal(await page.locator('#opStation').inputValue(), 'Эталон ЧР');
     assert.equal(await page.locator('#op-high').inputValue(), '50');
+    await page.reload();
+    await page.locator('.hero').waitFor();
+    await go(page, 'operators');
+    assert.equal(await page.locator('#opNext').count(), 0);
+    assert.equal(await page.locator('#opStation').inputValue(), 'Борец КАСКАД-НТ');
+    assert.equal(await page.locator('#op-start').inputValue(), '');
+    assert.equal(await page.locator('#opStart').isDisabled(), true);
   }));
-test('SKO and tap choices and geometry survive reload; level extension and original density units', () =>
+test('SKO and tap calculations clear on reload and can be recalculated; level extension and density units', () =>
   withPage(async (page) => {
     await go(page, 'sko');
     await page.locator('[data-v="reverse"]').click();
@@ -603,15 +616,21 @@ test('SKO and tap choices and geometry survive reload; level extension and origi
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'sko');
-    await result(page, expected);
-    assert.equal(await page.locator('#skoWall').inputValue(), '8');
+    assert.equal(await page.locator('#skoDepth').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
     assert.equal(
       await page
-        .locator('[data-t="89"]')
+        .locator('[data-t="73"]')
         .getAttribute('class')
         .then((x) => x.includes('active')),
       true,
     );
+    await page.locator('[data-v="reverse"]').click();
+    await page.locator('[data-t="89"]').click();
+    await page.locator('#skoCasing').selectOption('168');
+    await page.locator('#skoWall').selectOption('8');
+    await page.locator('#skoDepth').fill('1000');
+    await result(page, expected);
     await go(page, 'tap');
     await page.locator('[data-mode="vfd"]').click();
     await page.locator('[data-mat="al"]').click();
@@ -632,8 +651,16 @@ test('SKO and tap choices and geometry survive reload; level extension and origi
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'tap');
+    assert.equal(await page.locator('#trIn').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    await page.locator('[data-mode="vfd"]').click();
+    await page.locator('[data-mat="al"]').click();
+    await fill(page, {
+      trIn: '380', supplyV: '380', motorV: '1000', motorI: '20',
+      cableL: '1000', cableS: '16', temp: '20', vfdV: '380', fmax: '60', fnom: '50',
+    });
+    await page.locator('#filter').check();
     await result(page, tap);
-    assert.equal(await page.locator('#filter').isChecked(), true);
     await go(page, 'level');
     await fill(page, { depth: '1000', extension: '20', pz: '10', pd: '20', density: '1' });
     await result(page, '880 м');
@@ -779,7 +806,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.16'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.17'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -818,7 +845,7 @@ test('blocked storage does not crash startup or calculations and reports history
     await context.close();
   }
 });
-test('manual calendar dates save complete interval history and survive reload', () =>
+test('manual calendar dates save complete interval history while reload opens a fresh measurement', () =>
   withPage(async (page) => {
     await go(page, 'manual');
     await page.locator('#manualIntervalMode').check();
@@ -856,9 +883,17 @@ test('manual calendar dates save complete interval history and survive reload', 
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'manual');
-    await result(page, '7.2 м³/сут');
-    assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-18');
-    assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-19');
+    assert.equal(await page.locator('#liters').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    assert.equal(await page.locator('#manualIntervalMode').isChecked(), false);
+    const today = await page.evaluate(() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    });
+    assert.equal(await page.locator('#manualStartDate').inputValue(), today);
+    assert.equal(await page.locator('#manualEndDate').inputValue(), today);
+    await go(page, 'history');
+    assert.match(await page.locator('.history-item .hint').textContent(), /2026-10-18.*2026-10-19/);
   }));
 test('history retains older entries beyond 150, paginates and deletes individual records', () =>
   withPage(async (page) => {
@@ -913,7 +948,9 @@ test('version 3: fifth Technologist tab contains all six Android tools; level un
     await page.goBack();
     await page.waitForFunction(() => state.route === 'technologist');
     await page.goForward();
-    await result(page, '880 м');
+    assert.equal(await page.locator('#depth').inputValue(), '');
+    assert.equal(await page.locator('#extension').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
   }));
 
 test('manual laps stay on screen; final result saves only on stop without a save button; timer survives reopening', () =>
@@ -974,6 +1011,13 @@ test('manual laps stay on screen; final result saves only on stop without a save
     assert.equal(await reopened.evaluate(() => calculationHistory().length), 1);
     await reopened.locator('#manualIntervalMode').check();
     assert.equal(await reopened.locator('#lapBtn').isEnabled(), false);
+    await go(reopened, 'home');
+    await go(reopened, 'manual');
+    assert.equal(await reopened.locator('#liters').inputValue(), '');
+    assert.equal(await reopened.locator('#seconds').inputValue(), '');
+    assert.equal(await reopened.locator('#manualIntervalMode').isChecked(), false);
+    assert.equal(await reopened.locator('#liveResult .value').count(), 0);
+    assert.equal(await reopened.evaluate(() => calculationHistory().length), 1);
     await reopened.close();
   }));
 
@@ -1302,7 +1346,7 @@ test('Android question buttons show formulas and terms, retain inputs and close 
     assert.equal(await page.locator('#calculationHelpOpen').count(), 0);
   }));
 
-test('head at frequency retains data, records one result and uses distinct RICH letters and compass', () =>
+test('head at frequency clears old fields, retains history and uses distinct RICH letters and compass', () =>
   withPage(async (page) => {
     const sizes = await page
       .locator('.menu-card[onclick="go(\'rich\')"] svg text')
@@ -1329,13 +1373,15 @@ test('head at frequency retains data, records one result and uses distinct RICH 
     );
     await go(page, 'home');
     await page.evaluate(() => goBack());
-    await result(page, '2449 м');
+    assert.equal(await page.locator('#passportHead').inputValue(), '');
+    assert.equal(await page.locator('#workingFrequency').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
     await page.reload();
     await page.locator('.hero').waitFor();
     await go(page, 'headAtFrequency');
-    await result(page, '2449 м');
-    assert.equal(await page.locator('#passportHead').inputValue(), '2100');
-    await fill(page, { workingFrequency: '0' });
+    assert.equal(await page.locator('#passportHead').inputValue(), '');
+    assert.equal(await page.locator('#liveResult .value').count(), 0);
+    await fill(page, { passportHead: '2100', workingFrequency: '0' });
     await result(page, '0 м');
     await fill(page, { workingFrequency: '-1' });
     assert.equal(await page.locator('#liveResult .value').count(), 0);
@@ -1352,7 +1398,7 @@ test('head at frequency retains data, records one result and uses distinct RICH 
     assert.equal(await page.locator('#workingFrequency').inputValue(), '');
   }));
 
-test('operating modes round work and stop to whole minutes, retain the cycle and save the displayed result', () =>
+test('operating modes round work and stop to whole minutes, clear stale cycles and save the displayed result', () =>
   withPage(async (page) => {
     for (const mode of ['apv', 'upr']) {
       await go(page, mode);
@@ -1371,6 +1417,10 @@ test('operating modes round work and stop to whole minutes, retain the cycle and
       await result(page, text);
       await go(page, 'home');
       await page.evaluate(() => goBack());
+      assert.equal(await page.locator('#operatingRate').inputValue(), '');
+      assert.equal(await page.locator('#cycleMinutes').inputValue(), mode === 'apv' ? '360' : '60');
+      assert.equal(await page.locator('#liveResult .value').count(), 0);
+      await fill(page, values);
       await result(page, text);
       await fill(page, { operatingRate: '100', inflowRate: '50', startupMinutes: '0.5' });
       assert.match(
@@ -1432,12 +1482,14 @@ test('flow selectors list casing, tubing and every wall thickness in ascending n
     await page.locator('#tubing').selectOption('60');
     await go(page, 'home');
     await page.evaluate(() => goBack());
-    assert.equal(await page.locator('#casingOuter').inputValue(), '139.7');
-    assert.equal(await page.locator('#wall').inputValue(), '9.2');
-    assert.equal(await page.locator('#tubing').inputValue(), '60');
+    assert.equal(await page.locator('#source').inputValue(), 'По справочнику');
+    assert.equal(await page.locator('#casingOuter').count(), 0);
+    assert.equal(await page.locator('#tubing').inputValue(), '73');
+    assert.equal(await page.locator('#dh').inputValue(), '');
+    assert.equal(await page.locator('#time').inputValue(), '');
   }));
 
-test('manual interval starts with today at both ends in local time and preserves explicitly edited dates on return', () =>
+test('manual interval starts with today; in-screen edits persist and new entries reset dates to today', () =>
   withPage(
     async (page) => {
       // UTC still says October 24, while the operator's local date is October 25.
@@ -1450,13 +1502,16 @@ test('manual interval starts with today at both ends in local time and preserves
       await page.locator('#manualEndDate').fill('2026-10-24');
       await go(page, 'home');
       await go(page, 'manual');
-      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
-      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-24');
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-25');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-25');
       await page.reload();
       await page.locator('.hero').waitFor();
       await go(page, 'manual');
-      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
-      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-24');
+      assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-25');
+      assert.equal(await page.locator('#manualEndDate').inputValue(), '2026-10-25');
+      await page.locator('#manualIntervalMode').check();
+      await page.locator('#manualStartDate').fill('2026-10-23');
+      await page.locator('#manualEndDate').fill('2026-10-24');
       await page.locator('#manualIntervalMode').uncheck();
       await page.locator('#manualIntervalMode').check();
       assert.equal(await page.locator('#manualStartDate').inputValue(), '2026-10-23');
@@ -1496,11 +1551,20 @@ test('PED reset clears partial or complete selections and currents while keeping
     const name = await page.locator('#pedDetails h3').textContent();
     await go(page, 'home');
     await go(page, 'ped');
-    await page.locator('#pedWork').waitFor();
-    assert.equal(await page.locator('#pedWork').inputValue(), '50');
-    assert.equal(await page.locator('#pedNom').inputValue(), '100');
+    assert.equal(await page.locator('#pedDia').inputValue(), '');
+    assert.equal(await page.locator('#pedWork').count(), 0);
+    assert.equal(await page.locator('#pedCalc').count(), 0);
+    await page.locator('#pedDia').selectOption('95');
+    await page.locator('#pedPower').selectOption('16');
+    await page.locator('#pedCasing').selectOption('114');
+    await page.locator('#pedWall').selectOption('5.2');
+    await page.locator('[data-ped]').first().click();
+    await fill(page, { pedWork: '50', pedNom: '100' });
     assert.equal(await page.locator('#pedDetails h3').textContent(), name);
     assert.equal(await page.locator('#pedCalc .value').textContent(), expected);
+    // Commit the final input's native change before comparing the history
+    // snapshot: reset must not be confused with the preceding field's blur.
+    await page.locator('#pedNom').evaluate(input => input.blur());
     const historyBeforeReset = await page.evaluate(() => calculationHistory());
     await page.locator('#resetPed').click();
     assert.equal(await page.locator('#pedDia').inputValue(), '');

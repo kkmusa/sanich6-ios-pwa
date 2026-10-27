@@ -144,11 +144,30 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
   referenceOption.textContent = 'По справочнику (приближённо)';
   let selectedCasing = '168', selectedTubing = '73', geometryCasing = null;
   const geometryWalls = new Map();
-  let geometryCable = '';
+  const cablePresets = {
+    kpbp: { name: 'КПБП 3×16', dimensions: '14,7 × 35,3 мм', area: 14.7 * 35.3 },
+    kppbpt: { name: 'КППБПТ 3×16', dimensions: '15 × 37,4 мм', area: 15 * 37.4 },
+  };
+  let geometryCable = '', geometryCableType = 'custom';
   function rememberGeometry() {
     if (!document.getElementById('wall')) return;
     geometryWalls.set(geometryCasing, document.getElementById('wall').value);
-    geometryCable = document.getElementById('flowCableArea').value;
+    geometryCableType = document.getElementById('flowCableType')?.value || 'custom';
+    if (geometryCableType === 'custom')
+      geometryCable = document.getElementById('flowCableArea').value;
+  }
+  function updateCable(rememberCustom = true) {
+    const area = document.getElementById('flowCableArea');
+    if (!area) return;
+    if (rememberCustom && geometryCableType === 'custom') geometryCable = area.value;
+    geometryCableType = document.getElementById('flowCableType').value;
+    const preset = cablePresets[geometryCableType];
+    area.readOnly = !!preset;
+    area.value = preset ? String(Number(preset.area.toFixed(2))) : geometryCable;
+    document.getElementById('flowCableHint').textContent = preset
+      ? `Приближённо по максимальным габаритам ${preset.dimensions} из таблицы 9: площадь охватывающего прямоугольника ${fmt(preset.area)} мм². Скругления кабеля не учитываются.`
+      : 'Пустое поле — без учёта кабеля. 3×16 — сечение жил; ни 16, ни 48 мм² не являются наружной площадью кабеля с изоляцией.';
+    calc();
   }
   function rebuildVkp() {
     selectedCasing = document.getElementById('casing')?.value ||
@@ -180,9 +199,11 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
         'НКТ',
         Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
         selectedTubing,
-      )}</div><div id="wallHolder"></div>${field('flowCableArea', 'Наружное сечение всего кабеля, мм² (необязательно)')}<p class="hint">Пустое поле — геометрический расчёт без учёта кабеля.</p><div class="hint" id="vkpText"></div>`;
-      document.getElementById('flowCableArea').value = geometryCable;
+      )}</div><div id="wallHolder"></div><div class="field"><label for="flowCableType">Кабель</label><select id="flowCableType"><option value="custom">Ввести наружную площадь</option><option value="kpbp">КПБП 3×16 — приближённо</option><option value="kppbpt">КППБПТ 3×16 — приближённо</option></select></div>${field('flowCableArea', 'Наружная площадь кабеля с изоляцией, мм²')}<p class="hint" id="flowCableHint"></p><div class="hint" id="vkpText"></div>`;
+      document.getElementById('flowCableType').value = geometryCableType;
       buildWall();
+      updateCable(false);
+      bind(['flowCableType'], () => updateCable());
       bind(['flowCableArea'], calc);
     }
     bind(['casing', 'tubing', 'casingOuter'], (event) => {
@@ -235,13 +256,14 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       const co = num(document.getElementById('casingOuter')?.value),
         w = num(document.getElementById('wall')?.value),
         to = num(tub),
+        cablePreset = cablePresets[document.getElementById('flowCableType')?.value],
         cableText = document.getElementById('flowCableArea')?.value || '',
-        cableArea = cableText.trim() ? num(cableText) : 0;
+        cableArea = cablePreset ? cablePreset.area : cableText.trim() ? num(cableText) : 0;
       if (co && w && to) {
         const inner = co - 2 * w;
         if (inner > to) {
           vkp = DngMath.annularVolume(to, co, w, cableArea);
-          detail = `НКТ=${tub} мм; D ЭК=${co} мм; стенка=${w} мм; Dвнутр=${fmt(inner)} мм; кабель=${cableArea === 0 ? 'без учёта' : cableArea + ' мм²'}`;
+          detail = `НКТ=${tub} мм; D ЭК=${co} мм; стенка=${w} мм; Dвнутр=${fmt(inner)} мм; кабель=${cablePreset ? `${cablePreset.name}, приблизительно по габаритам ${cablePreset.dimensions}; S≈${fmt(cableArea)} мм²` : cableArea === 0 ? 'без учёта' : cableArea + ' мм²'}`;
         }
       }
     }

@@ -98,7 +98,9 @@ for (const edition of ['', 'reglament/', 'bez/']) {
       await page.locator('[data-ped]').first().click();
       await page.evaluate(() => go('home'));
       await page.evaluate(() => go('ped'));
-      assert.equal(await page.locator('#pedPower').inputValue(), '70 - 125 (кроме 90)');
+      assert.equal(await page.locator('#pedDia').inputValue(), '');
+      assert.equal(await page.locator('#pedPower').count(), 0);
+      assert.equal(await page.locator('#pedCalc').count(), 0);
       await page.locator('#pedDia').selectOption('130');
       await page.locator('#pedPower').selectOption('400');
       await page.locator('#pedCasing').selectOption('168');
@@ -122,7 +124,13 @@ for (const edition of ['', 'reglament/', 'bez/']) {
       await page.locator('#genericNominal').fill('100');
       await page.evaluate(() => go('home'));
       await page.evaluate(() => go('ped'));
-      assert.equal(await page.locator('#genericWall').inputValue(),'7.7');
+      assert.equal(await page.locator('#genericWall').count(),0);
+      assert.equal(await page.locator('#pedDia').inputValue(),'');
+      await page.locator('#pedMode').click();
+      for (const [id,value] of Object.entries({genericDiameter:'117',genericPower:'100',
+        genericCasing:'146',genericWall:'7.7',genericWorking:'81',genericNominal:'100'}))
+        await page.locator('#'+id).fill(value);
+      assert.equal(await page.locator('#pedCalc .value').innerText(), '46.48 м³/сут');
       await page.locator('#resetPed').click();
       assert.equal(await page.locator('#pedDia').inputValue(),'');
       await page.evaluate(async () => { await DngOfflineWorker.ready(); });

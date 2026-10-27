@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.16';
+const APP_VERSION = '3.0.17';
 const APP_EDITION = document.documentElement.dataset.edition || 'author';
 const APP_NAME = document.title || 'Оператор ДНГ';
 const app = document.getElementById('app');
@@ -114,14 +114,24 @@ function clearHistory() {
     storageNotice('Не удалось очистить историю: хранилище браузера недоступно.');
   }
 }
-// Route-scoped drafts survive reloads within the same browser session.
-// Never persist password/file inputs, and avoid storing calculation history twice.
+// A calculator is a new measurement whenever its screen is entered again,
+// including browser Back. Drafts only support the current process; an active
+// manual stopwatch is the exception because it must survive leaving the app.
+const FRESH_CALCULATION_ROUTES = new Set([
+  'level', 'frequency', 'headAtFrequency', 'flow', 'upr', 'apv', 'sko', 'tap',
+  'motorCoefficient', 'temperatureSetpoint', 'wellPotential', 'rpd',
+  'manual', 'ped', 'ramp', 'rich', 'operators',
+]);
 const DRAFTS_KEY = 'operator_dng_route_drafts_v2';
 const routeDrafts = new Map();
+let storedManualRunning = false;
+try {
+  storedManualRunning = JSON.parse(localStorage.getItem('operator_dng_manual_timer_v1') || 'null')?.running === true;
+} catch {}
 try {
   const saved = JSON.parse(sessionStorage.getItem(DRAFTS_KEY) || '{}');
   for (const [route, fields] of Object.entries(saved)) {
-    if (route === 'ped') continue;
+    if (FRESH_CALCULATION_ROUTES.has(route) && !(route === 'manual' && storedManualRunning)) continue;
     if (fields && typeof fields === 'object' && !Array.isArray(fields)) {
       // web.20/21 stored these fields in seconds; migrate explicitly to minutes.
       if (['upr', 'apv'].includes(route))
@@ -153,7 +163,7 @@ try {
   /* storage may be disabled in private browsing */
 }
 try {
-  if (!routeDrafts.has('manual')) {
+  if (storedManualRunning && !routeDrafts.has('manual')) {
     const savedManual = JSON.parse(localStorage.getItem('sanich_manual_form_v3') || 'null');
     if (savedManual && typeof savedManual === 'object') routeDrafts.set('manual', savedManual);
   }
@@ -306,6 +316,38 @@ function showCachedScreen(route) {
 function clearScreenCache() {
   screenCache.clear();
 }
+function resetCalculationForEntry(route) {
+  if (!FRESH_CALCULATION_ROUTES.has(route)) return;
+  // A running measurement continues by wall-clock time even while its UI is
+  // unmounted. Reopening its screen must never start another measurement.
+  if (route === 'manual' && typeof manualTimerRunning !== 'undefined' && manualTimerRunning) return;
+  routeDrafts.delete(route);
+  screenCache.delete(route);
+  if (route === 'manual') {
+    manualTimerElapsed = 0;
+    manualTimerStart = 0;
+    manualSavedLiters = '';
+    manualSavedSeconds = '';
+    manualSavedMinutes = false;
+    for (const key of ['sanich_manual_form_v3', 'sanich_manual_history_session', 'operator_dng_manual_timer_v1']) {
+      try { localStorage.removeItem(key); } catch {}
+    }
+  }
+  if (route === 'ped' && typeof pedSaved !== 'undefined') {
+    pedSaved = { selection: {}, selectedKey: null, working: '', nominal: '' };
+    state.pedSel = {};
+  }
+  if (['operators', 'ramp', 'rich'].includes(route) && typeof opValues !== 'undefined') {
+    for (const mode of ['ramp', 'rich'])
+      for (const key of Object.keys(opValues[mode]))
+        opValues[mode][key] = key === 'station' ? OP_STATIONS[0] : '';
+    operatorMode = route === 'rich' ? 'rich' : 'ramp';
+    operatorViewing = false;
+    operatorStep = 0;
+    persistOperatorState();
+  }
+  persistDrafts();
+}
 function go(route) {
   if (APP_EDITION === 'bez' && route === 'assistant') route = 'reference';
   if (route === state.route) return;
@@ -314,6 +356,7 @@ function go(route) {
   saveRouteScroll();
   parkCurrentScreen();
   resetHistoryDraft();
+  resetCalculationForEntry(route);
   state.route = route;
   routeScroll.set(route, 0);
   window.history.pushState(
@@ -355,6 +398,7 @@ function goBack() {
   const prev = state.navStack.pop();
   if (prev) {
     resetHistoryDraft();
+    resetCalculationForEntry(prev);
     state.route = prev;
     render();
     restoreRouteScroll(prev);
@@ -434,6 +478,7 @@ window.addEventListener('popstate', (event) => {
   saveRouteScroll();
   parkCurrentScreen();
   resetHistoryDraft();
+  resetCalculationForEntry(target.route);
   state.route = target.route;
   state.navStack = Array.isArray(target.stack) ? [...target.stack] : [];
   render();

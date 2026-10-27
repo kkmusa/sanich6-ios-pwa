@@ -120,8 +120,8 @@ function renderScreen() {
 
 function render() {
   stopManualTimer();
-  // Reattach the original calculator DOM, preserving field values, selected
-  // options, computed results and the event handlers attached by each screen.
+  // Entry navigation clears completed calculation forms. A same-route render
+  // may still reuse its live DOM without interrupting the current process.
   if (showCachedScreen(state.route)) return;
   const result = renderScreen();
   restoreRoute();
