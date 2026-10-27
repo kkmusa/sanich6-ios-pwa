@@ -20,6 +20,18 @@ test('139.7/73 old capacity violates even the largest available annulus; tubing 
   }
   close(math.annularVolume(73,139.7,6.2),0.008542218190578032);
 });
+test('139.7/73 approximation uses a 7 mm casing wall and the complete table 9 KPBP envelope', () => {
+  const cableEnvelope = 14.7 * 35.3;
+  close(cableEnvelope, 518.91);
+  const plain = math.annularVolume(73,139.7,7);
+  const conservative = math.annularVolume(73,139.7,7,cableEnvelope);
+  close(plain,0.008224289014034746);
+  close(conservative,0.007705379014034746);
+  assert.ok(0.0058 < conservative && conservative < 0.0091);
+  assert.equal(Number(conservative.toFixed(4)),0.0077);
+  // 3x16 is conductor area, never the complete cable's occupied area.
+  assert.notEqual(cableEnvelope,3*16);
+});
 test('cable displaces its entire outer area and can never create a negative annular volume', () => {
   const plain=math.annularVolume(73,139.7,6.2);
   close(plain-math.annularVolume(73,139.7,6.2,200),0.0002);
@@ -64,6 +76,7 @@ test('only confirmed obsolete reference-history records are marked for recalcula
   vm.runInNewContext(fs.readFileSync(require.resolve('../js/calculators.js'),'utf8'),context);
   const details='ΔH=100 м; время=60 мин; ЭК=139.7 мм; НКТ=73 мм; Vкп=0.010000 м³/м';
   assert.match(context.historyCalculationNotice({method:'По справочнику',details}),/Требует пересчёта/);
+  assert.equal(context.historyCalculationNotice({method:'По справочнику',details:details.replace('0.010000','0.007700')}), '');
   assert.equal(context.historyCalculationNotice({method:'По геометрии',details}), '');
   assert.equal(context.historyCalculationNotice({method:'По справочнику',details:details.replace('139.7','146')}), '');
 });

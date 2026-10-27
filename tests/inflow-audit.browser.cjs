@@ -50,7 +50,7 @@ for (const directory of ['', 'reglament/', 'bez/'])
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const page = await context.newPage();
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    page.on('pageerror', error => errors.push(error.stack || error.message));
     page.setDefaultTimeout(10000);
     try {
       await page.goto(origin + directory);
@@ -95,19 +95,62 @@ for (const directory of ['', 'reglament/', 'bez/'])
       await page.locator('#flowType').selectOption('Негерметичный ОК после слива');
       await result(page, '39.84 м³/сут');
 
-      // Do not substitute a guessed coefficient for the impossible table cell.
+      // The user stays in the selected reference mode. The corrected pair
+      // explicitly identifies the wall/cable assumptions behind its estimate.
       await page.locator('#casing').selectOption('139.7');
-      assert.equal(await page.locator('#source').inputValue(), 'По геометрии');
+      assert.equal(await page.locator('#source').inputValue(), 'По справочнику');
+      assert.equal(await page.locator('#casing').inputValue(), '139.7');
+      assert.equal(await page.locator('#tubing').inputValue(), '73');
+      assert.deepEqual(await page.locator('#vkpBox .row select').evaluateAll(nodes => nodes.map(n => n.id)), ['casing','tubing']);
+      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.007700 м³/м');
+      assert.match(await page.locator('#vkpAssumption').innerText(), /7 мм.*КПБП 3×16.*14,7 × 35,3/);
+      await page.locator('#flowType').selectOption('Герметичный ОК');
+      await result(page, '18.48 м³/сут');
+      const calculatedRecord = await page.evaluate(() => calculationHistory()[0]);
+      assert.match(calculatedRecord.details,/расчётное приближение/);
+      assert.equal(await page.evaluate(record => historyCalculationNotice(record), calculatedRecord),'');
+      await page.locator('#tubing').selectOption('60');
+      await result(page,'21.84 м³/сут');
+      assert.equal(await page.locator('#vkpAssumption').isVisible(),false);
+      await page.locator('#tubing').selectOption('89');
+      await result(page,'13.92 м³/сут');
+      await page.locator('#tubing').selectOption('73');
+      await result(page,'18.48 м³/сут');
+
+      // Changing the source is explicit and never swaps casing/tubing.
+      await page.locator('#source').selectOption('По геометрии');
       assert.equal(await page.locator('#casingOuter').inputValue(), '139.7');
       assert.equal(await page.locator('#tubing').inputValue(), '73');
-      assert.equal(await page.locator('#wall').inputValue(), '');
-      assert.equal(await page.locator('#liveResult .value').count(), 0);
+      assert.deepEqual(await page.locator('#vkpBox .row select').evaluateAll(nodes => nodes.map(n => n.id)), ['casingOuter','tubing']);
       await page.locator('#wall').selectOption('6.2');
       assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.008542 м³/м');
       await page.locator('#flowType').selectOption('Герметичный ОК');
       await result(page, '20.5 м³/сут');
       await page.locator('#flowCableArea').fill('200');
       await result(page, '20.02 м³/сут');
+      await page.locator('#wall').selectOption('7');
+      await page.locator('#flowCableArea').fill('518.91');
+      await result(page,'18.49 м³/сут');
+      await page.locator('#source').selectOption('По справочнику');
+      assert.equal(await page.locator('#casing').inputValue(),'139.7');
+      await result(page,'18.48 м³/сут');
+      await page.locator('#source').selectOption('По геометрии');
+      assert.equal(await page.locator('#wall').inputValue(),'7');
+      assert.equal(await page.locator('#flowCableArea').inputValue(),'518.91');
+      await result(page,'18.49 м³/сут');
+      await page.locator('#casingOuter').selectOption('146');
+      await page.locator('#wall').selectOption('8.5');
+      await page.locator('#casingOuter').selectOption('139.7');
+      assert.equal(await page.locator('#wall').inputValue(),'7');
+      await page.evaluate(() => go('home'));
+      await page.evaluate(() => goBack());
+      assert.equal(await page.locator('#source').inputValue(),'По геометрии');
+      assert.equal(await page.locator('#casingOuter').inputValue(),'139.7');
+      assert.equal(await page.locator('#tubing').inputValue(),'73');
+      assert.equal(await page.locator('#wall').inputValue(),'7');
+      assert.equal(await page.locator('#flowCableArea').inputValue(),'518.91');
+      await result(page,'18.49 м³/сут');
+      await page.locator('#wall').selectOption('6.2');
       await page.locator('#flowCableArea').fill('100000');
       assert.equal(await page.locator('#liveResult .value').count(), 0);
       await page.locator('#flowCableArea').fill('');

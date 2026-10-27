@@ -108,9 +108,11 @@ function renderFrequency() {
 
 const vkpTable = {
   '139.7-60': 0.0091,
-  // The supplied table says 0.0100, exceeding the physical maximum.
-  // No replacement is inferred: this construction requires an actual wall size.
-  '139.7-73': null,
+  // Calculated approximation, not the erroneous 0.0100 printed in table 13.
+  // User-selected 7 mm casing wall; table 9 KPBP 3x16 maximum envelope:
+  // pi/4 * ((139.7 - 2*7)^2 - 73^2) * 1e-6 - 14.7*35.3*1e-6
+  // = 0.007705379... m³/m, rounded to the reference table's four decimals.
+  '139.7-73': 0.0077,
   '139.7-89': 0.0058,
   '146-60': 0.01,
   '146-73': 0.0087,
@@ -140,52 +142,66 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
   const referenceOption = document.getElementById('source').options[0];
   referenceOption.value = 'По справочнику';
   referenceOption.textContent = 'По справочнику (приближённо)';
-  function rebuildVkp(options = {}) {
-    const selectedTubing = options.tubing || document.getElementById('tubing')?.value || '73';
+  let selectedCasing = '168', selectedTubing = '73', geometryCasing = null;
+  const geometryWalls = new Map();
+  let geometryCable = '';
+  function rememberGeometry() {
+    if (!document.getElementById('wall')) return;
+    geometryWalls.set(geometryCasing, document.getElementById('wall').value);
+    geometryCable = document.getElementById('flowCableArea').value;
+  }
+  function rebuildVkp() {
+    selectedCasing = document.getElementById('casing')?.value ||
+      document.getElementById('casingOuter')?.value || selectedCasing;
+    selectedTubing = document.getElementById('tubing')?.value || selectedTubing;
+    rememberGeometry();
     const src = source.value;
     if (src === 'По справочнику') {
+      if (!['139.7', '146', '168', '178'].includes(selectedCasing)) selectedCasing = '168';
       vkpBox.innerHTML = `<div class="row">${selectField(
         'casing',
         'ЭК',
         ['139.7', '146', '168', '178'].sort((a, b) => Number(a) - Number(b)),
-        '168',
+        selectedCasing,
       )}${selectField(
         'tubing',
         'НКТ',
         Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
         selectedTubing,
-      )}</div><div class="hint" id="vkpText"></div>`;
+      )}</div><div class="hint" id="vkpText"></div><div class="hint" id="vkpAssumption" hidden></div>`;
     } else {
       vkpBox.innerHTML = `<div class="row">${selectField(
-        'tubing',
-        'НКТ',
-        Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
-        selectedTubing,
-      )}${selectField(
         'casingOuter',
         'D ЭК',
         Object.keys(casingWalls).sort((a, b) => Number(a) - Number(b)),
-        options.casing || '146',
+        selectedCasing,
+      )}${selectField(
+        'tubing',
+        'НКТ',
+        Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
+        selectedTubing,
       )}</div><div id="wallHolder"></div>${field('flowCableArea', 'Наружное сечение всего кабеля, мм² (необязательно)')}<p class="hint">Пустое поле — геометрический расчёт без учёта кабеля.</p><div class="hint" id="vkpText"></div>`;
-      buildWall(options.requireWall === true);
+      document.getElementById('flowCableArea').value = geometryCable;
+      buildWall();
       bind(['flowCableArea'], calc);
     }
     bind(['casing', 'tubing', 'casingOuter'], (event) => {
-      if (event.target.id === 'casingOuter') buildWall();
+      if (event.target.id === 'casingOuter') {
+        rememberGeometry();
+        buildWall();
+      }
       calc();
     });
     calc();
   }
-  function buildWall(requireSelection = false) {
+  function buildWall() {
     const co = document.getElementById('casingOuter');
     if (!co) return;
     const vals = [...(casingWalls[co.value] || [])].sort((a, b) => Number(a) - Number(b));
-    wallHolder.innerHTML = selectField('wall', 'Стенка ЭК, мм', vals, vals[0]);
-    if (requireSelection) {
-      const select = document.getElementById('wall');
-      select.insertAdjacentHTML('afterbegin', '<option value="">— Выберите стенку —</option>');
-      select.value = '';
-    }
+    geometryCasing = co.value;
+    const saved = geometryWalls.get(geometryCasing);
+    wallHolder.innerHTML = selectField('wall', 'Стенка ЭК, мм', vals,
+      vals.some(value => String(value) === saved) ? saved : vals[0]);
     bind(['wall'], calc);
   }
   function calc() {
@@ -203,13 +219,18 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       detail = '';
     if (source.value === 'По справочнику') {
       const cas = document.getElementById('casing')?.value;
-      if (cas === '139.7' && tub === '73') {
-        source.value = 'По геометрии';
-        rebuildVkp({ casing: cas, tubing: tub, requireWall: true });
-        return;
-      }
       vkp = vkpTable[`${cas}-${tub}`];
       detail = `ЭК=${cas} мм; НКТ=${tub} мм`;
+      const approximation = cas === '139.7' && tub === '73';
+      const assumption = document.getElementById('vkpAssumption');
+      // Replacing a focused input can synchronously emit its final change
+      // while the new selector markup is still being installed.
+      if (assumption) {
+        assumption.hidden = !approximation;
+        assumption.textContent = approximation
+          ? 'Расчётное приближение: стенка ЭК 7 мм; КПБП 3×16 по максимальным габаритам 14,7 × 35,3 мм.' : '';
+      }
+      if (approximation) detail += '; расчётное приближение: стенка ЭК=7 мм; КПБП 3×16=14.7×35.3 мм';
     } else {
       const co = num(document.getElementById('casingOuter')?.value),
         w = num(document.getElementById('wall')?.value),
@@ -441,7 +462,8 @@ function renderTap() {
 let historyVisibleCount = 50;
 function historyCalculationNotice(entry) {
   return entry.method === 'По справочнику' &&
-    /ЭК=139[.,]7\s*мм;\s*НКТ=73\s*мм/.test(entry.details || '')
+    /ЭК=139[.,]7\s*мм;\s*НКТ=73\s*мм/.test(entry.details || '') &&
+    /Vкп=0[.,]0100(?:00)?\s*м³\/м/.test(entry.details || '')
     ? 'Требует пересчёта: старое табличное Vкп для ЭК 139,7 / НКТ 73.' : '';
 }
 function renderHistory() {

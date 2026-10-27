@@ -74,7 +74,7 @@ test('inflow rejects missing values and zero time while retaining true zero meas
   assert.equal(math.wellFlow('drain', 0, 1, 1440, 1, 0.135), -0.14);
 });
 
-test('eleven source capacities remain unchanged and the impossible 139.7/73 value is disabled', () => {
+test('eleven source capacities remain unchanged and 139.7/73 uses the documented calculated approximation', () => {
   const context = {};
   vm.runInNewContext(
     fs.readFileSync(path.join(__dirname, '../js/calculators.js'), 'utf8') +
@@ -82,10 +82,10 @@ test('eleven source capacities remain unchanged and the impossible 139.7/73 valu
     context,
   );
   // VNR p.45, table 13 (caption in supplied scan: 113). The 139.7/73
-  // entry is deliberately disabled for calculations; actual geometry is required.
+  // entry is a calculated approximation for a 7 mm wall and table 9 KPBP.
   assert.deepEqual(JSON.parse(JSON.stringify(context.tables)), {
     vkpTable: {
-      '139.7-60': 0.0091, '139.7-73': null, '139.7-89': 0.0058,
+      '139.7-60': 0.0091, '139.7-73': 0.0077, '139.7-89': 0.0058,
       '146-60': 0.01, '146-73': 0.0087, '146-89': 0.0067,
       '168-60': 0.015, '168-73': 0.0136, '168-89': 0.0114,
       '178-60': 0.0168, '178-73': 0.0155, '178-89': 0.0134,
