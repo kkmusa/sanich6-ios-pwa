@@ -122,11 +122,20 @@ for (const mode of ['ramp', 'rich']) {
     }
 }
 const db = JSON.parse(read('assets/PedCoolingDatabase.json'));
-assert.equal(db.length, 16160);
+const catalog = JSON.parse(read('assets/PedCoolingCatalog-v7.json'));
+assert.equal(catalog.models.length, 551);
+assert.equal(db.length, catalog.models.length * catalog.geometries.length);
 for (const row of db) {
   assert.ok(typeof row.name === 'string');
-  for (const key of ['diameter', 'power', 'speed', 'casing', 'wall', 'flow'])
+  assert.ok(Number.isFinite(row.power) || typeof row.power === 'string');
+  for (const key of ['diameter', 'speed', 'casing', 'wall'])
     assert.ok(Number.isFinite(row[key]));
+  const inner = row.casing - 2 * row.wall;
+  if (inner <= row.diameter) assert.equal(row.flow, null);
+  else {
+    const expected = Math.PI / 4 * ((inner / 1000) ** 2 - (row.diameter / 1000) ** 2) * row.speed * 86400;
+    assert.ok(row.flow > 0 && Math.abs(row.flow - expected) < 1e-9);
+  }
 }
 console.log(
   `OK ${version} (${edition}): 207 pages, ${words} search words, 335 internal + 3 external links, ${steps} station steps, ${photos.size} photos, ${db.length} PED records; scripts, manifest and cache assets valid.`,

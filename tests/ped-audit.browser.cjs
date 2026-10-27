@@ -63,7 +63,7 @@ for (const edition of ['', 'reglament/', 'bez/']) {
       await page.locator('#pedCasing').selectOption('140');
       await page.locator('#pedWall').selectOption('6.2');
       assert.deepEqual(await page.locator('.ped-result .ped-flow b').allTextContents(),
-        ['13.66 м³/сут', '8.8 м³/сут', '8.8 м³/сут', '8.54 м³/сут']);
+        ['14.08 м³/сут', '8.8 м³/сут', '8.8 м³/сут', '8.8 м³/сут']);
 
       await page.locator('#pedDia').selectOption('95');
       await page.locator('#pedPower').selectOption('16');
@@ -85,6 +85,57 @@ for (const edition of ['', 'reglament/', 'bez/']) {
       await page.locator('#pedWork').fill('81');
       await page.locator('#pedNom').fill('100');
       assert.equal(await page.locator('#pedCalc .value').innerText(), '7.6 м³/сут');
+      // EZ-Line's 90 kW exception is distinct from the adjacent range.
+      await page.locator('#pedDia').selectOption('115.8');
+      await page.locator('#pedPower').selectOption('90');
+      await page.locator('#pedCasing').selectOption('146');
+      await page.locator('#pedWall').selectOption('7.7');
+      assert.equal(await page.locator('.ped-result .ped-flow b').first().innerText(), '86.61 м³/сут');
+      await page.locator('#pedPower').selectOption('70 - 125 (кроме 90)');
+      await page.locator('#pedCasing').selectOption('146');
+      await page.locator('#pedWall').selectOption('7.7');
+      assert.equal(await page.locator('.ped-result .ped-flow b').first().innerText(), '74.24 м³/сут');
+      await page.locator('[data-ped]').first().click();
+      await page.evaluate(() => go('home'));
+      await page.evaluate(() => go('ped'));
+      assert.equal(await page.locator('#pedPower').inputValue(), '70 - 125 (кроме 90)');
+      await page.locator('#pedDia').selectOption('130');
+      await page.locator('#pedPower').selectOption('400');
+      await page.locator('#pedCasing').selectOption('168');
+      await page.locator('#pedWall').selectOption('8');
+      assert.match(await page.locator('#pedBody').innerText(), /ПЭДМТ 400-130/);
+      // Universal source row uses actual passport geometry, never a fabricated motor.
+      await page.locator('#pedMode').click();
+      for (const [id,value] of Object.entries({genericDiameter:'117',genericPower:'100',
+        genericCasing:'146',genericWall:'7.7',genericWorking:'81',genericNominal:'100'}))
+        await page.locator('#'+id).fill(value);
+      assert.equal(await page.locator('#genericNominalResult').innerText(), 'Номинальный приток: 70.84 м³/сут');
+      assert.equal(await page.locator('#pedCalc .value').innerText(), '46.48 м³/сут');
+      const lastGood = await page.evaluate(() => calculationHistory()[0].result);
+      await page.locator('#genericCasing').fill('114');
+      assert.equal(await page.locator('#pedCalc .value').count(),0);
+      assert.equal(await page.evaluate(() => state.last),null);
+      assert.equal(await page.evaluate(() => calculationHistory()[0].result),lastGood);
+      await page.locator('#genericCasing').fill('146');
+      await page.locator('#genericNominal').fill('0');
+      assert.equal(await page.locator('#pedCalc .value').count(),0);
+      await page.locator('#genericNominal').fill('100');
+      await page.evaluate(() => go('home'));
+      await page.evaluate(() => go('ped'));
+      assert.equal(await page.locator('#genericWall').inputValue(),'7.7');
+      await page.locator('#resetPed').click();
+      assert.equal(await page.locator('#pedDia').inputValue(),'');
+      await page.evaluate(async () => { await DngOfflineWorker.ready(); });
+      await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+      await context.setOffline(true);
+      await page.reload();
+      await page.locator('.hero').waitFor();
+      await page.evaluate(() => go('ped'));
+      await page.locator('#pedDia').selectOption('115.8');
+      await page.locator('#pedPower').selectOption('90');
+      await page.locator('#pedCasing').selectOption('146');
+      await page.locator('#pedWall').selectOption('7.7');
+      assert.equal(await page.locator('.ped-flow b').first().innerText(),'86.61 м³/сут');
       assert.deepEqual(errors, []);
     } finally {
       await context.close();

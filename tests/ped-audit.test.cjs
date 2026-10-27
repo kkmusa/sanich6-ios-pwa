@@ -37,13 +37,13 @@ function optionValues(html, id) {
 }
 
 test('PED source records distinguish valid cooling paths from incompatible geometry', () => {
-  // The supplied JSON includes the complete Android source, even rows the DAO excludes.
-  assert.equal(database.length, 16160);
+  // Appendix 19 model speeds expanded over the supported construction choices; incompatible rows have null, never a negative flow.
+  assert.equal(database.length, 23693);
   const usable = database.filter((p) => p.flow > 0);
-  const excluded = database.filter((p) => p.flow <= 0);
-  assert.equal(usable.length, 15147);
-  assert.equal(excluded.length, 1013);
-  assert.ok(database.every((p) => ['diameter', 'power', 'speed', 'casing', 'wall', 'flow']
+  const excluded = database.filter((p) => p.flow === null);
+  assert.equal(usable.length, 18869);
+  assert.equal(excluded.length, 4824);
+  assert.ok(database.every((p) => ['diameter', 'speed', 'casing', 'wall']
     .every((key) => Number.isFinite(p[key]))));
   assert.ok(usable.every((p) => p.casing - 2 * p.wall > p.diameter));
   assert.ok(excluded.every((p) => p.casing - 2 * p.wall <= p.diameter));
@@ -70,7 +70,7 @@ test('valid PED choices preserve Android descending nominal-flow order and exact
   ui.context.renderPedBody(database);
   const flows = [...ui.element('pedBody').innerHTML.matchAll(/Номинальный приток: <b>([^<]+) м³\/сут/g)]
     .map((m) => Number(m[1]));
-  assert.deepEqual(flows, [13.66011333210492, 8.797027430003183, 8.797027430003183, 8.537570832565574]);
+  assert.deepEqual(flows, [14.075243888005092, 8.797027430003183, 8.797027430003183, 8.797027430003183]);
 });
 
 test('PED current correction preserves the square, units and Android boundary behavior', () => {
@@ -84,7 +84,7 @@ test('PED current correction preserves the square, units and Android boundary be
 
 test('PED form shows an error rather than a valid-looking flow when correction overflows', () => {
   const ui = pedUi();
-  ui.context.renderPedDetails(database[0]);
+  ui.context.renderPedDetails(database.find(p => p.flow > 0));
   ui.element('pedWork').value = '1e308';
   ui.element('pedNom').value = '1e-308';
   ui.recalculate();

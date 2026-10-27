@@ -15,21 +15,28 @@ function rememberPed() {
 
 async function loadPedDb() {
   if (pedDb) return pedDb;
-  const r = await fetch('./assets/PedCoolingDatabase.json');
+  const r = await fetch('./assets/PedCoolingDatabase.json?v=' + APP_VERSION);
   if (!r.ok) throw new Error('Не удалось загрузить справочник ПЭД');
-  pedDb = await r.json();
+  const records = await r.json();
+  pedDb = records.map((p) => ({ ...p,
+    flow: DngMath.pedNominalFlow(p.casing, p.wall, p.diameter, p.speed) }));
   return pedDb;
 }
 function uniqueSorted(a, numeric = true) {
   return [...new Set(a)].sort((x, y) =>
-    numeric ? x - y : String(x).localeCompare(String(y), 'ru'),
+    numeric ? (Number(String(x).match(/[\d.]+/)?.[0]) - Number(String(y).match(/[\d.]+/)?.[0])) || String(x).localeCompare(String(y), 'ru') : String(x).localeCompare(String(y), 'ru'),
   );
 }
 async function renderPed() {
   app.innerHTML = screen(
-    `${topbarTo('Охлаждение ПЭД')}<main class="content stack"><div class="card"><b>Необходимый приток для охлаждения ПЭД</b><div class="hint">Выберите параметры своего ПЭД для расчёта необходимого притока.</div></div><div id="pedBody" class="stack"><div class="card">Загрузка справочника…</div></div><button type="button" class="btn secondary full" id="resetPed">Сбросить</button></main>`,
+    `${topbarTo('Охлаждение ПЭД')}<main class="content stack"><div class="card"><b>Необходимый приток для охлаждения ПЭД</b><div class="hint">Выберите параметры своего ПЭД для расчёта необходимого притока.</div></div><button type="button" class="btn secondary full" id="pedMode">REDA / CENTRILIFT</button><div id="pedBody" class="stack"><div class="card">Загрузка справочника…</div></div><button type="button" class="btn secondary full" id="resetPed">Сбросить</button></main>`,
     'reference',
   );
+  document.getElementById('pedMode').onclick = () => {
+    pedSaved.genericMode = !pedSaved.genericMode;
+    resetHistoryDraft();
+    renderPedBody(pedDb || []);
+  };
   document.getElementById('resetPed').onclick = () => {
     pedSaved = { selection: {}, selectedKey: null, working: '', nominal: '' };
     state.pedSel = {};
@@ -60,6 +67,9 @@ function pedSelectHtml(id, label, values, val = '') {
   return `<div class="field"><label>${esc(label)}</label><select id="${id}">${opts}</select></div>`;
 }
 function renderPedBody(db) {
+  const mode = document.getElementById('pedMode');
+  if (mode) mode.textContent = pedSaved.genericMode ? 'К списку моделей ПЭД' : 'REDA / CENTRILIFT';
+  if (pedSaved.genericMode) return renderGenericPed();
   const s = state.pedSel || {};
   const dias = uniqueSorted(db.map((x) => x.diameter));
   let html = pedSelectHtml('pedDia', 'Диаметр ПЭД, мм', dias, s.diameter || '');
@@ -78,11 +88,11 @@ function renderPedBody(db) {
     bindPedSelects(db);
     return;
   }
-  const power = Number(s.power);
+  const power = String(s.power);
   const cas = uniqueSorted(
-    db.filter((x) => x.diameter === dia && x.power === power).map((x) => x.casing),
+    db.filter((x) => x.diameter === dia && String(x.power) === power).map((x) => x.casing),
   );
-  html += pedSelectHtml('pedCasing', 'Обсадная колонна, мм', cas, s.casing || '');
+  html += pedSelectHtml('pedCasing', 'Наружный диаметр ЭК, мм', cas, s.casing || '');
   if (!s.casing) {
     html += `<div class="card hint">Выберите диаметр обсадной колонны.</div>`;
     document.getElementById('pedBody').innerHTML = html;
@@ -92,7 +102,7 @@ function renderPedBody(db) {
   const casing = Number(s.casing);
   const walls = uniqueSorted(
     db
-      .filter((x) => x.diameter === dia && x.power === power && x.casing === casing && Number.isFinite(x.flow) && x.flow > 0)
+      .filter((x) => x.diameter === dia && String(x.power) === power && x.casing === casing && Number.isFinite(x.flow) && x.flow > 0)
       .map((x) => x.wall),
   );
   if (!walls.length) {
@@ -112,7 +122,7 @@ function renderPedBody(db) {
   const results = db.filter(
     (x) =>
       x.diameter === dia &&
-      x.power === power &&
+      String(x.power) === power &&
       x.casing === casing &&
       Math.abs(x.wall - wall) < 1e-9 &&
       Number.isFinite(x.flow) && x.flow > 0,
@@ -150,7 +160,7 @@ function bindPedSelects(db) {
     el.onchange = (e) => {
       const key = map[id];
       const value = e.target.value;
-      state.pedSel[key] = value ? Number(value) : '';
+      state.pedSel[key] = value ? (id === 'pedPower' ? value : Number(value)) : '';
       if (id === 'pedDia') {
         state.pedSel.power = '';
         state.pedSel.casing = '';
@@ -211,6 +221,41 @@ function renderPedDetails(p) {
     rememberPed();
     calc();
   });
+  calc();
+}
+
+function renderGenericPed() {
+  const saved = pedSaved.generic || (pedSaved.generic = {});
+  const fields = [
+    ['genericDiameter', 'Диаметр корпуса ПЭД по паспорту, мм'],
+    ['genericPower', 'Мощность ПЭД по паспорту, кВт'],
+    ['genericCasing', 'Наружный диаметр ЭК, мм'],
+    ['genericWall', 'Толщина стенки ЭК, мм'],
+    ['genericWorking', 'Рабочий ток, А'],
+    ['genericNominal', 'Номинальный ток, А'],
+  ];
+  document.getElementById('pedBody').innerHTML = `<div class="card"><b>REDA / CENTRILIFT</b><p>Скорость охлаждающей жидкости — 0,31 м/с. Размеры и мощность укажите по паспорту оборудования.</p></div>${fields.map(([id, label]) => field(id, label)).join('')}<div id="genericNominalResult" class="card" role="status"></div><div id="pedCalc" class="result card" role="status"></div>`;
+  for (const [id] of fields) document.getElementById(id).value = saved[id] || '';
+  const calc = () => {
+    state._last = null;
+    for (const [id] of fields) saved[id] = document.getElementById(id).value;
+    const [diameter, power, casing, wall, working, nominal] = fields.map(([id]) => num(saved[id]));
+    const q = power > 0 ? DngMath.pedNominalFlow(casing, wall, diameter, 0.31) : null;
+    const result = document.getElementById('pedCalc');
+    document.getElementById('genericNominalResult').textContent = q === null
+      ? 'Укажите положительные размеры и мощность. Внутренний диаметр ЭК должен быть больше диаметра ПЭД.'
+      : `Номинальный приток: ${fmt(q)} м³/сут`;
+    const corrected = q === null ? null : DngMath.pedCooling(q, working, nominal);
+    if (corrected === null) {
+      result.innerHTML = '<h4>Необходимый приток</h4><div class="error">Проверьте геометрию, рабочий и номинальный ток. Номинальный ток должен быть больше нуля.</div>';
+      return;
+    }
+    result.innerHTML = `<h4>Необходимый приток при фактической загрузке ПЭД</h4><div class="value">${fmt(corrected)} м³/сут</div>`;
+    state.last = { title: 'Охлаждение ПЭД', method: 'REDA / CENTRILIFT',
+      result: `${fmt(corrected)} м³/сут`,
+      details: `ПЭД=${diameter} мм; мощность=${power} кВт; ЭК=${casing} мм; стенка=${wall} мм; скорость=0,31 м/с; номинальный приток=${q} м³/сут; рабочий ток=${working} А; номинальный ток=${nominal} А` };
+  };
+  bind(fields.map(([id]) => id), calc);
   calc();
 }
 

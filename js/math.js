@@ -196,6 +196,14 @@ const DngMath = Object.freeze({
       ? { temperatureCoefficient, loss, total: base + loss }
       : null;
   },
+  pedNominalFlow(casing, wall, diameter, speed) {
+    if (![casing, wall, diameter, speed].every(Number.isFinite) ||
+        casing <= 0 || wall <= 0 || diameter <= 0 || speed <= 0 ||
+        casing - 2 * wall <= diameter) return null;
+    const flow = Math.PI / 4 * (((casing - 2 * wall) / 1000) ** 2 -
+      (diameter / 1000) ** 2) * speed * 86400;
+    return Number.isFinite(flow) && flow > 0 ? flow : null;
+  },
   pedCooling(nominalFlow, workingCurrent, nominalCurrent) {
     if (
       ![nominalFlow, workingCurrent, nominalCurrent].every(Number.isFinite) ||
