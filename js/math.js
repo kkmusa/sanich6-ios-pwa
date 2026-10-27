@@ -95,18 +95,20 @@ const DngMath = Object.freeze({
     const minutes = (end - start) / 60000 + endHour * 60 + endMinute - startHour * 60 - startMinute;
     return minutes > 0 ? minutes : null;
   },
-  annularVolume(tubing, casing, wall) {
+  annularVolume(tubing, casing, wall, cableArea = 0) {
     if (
-      ![tubing, casing, wall].every(Number.isFinite) ||
+      ![tubing, casing, wall, cableArea].every(Number.isFinite) ||
+      cableArea < 0 ||
       tubing <= 0 ||
       casing <= 0 ||
       wall <= 0 ||
       casing - 2 * wall <= tubing
     )
       return null;
-    return finiteOrNull((Math.PI / 4) * ((casing - 2 * wall) ** 2 - tubing ** 2) * 1e-6);
+    const area = (Math.PI / 4) * ((casing - 2 * wall) ** 2 - tubing ** 2) - cableArea;
+    return area > 0 ? finiteOrNull(area * 1e-6) : null;
   },
-  wellFlow(type, delta, vkp, time, vnkt = 0, hst = 0) {
+  wellFlowRaw(type, delta, vkp, time, vnkt = 0, hst = 0) {
     if (
       ![delta, vkp, time, vnkt, hst].every(Number.isFinite) ||
       delta < 0 ||
@@ -121,7 +123,11 @@ const DngMath = Object.freeze({
     else if (type === 'drain') value = ((delta * vkp - vnkt * hst) * 1440) / time;
     else if (type === 'afterDrain') value = (delta * (vkp + vnkt) * 1440) / time;
     else return null;
-    return Number.isFinite(value) ? finiteOrNull(androidRound(value * 100) / 100) : null;
+    return finiteOrNull(value);
+  },
+  wellFlow(type, delta, vkp, time, vnkt = 0, hst = 0) {
+    const value = DngMath.wellFlowRaw(type, delta, vkp, time, vnkt, hst);
+    return value === null ? null : finiteOrNull(androidRound(value * 100) / 100);
   },
   skoVolume(variant, depth, tubingLiters = null, casingInner = null, tubingOuter = null) {
     if (!Number.isFinite(depth) || depth <= 0) return null;
@@ -357,6 +363,8 @@ const DngMath = Object.freeze({
     const initialVolume = ((pump - inflow) / 1440) * run,
       initialAccum = (initialVolume * 1440) / inflow,
       actualRun = initialAccum > maxAccum ? (run * maxAccum) / initialAccum : run;
+    if (![initialVolume, initialAccum, actualRun].every(Number.isFinite) ||
+        initialVolume <= 0 || initialAccum <= 0 || actualRun <= 0) return null;
     const volume = ((pump - inflow) / 1440) * actualRun,
       accumulation = (volume * 1440) / inflow,
       area = (Math.PI / 4) * (D * D - d * d),

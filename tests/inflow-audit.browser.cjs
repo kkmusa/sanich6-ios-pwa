@@ -95,15 +95,23 @@ for (const directory of ['', 'reglament/', 'bez/'])
       await page.locator('#flowType').selectOption('Негерметичный ОК после слива');
       await result(page, '39.84 м³/сут');
 
+      // Do not substitute a guessed coefficient for the impossible table cell.
       await page.locator('#casing').selectOption('139.7');
-      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.010000 м³/м');
-      assert.doesNotMatch(await page.locator('main').innerText(), /требует уточнения/);
-      await page.locator('#tubing').selectOption('60');
-      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.009100 м³/м');
-      assert.doesNotMatch(await page.locator('main').innerText(), /требует уточнения/);
-      await page.locator('#tubing').selectOption('73');
-      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.010000 м³/м');
-      assert.doesNotMatch(await page.locator('main').innerText(), /требует уточнения/);
+      assert.equal(await page.locator('#source').inputValue(), 'По геометрии');
+      assert.equal(await page.locator('#casingOuter').inputValue(), '139.7');
+      assert.equal(await page.locator('#tubing').inputValue(), '73');
+      assert.equal(await page.locator('#wall').inputValue(), '');
+      assert.equal(await page.locator('#liveResult .value').count(), 0);
+      await page.locator('#wall').selectOption('6.2');
+      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.008542 м³/м');
+      await page.locator('#flowType').selectOption('Герметичный ОК');
+      await result(page, '20.5 м³/сут');
+      await page.locator('#flowCableArea').fill('200');
+      await result(page, '20.02 м³/сут');
+      await page.locator('#flowCableArea').fill('100000');
+      assert.equal(await page.locator('#liveResult .value').count(), 0);
+      await page.locator('#flowCableArea').fill('');
+      await result(page, '20.5 м³/сут');
 
       // 146 mm outer casing / 7 mm wall / 73 mm outer tubing.
       await page.locator('#source').selectOption('По геометрии');
@@ -111,7 +119,7 @@ for (const directory of ['', 'reglament/', 'bez/'])
       await page.locator('#wall').selectOption('7');
       assert.doesNotMatch(await page.locator('main').innerText(), /требует уточнения/);
       await page.locator('#calculationHelpOpen').click();
-      assert.match(await page.locator('#calculationHelpDialog').innerText(), /Геометрический расчёт не учитывает объём кабеля/);
+      assert.match(await page.locator('#calculationHelpDialog').innerText(), /Если поле пустое, геометрический расчёт не учитывает объём кабеля/);
       assert.match(await page.locator('#calculationHelpDialog').innerText(), /статический уровень в затрубном пространстве и НКТ в момент окончания слива/);
       await page.locator('#calculationHelpDone').click();
       await page.locator('#flowType').selectOption('Герметичный ОК');

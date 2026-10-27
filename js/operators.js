@@ -69,7 +69,30 @@ async function operatorOfflineStatus() {
 function opNumber(value) {
   return num(value);
 }
+function opInputIssue(mode, values) {
+  const steps = operatorSteps[mode]?.[values.station] || [];
+  if (mode === 'ramp') {
+    const r = DngMath.operatorRamp(...['start','end','delta','stepMinutes'].map(k => opNumber(values[k])));
+    if (!r) return 'Проверьте частоты и время: значения должны быть положительными.';
+    if ([r.start,r.end,r.delta,r.seconds,r.rate].some(x => Number(fmt(x)) === 0) ||
+        (steps.some(s => s.description.includes('formatNumber(totalMinutes)')) && Number(fmt(r.totalMinutes)) === 0))
+      return 'Значения слишком малы для точности отображения инструкции. Нулевые настройки вместо положительных не подставляются.';
+    if (steps.some(s => s.description.includes('$duration')) &&
+        Math.abs(r.totalMinutes - Math.round(r.totalMinutes)) > 1e-8)
+      return 'Для этой инструкции время ч:мин должно выражаться целыми минутами. Измените исходные параметры; скрытое округление не применяется.';
+  } else {
+    const r = DngMath.operatorRich(...['high','low','highMinutes','lowMinutes'].map(k => opNumber(values[k])));
+    if (!r) return 'Проверьте частоты и время: значения должны быть положительными.';
+    if ([r.high,r.low,r.highMinutes,r.lowMinutes].some(x => Number(fmt(x)) === 0))
+      return 'Значения слишком малы для точности отображения инструкции. Нулевые настройки вместо положительных не подставляются.';
+    if (steps.some(s => s.description.includes('minutesClock(')) &&
+        (!Number.isInteger(r.highMinutes) || !Number.isInteger(r.lowMinutes)))
+      return 'Для этой инструкции периоды ч:мин задаются целыми минутами. Скрытое округление не применяется.';
+  }
+  return '';
+}
 function opCalc(mode, values) {
+  if (opInputIssue(mode, values)) return null;
   const n = (key) => opNumber(values[key]);
   if (mode === 'ramp') {
     const r = DngMath.operatorRamp(...['start', 'end', 'delta', 'stepMinutes'].map(n));
@@ -206,7 +229,7 @@ function renderOperator() {
           ['lowMinutes', 'Время на пониженной частоте, мин'],
         ];
   app.innerHTML = screen(
-    `${topbar('Операторы — ' + title)}<main class="content stack"><button class="btn secondary full" id="opOfflineOpen">↓ Фотографии для офлайна</button><div class="chips"><button class="chip ${mode === 'ramp' ? 'active' : ''}" data-opmode="ramp">Разгон</button><button class="chip ${mode === 'rich' ? 'active' : ''}" data-opmode="rich">РИЧ</button></div><div class="card stack"><h2>Введите свои значения</h2>${fields.map(([key, label]) => `<div class="field"><label for="op-${key}">${label}</label><input id="op-${key}" type="text" inputmode="decimal" value="${esc(v[key])}" autocomplete="off"></div>`).join('')}<div class="field"><label for="opStation">Станция управления</label><select id="opStation">${OP_STATIONS.map((s) => `<option ${s === v.station ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></div><div id="opUnderload" class="hint">${mode === 'rich' && calc ? `Время срабатывания недогрузки: ${calc.uv} с` : ''}</div><div id="opValidation" class="hint"></div><button class="btn full" id="opStart" ${calc ? '' : 'disabled'}>Перейти к инструкции</button></div><dialog id="opOfflineDialog" class="offline-dialog"><div class="stack"><button class="btn secondary" id="opOfflineClose" aria-label="Закрыть загрузку фотографий">Закрыть ×</button><h3>Фотографии станций офлайн</h3><p class="hint">Загрузите фотографии при наличии интернета.</p><button class="btn secondary full" id="opOfflineDownload">↓ Скачать фотографии</button><p id="opOfflineStatus" class="hint" role="status"></p></div></dialog></main>`,
+    `${topbar('Операторы — ' + title)}<main class="content stack"><button class="btn secondary full" id="opOfflineOpen">↓ Фотографии для офлайна</button><div class="chips"><button class="chip ${mode === 'ramp' ? 'active' : ''}" data-opmode="ramp">Разгон</button><button class="chip ${mode === 'rich' ? 'active' : ''}" data-opmode="rich">РИЧ</button></div><div class="card stack"><h2>Введите свои значения</h2>${fields.map(([key, label]) => `<div class="field"><label for="op-${key}">${label}</label><input id="op-${key}" type="text" inputmode="decimal" value="${esc(v[key])}" autocomplete="off"></div>`).join('')}<div class="field"><label for="opStation">Станция управления</label><select id="opStation">${OP_STATIONS.map((s) => `<option ${s === v.station ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></div><div id="opUnderload" class="hint">${mode === 'rich' && calc ? `Время срабатывания недогрузки: ${calc.uv} с` : ''}</div><div id="opValidation" class="hint">${calc ? '' : esc(opInputIssue(mode, v))}</div><button class="btn full" id="opStart" ${calc ? '' : 'disabled'}>Перейти к инструкции</button></div><dialog id="opOfflineDialog" class="offline-dialog"><div class="stack"><button class="btn secondary" id="opOfflineClose" aria-label="Закрыть загрузку фотографий">Закрыть ×</button><h3>Фотографии станций офлайн</h3><p class="hint">Загрузите фотографии при наличии интернета.</p><button class="btn secondary full" id="opOfflineDownload">↓ Скачать фотографии</button><p id="opOfflineStatus" class="hint" role="status"></p></div></dialog></main>`,
   );
   document.getElementById('opOfflineDownload').onclick = downloadOperatorPhotos;
   const offlineDialog = document.getElementById('opOfflineDialog');
@@ -248,12 +271,15 @@ function renderOperator() {
       document.getElementById('opStart').disabled = !c;
       document.getElementById('opValidation').textContent = c
         ? ''
-        : 'Проверьте частоты и время: значения должны быть положительными.';
+        : opInputIssue(mode, v);
     }),
   );
   document.getElementById('opStation').onchange = (e) => {
     v.station = e.target.value;
     persistOperatorState();
+    const c = opCalc(mode, v);
+    document.getElementById('opStart').disabled = !c;
+    document.getElementById('opValidation').textContent = c ? '' : opInputIssue(mode, v);
   };
   document.getElementById('opStart').onclick = () => {
     if (!opCalc(mode, v)) return;

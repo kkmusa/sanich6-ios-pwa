@@ -1,4 +1,4 @@
-const APP_VERSION = '3.0.14';
+const APP_VERSION = '3.0.15';
 const APP_EDITION = document.documentElement.dataset.edition || 'author';
 const APP_NAME = document.title || 'Оператор ДНГ';
 const app = document.getElementById('app');

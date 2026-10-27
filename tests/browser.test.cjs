@@ -90,6 +90,45 @@ async function result(page, text) {
     { timeout: 10000 },
   );
 }
+test('deep audit: tiny negative drainage is rejected and obsolete history is identified without deletion', () =>
+  withPage(async page => {
+    await go(page,'flow');
+    await page.locator('#flowType').selectOption('Негерметичный ОК в период слива');
+    await fill(page,{hst:'0.000001',dh:'0',time:'60'});
+    assert.equal(await page.locator('#liveResult .value').count(),0);
+    assert.match(await page.locator('#liveResult').innerText(),/отрицательный приток/);
+    assert.equal(await page.evaluate(()=>calculationHistory().length),0);
+    await page.evaluate(()=>saveHistory({title:'Герметичный ОК',method:'По справочнику',
+      result:'24 м³/сут',details:'ΔH=100 м; время=60 мин; ЭК=139.7 мм; НКТ=73 мм; Vкп=0.010000 м³/м'}));
+    await go(page,'history');
+    assert.match(await page.locator('.history-item').innerText(),/Требует пересчёта/);
+    assert.equal(await page.locator('.history-result').innerText(),'24 м³/сут');
+  }));
+test('deep audit: RPD reports unsuitable limits and rejects negative pressure without inventing settings', () =>
+  withPage(async page => {
+    await go(page,'rpd');
+    await fill(page,{rpdCasing:'0.15',rpdTubing:'0.073',rpdOil:'870',rpdWater:'1015',
+      rpdWatercut:'80',rpdInflow:'17',rpdPump:'57',rpdIntake:'30',rpdRun:'1',rpdMaxAccum:'20'});
+    assert.match(await page.locator('#liveResult').innerText(),/Время работы менее 3 минут/);
+    assert.equal(await page.evaluate(()=>state.last),null);
+    await page.locator('#rpdRun').fill('10');
+    assert.match(await page.locator('#liveResult .value').innerText(),/28.33/);
+    await page.locator('#rpdIntake').fill('1');
+    assert.equal(await page.locator('#liveResult .value').count(),0);
+    assert.match(await page.locator('#liveResult').innerText(),/отрицательная граница/);
+    assert.equal(await page.evaluate(()=>state.last),null);
+  }));
+test('deep audit: vertical level matches Word example and impossible elongation is rejected', () =>
+  withPage(async page => {
+    await go(page,'level');
+    await fill(page,{depth:'3000',pz:'24',pd:'35',density:'0.65',extension:'271'});
+    await result(page,'2559.77 м');
+    assert.match(await page.locator('#liveResult').innerText(),/Вертикальный уровень/);
+    for(const extension of ['-1','3001']) {
+      await page.locator('#extension').fill(extension);
+      assert.equal(await page.locator('#liveResult .value').count(),0);
+    }
+  }));
 test('calculator navigation preserves result, and history persists across reload', () =>
   withPage(async (page) => {
     await go(page, 'level');
@@ -104,6 +143,19 @@ test('calculator navigation preserves result, and history persists across reload
     await page.locator('.hero').waitFor();
     await go(page, 'history');
     assert.equal(await page.locator('.history-result').textContent(), '900 м');
+  }));
+test('deep audit: station change immediately validates whether the instruction can represent the duration', () =>
+  withPage(async page => {
+    await go(page,'ramp');
+    await fill(page,{'op-start':'40','op-end':'41','op-delta':'1','op-stepMinutes':'1'});
+    await page.locator('#opStation').selectOption('ТРИОЛ (УМКА)');
+    assert.equal(await page.locator('#opStart').isDisabled(),true);
+    assert.match(await page.locator('#opValidation').innerText(),/целыми минутами/);
+    await page.locator('#opStation').selectOption('Борец КАСКАД-НТ');
+    assert.equal(await page.locator('#opStart').isDisabled(),false);
+    await page.locator('#opStation').selectOption('ТРИОЛ (УМКА)');
+    await page.locator('#op-stepMinutes').fill('60');
+    assert.equal(await page.locator('#opStart').isDisabled(),false);
   }));
 test('manual stopwatch suspends UI updates on navigation, interval wheels survive navigation and reload', () =>
   withPage(async (page) => {
@@ -727,7 +779,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.14'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.15'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),

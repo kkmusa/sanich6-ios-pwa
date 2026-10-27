@@ -130,28 +130,41 @@ function renderRpd() {
       ['rpdWatercut', 'Обводнённость, %'],
       ['rpdInflow', 'Приток, м³/сут'],
       ['rpdPump', 'Подача ЭЦН, м³/сут'],
-      ['rpdIntake', 'Проектное давление на приёме, ат'],
+      ['rpdIntake', 'Проектное давление на приёме, атм'],
       ['rpdRun', 'Исходное время работы, мин'],
       ['rpdMaxAccum', 'Максимальное время накопления, мин'],
     ];
   app.innerHTML = screen(
-    `${topbar(title)}<main class="content stack"><p class="hint">Периодическая откачка: расчёт цикла и ориентировочных уставок давления на приёме.</p>${fields.map(([id, label]) => field(id, label)).join('')}<div id="liveResult">${resultCard(title, '', 'Введите исходные параметры')}</div><p class="hint">Итоговые уставки проверяются по действующему регламенту и фактической конфигурации ТМС/СУ. Давления указаны в ат.</p></main>`,
+    `${topbar(title)}<main class="content stack"><p class="hint">Периодическая откачка: расчёт цикла и ориентировочных уставок давления на приёме.</p>${fields.map(([id, label]) => field(id, label)).join('')}<div id="liveResult">${resultCard(title, '', 'Введите исходные параметры')}</div><p class="hint">Итоговые уставки проверяются по действующему регламенту и фактической конфигурации ТМС/СУ. Давления указаны в атм по методике РПД.</p></main>`,
   );
   function calc() {
     const values = fields.map(([id]) => engineeringNumber(document.getElementById(id).value)),
       r = DngMath.rpd(...values);
+    state._last = null;
     if (!r)
       return setResult(
         title,
         '',
         'Проверьте геометрию, плотности, обводнённость, давления и время; подача ЭЦН должна быть больше притока',
       );
-    const value = `Время работы: ${fmt(r.actualRun)} мин\nОбъём откачки: ${fmt(r.volume)} м³\nНакопление: ${fmt(r.accumulation)} мин\nИзменение уровня: ${fmt(r.deltaLevel)} м\nПлотность: ${fmt(r.rho)} кг/м³\nПерепад давления: ${fmt(r.deltaP)} ат\nДавление отключения: ${fmt(r.off)} ат\nДавление запуска: ${fmt(r.start)} ат`;
+    if (r.off < 0)
+      return setResult(title, '', 'Перепад давления больше проектного давления. Проверьте исходные параметры: отрицательная граница отключения не является готовой уставкой.');
+    const value = `Время работы: ${fmt(r.actualRun)} мин\nОбъём откачки: ${fmt(r.volume)} м³\nНакопление: ${fmt(r.accumulation)} мин\nИзменение уровня: ${fmt(r.deltaLevel)} м\nПлотность: ${fmt(r.rho)} кг/м³\nПерепад давления: ${fmt(r.deltaP)} атм\nДавление отключения: ${fmt(r.off)} атм\nДавление запуска: ${fmt(r.start)} атм`;
     setResult(title, value);
+    const restrictions = [];
+    if (r.actualRun < 3) restrictions.push('Время работы менее 3 минут');
+    if (r.deltaP < 1) restrictions.push('Диапазон давлений менее 1 атм');
+    if (restrictions.length) {
+      const note = document.createElement('p');
+      note.className = 'hint';
+      note.textContent = restrictions.join('. ') + '. Результат не соответствует рекомендациям раздела 11.11.4 ВНР; режим требует проверки.';
+      document.getElementById('liveResult').append(note);
+      return;
+    }
     state.last = {
       title,
       method: 'Периодическая откачка',
-      result: `Pоткл=${fmt(r.off)} ат; Pзап=${fmt(r.start)} ат`,
+      result: `Pоткл=${fmt(r.off)} атм; Pзап=${fmt(r.start)} атм`,
       details: `Tработы=${fmt(r.actualRun)} мин; Tнакопления=${fmt(r.accumulation)} мин; V=${fmt(r.volume)} м³; ΔL=${fmt(r.deltaLevel)} м; Qпр=${values[5]} м³/сут; Qэцн=${values[6]} м³/сут`,
     };
   }

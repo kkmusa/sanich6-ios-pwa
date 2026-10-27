@@ -50,22 +50,23 @@ function renderHeadAtFrequency() {
 
 function renderLevel() {
   app.innerHTML = screen(
-    `${topbar('Расчёт уровня жидкости')}<main class="content stack">${field('depth', 'Глубина спуска насоса, м')}<div class="row">${field('pz', 'Pз')}${field('pd', 'Pд')}</div>${field('density', 'Плотность жидкости, г/см³')}${field('extension', 'Удлинение, м (необязательно)')}<div id="liveResult">${resultCard('Уровень жидкости', '', 'Заполните все параметры')}</div><button class="btn secondary full" id="clear">Очистить</button></main>`,
+    `${topbar('Расчёт уровня жидкости')}<main class="content stack">${field('depth', 'Глубина спуска насоса, м')}<div class="row">${field('pz', 'Pз, ат (кгс/см²)')}${field('pd', 'Pд, ат (кгс/см²)')}</div>${field('density', 'Плотность жидкости, г/см³')}${field('extension', 'Удлинение, м (необязательно)')}<div id="liveResult">${resultCard('Уровень жидкости', '', 'Заполните все параметры')}</div><button class="btn secondary full" id="clear">Очистить</button></main>`,
   );
   const calc = () => {
     const d = num(depth.value),
       z = num(pz.value),
       p = num(pd.value),
       rho = num(density.value);
-    if ([d, z, p, rho].some((v) => v === null) || rho <= 0)
+    if ([d, z, p, rho].some((v) => v === null) || rho <= 0 || d <= 0)
       return setResult('Уровень жидкости', '', 'Заполните все параметры');
     const extensionText = document.getElementById('extension').value,
       extensionValue = extensionText.trim() === '' ? 0 : num(extensionText);
-    if (extensionValue === null) return setResult('Уровень жидкости', '', 'Проверьте удлинение');
+    if (extensionValue === null || extensionValue < 0 || extensionValue > d)
+      return setResult('Уровень жидкости', '', 'Удлинение должно быть от нуля до глубины спуска');
     const level = DngMath.liquidLevel(d - extensionValue, z, p, rho * 1000);
     if (level === null)
       return setResult('Уровень жидкости', '', 'Результат выходит за числовой диапазон');
-    setResult('Уровень жидкости', `${fmt(level)} м`);
+    setResult('Вертикальный уровень жидкости', `${fmt(level)} м`);
     state.last = {
       title: 'Уровень жидкости',
       method: 'Автоматический расчёт',
@@ -85,7 +86,7 @@ function renderLevel() {
 
 function renderFrequency() {
   app.innerHTML = screen(
-    `${topbar('Необходимая частота запуска')}<main class="content stack">${field('level', 'Уровень жидкости, м')}${field('head', 'Напор, м')}<div id="liveResult">${resultCard('Необходимая частота', '', 'Заполните все параметры')}</div></main>`,
+    `${topbar('Необходимая частота запуска')}<main class="content stack">${field('level', 'Вертикальный уровень жидкости, м')}${field('head', 'Паспортный напор при 50 Гц, м')}<p class="hint">Оценка по исходной модели: добавочный напор 392,4 м.</p><div id="liveResult">${resultCard('Необходимая частота', '', 'Заполните все параметры')}</div></main>`,
   );
   const calc = () => {
     const l = num(level.value),
@@ -107,7 +108,9 @@ function renderFrequency() {
 
 const vkpTable = {
   '139.7-60': 0.0091,
-  '139.7-73': 0.01,
+  // The supplied table says 0.0100, exceeding the physical maximum.
+  // No replacement is inferred: this construction requires an actual wall size.
+  '139.7-73': null,
   '139.7-89': 0.0058,
   '146-60': 0.01,
   '146-73': 0.0087,
@@ -134,7 +137,11 @@ function renderFlow() {
 ${selectField('flowType', 'Вид расчёта', ['Герметичный ОК', 'Негерметичный ОК в период слива', 'Негерметичный ОК после слива'], 'Герметичный ОК')}
 ${selectField('source', 'Источник Vкп', ['По справочнику', 'По геометрии'], 'По справочнику')}
 <div class="card stack" id="vkpBox"></div><div class="row">${field('dh', 'ΔH, м')}${field('time', 'Время, мин')}</div><div id="hstWrap"></div><div id="liveResult">${resultCard('Приток', '', 'Заполните параметры')}</div></main>`);
-  function rebuildVkp() {
+  const referenceOption = document.getElementById('source').options[0];
+  referenceOption.value = 'По справочнику';
+  referenceOption.textContent = 'По справочнику (приближённо)';
+  function rebuildVkp(options = {}) {
+    const selectedTubing = options.tubing || document.getElementById('tubing')?.value || '73';
     const src = source.value;
     if (src === 'По справочнику') {
       vkpBox.innerHTML = `<div class="row">${selectField(
@@ -146,21 +153,22 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
         'tubing',
         'НКТ',
         Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
-        '73',
+        selectedTubing,
       )}</div><div class="hint" id="vkpText"></div>`;
     } else {
       vkpBox.innerHTML = `<div class="row">${selectField(
         'tubing',
         'НКТ',
         Object.keys(vnkt).sort((a, b) => Number(a) - Number(b)),
-        '73',
+        selectedTubing,
       )}${selectField(
         'casingOuter',
         'D ЭК',
         Object.keys(casingWalls).sort((a, b) => Number(a) - Number(b)),
-        '146',
-      )}</div><div id="wallHolder"></div><div class="hint" id="vkpText"></div>`;
-      buildWall();
+        options.casing || '146',
+      )}</div><div id="wallHolder"></div>${field('flowCableArea', 'Наружное сечение всего кабеля, мм² (необязательно)')}<p class="hint">Пустое поле — геометрический расчёт без учёта кабеля.</p><div class="hint" id="vkpText"></div>`;
+      buildWall(options.requireWall === true);
+      bind(['flowCableArea'], calc);
     }
     bind(['casing', 'tubing', 'casingOuter'], (event) => {
       if (event.target.id === 'casingOuter') buildWall();
@@ -168,11 +176,16 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
     });
     calc();
   }
-  function buildWall() {
+  function buildWall(requireSelection = false) {
     const co = document.getElementById('casingOuter');
     if (!co) return;
     const vals = [...(casingWalls[co.value] || [])].sort((a, b) => Number(a) - Number(b));
-    wallHolder.innerHTML = selectField('wall', 'Стенка ЭК', vals, vals[0]);
+    wallHolder.innerHTML = selectField('wall', 'Стенка ЭК, мм', vals, vals[0]);
+    if (requireSelection) {
+      const select = document.getElementById('wall');
+      select.insertAdjacentHTML('afterbegin', '<option value="">— Выберите стенку —</option>');
+      select.value = '';
+    }
     bind(['wall'], calc);
   }
   function calc() {
@@ -190,22 +203,29 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       detail = '';
     if (source.value === 'По справочнику') {
       const cas = document.getElementById('casing')?.value;
+      if (cas === '139.7' && tub === '73') {
+        source.value = 'По геометрии';
+        rebuildVkp({ casing: cas, tubing: tub, requireWall: true });
+        return;
+      }
       vkp = vkpTable[`${cas}-${tub}`];
       detail = `ЭК=${cas} мм; НКТ=${tub} мм`;
     } else {
       const co = num(document.getElementById('casingOuter')?.value),
         w = num(document.getElementById('wall')?.value),
-        to = num(tub);
+        to = num(tub),
+        cableText = document.getElementById('flowCableArea')?.value || '',
+        cableArea = cableText.trim() ? num(cableText) : 0;
       if (co && w && to) {
         const inner = co - 2 * w;
         if (inner > to) {
-          vkp = DngMath.annularVolume(to, co, w);
-          detail = `НКТ=${tub} мм; D ЭК=${co} мм; стенка=${w} мм; Dвнутр=${fmt(inner)} мм`;
+          vkp = DngMath.annularVolume(to, co, w, cableArea);
+          detail = `НКТ=${tub} мм; D ЭК=${co} мм; стенка=${w} мм; Dвнутр=${fmt(inner)} мм; кабель=${cableArea === 0 ? 'без учёта' : cableArea + ' мм²'}`;
         }
       }
     }
     const vt = document.getElementById('vkpText');
-    if (vt) vt.textContent = vkp ? `Vкп: ${vkp.toFixed(6)} м³/м` : 'Не удалось определить Vкп';
+    if (vt) vt.textContent = vkp ? `Vкп: ${vkp.toFixed(6)} м³/м` : 'Выберите размеры и проверьте сечение кабеля';
     const D = num(dh.value),
       T = num(time.value);
     if (D === null || D < 0 || T === null || T <= 0 || !vkp)
@@ -219,9 +239,10 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
             : 'drain';
     const hs = mode === 'drain' ? num(document.getElementById('hst')?.value) : 0;
     if (hs === null || hs < 0) return setResult('Приток', '', 'Введите Hст');
+    const raw = DngMath.wellFlowRaw(mode, D, vkp, T, vnkt[tub] || 0, hs);
     const r = DngMath.wellFlow(mode, D, vkp, T, vnkt[tub] || 0, hs);
     if (r === null) return setResult('Приток', '', 'Проверьте параметры');
-    if (r < 0)
+    if (raw < 0)
       return setResult('Приток', '', 'Расчёт дал отрицательный приток. Проверьте ΔH, Hст, время и соответствие выбранному режиму слива.');
     setResult('Приток', `${fmt(r)} м³/сут`);
     state.last = {
@@ -328,7 +349,7 @@ function renderSko() {
 
 function renderTap() {
   app.innerHTML = screen(
-    `${topbar('Расчёт отпайки ТМПН')}<main class="content stack"><div class="section-title">Тип станции управления</div><div class="chips"><button class="chip active" data-mode="no">Без ЧРП</button><button class="chip" data-mode="vfd">С ЧРП</button></div><div class="row">${field('trIn', 'Uвх ТМПН, В')}${field('supplyV', 'U сети, В')}</div><div class="row">${field('motorV', 'U ПЭД, В')}${field('motorI', 'I ПЭД, А')}</div><div class="row">${field('cableL', 'Кабель, м')}${field('cableS', 'Сечение, мм²')}</div>${field('temp', 'Температура пласта, °C')}<div class="section-title">Материал кабеля</div><div class="chips"><button class="chip active" data-mat="cu">Медь</button><button class="chip" data-mat="al">Алюминий</button></div><div class="section-title">Тип ПЭД</div><div class="chips"><button class="chip active" data-motor="async">Асинхронный</button><button class="chip" data-motor="pm">Вентильный</button></div><div id="vfdFields"></div><div id="liveResult">${resultCard('Расчётное напряжение отпайки', '', 'Заполните параметры')}</div><div class="hint">Выберите ближайшую доступную отпайку в большую сторону.</div></main>`,
+    `${topbar('Расчёт отпайки ТМПН')}<main class="content stack"><div class="section-title">Тип станции управления</div><div class="chips"><button class="chip active" data-mode="no">Без ЧРП</button><button class="chip" data-mode="vfd">С ЧРП</button></div><div class="row">${field('trIn', 'Номинальное Uвх ТМПН, В')}${field('supplyV', 'Фактическое U сети, В')}</div><div class="row">${field('motorV', 'Паспортное U ПЭД, В')}${field('motorI', 'Номинальный ток ПЭД, А')}</div><div class="row">${field('cableL', 'Кабель, м')}${field('cableS', 'Сечение, мм²')}</div>${field('temp', 'Температура пласта, °C')}<div class="section-title">Материал кабеля</div><div class="chips"><button class="chip active" data-mat="cu">Медь</button><button class="chip" data-mat="al">Алюминий</button></div><div class="section-title">Тип ПЭД</div><div class="chips"><button class="chip active" data-motor="async">Асинхронный</button><button class="chip" data-motor="pm">Вентильный</button></div><div id="vfdFields"></div><div id="liveResult">${resultCard('Расчётное напряжение отпайки', '', 'Заполните параметры')}</div><div class="hint">Выберите ближайшую доступную отпайку в большую сторону.</div></main>`,
   );
   let mode = 'no',
     mat = 'cu',
@@ -336,7 +357,7 @@ function renderTap() {
     filter = false;
   function rebuild() {
     if (!vfdFields.firstElementChild) {
-      vfdFields.innerHTML = `<div class="row">${field('vfdV', 'Uвых max ЧРП, В')}${field('fmax', 'Fmax, Гц')}</div>${field('fnom', 'Номинальная частота ПЭД, Гц')}<label class="switchline card"><span><b>Выходной фильтр в составе НЭО</b><br><span class="subtle">Учитывать коэффициент 1,08</span></span><input id="filter" type="checkbox"></label>`;
+      vfdFields.innerHTML = `<div class="row">${field('vfdV', 'Uвых max ЧРП, В')}${field('fmax', 'Максимальная частота ЧРП Fб, Гц')}</div>${field('fnom', 'Номинальная частота ПЭД, Гц')}<label class="switchline card"><span><b>Выходной фильтр в составе НЭО</b><br><span class="subtle">Учитывать коэффициент 1,08</span></span><input id="filter" type="checkbox"></label>`;
       bind(['vfdV', 'fmax', 'fnom'], calc);
       document.getElementById('filter').onchange = (event) => {
         filter = event.target.checked;
@@ -418,11 +439,16 @@ function renderTap() {
 }
 
 let historyVisibleCount = 50;
+function historyCalculationNotice(entry) {
+  return entry.method === 'По справочнику' &&
+    /ЭК=139[.,]7\s*мм;\s*НКТ=73\s*мм/.test(entry.details || '')
+    ? 'Требует пересчёта: старое табличное Vкп для ЭК 139,7 / НКТ 73.' : '';
+}
 function renderHistory() {
   const list = calculationHistory(),
     visible = list.slice(0, historyVisibleCount);
   app.innerHTML = screen(
-    `${topbar('История расчётов')}<main class="content stack">${list.length ? `<button class="btn danger full" id="clearHistory">Очистить историю</button><div class="hint">Показано ${visible.length} из ${list.length}</div>${visible.map((entry) => `<div class="card history-item"><div class="title">${esc(entry.title)}</div><div class="date">${new Date(entry.ts).toLocaleString('ru-RU')}</div><div class="history-result">${esc(entry.result)}</div><div class="subtle">${esc(entry.method || '')}</div><div class="hint">${esc(entry.details || '')}</div>${entry.id ? `<button class="btn danger" data-history-delete="${esc(entry.id)}" aria-label="Удалить запись ${esc(entry.title)}">Удалить запись</button>` : ''}</div>`).join('')}${visible.length < list.length ? '<button class="btn secondary full" id="moreHistory">Показать ещё</button>' : ''}` : '<div class="empty">История пока пустая.<br>Выполненные расчёты будут сохраняться на этом устройстве.</div>'}</main>`,
+    `${topbar('История расчётов')}<main class="content stack">${list.length ? `<button class="btn danger full" id="clearHistory">Очистить историю</button><div class="hint">Показано ${visible.length} из ${list.length}</div>${visible.map((entry) => `<div class="card history-item"><div class="title">${esc(entry.title)}</div><div class="date">${new Date(entry.ts).toLocaleString('ru-RU')}</div>${historyCalculationNotice(entry) ? `<div class="error">${esc(historyCalculationNotice(entry))}</div>` : ''}<div class="history-result">${esc(entry.result)}</div><div class="subtle">${esc(entry.method || '')}</div><div class="hint">${esc(entry.details || '')}</div>${entry.id ? `<button class="btn danger" data-history-delete="${esc(entry.id)}" aria-label="Удалить запись ${esc(entry.title)}">Удалить запись</button>` : ''}</div>`).join('')}${visible.length < list.length ? '<button class="btn secondary full" id="moreHistory">Показать ещё</button>' : ''}` : '<div class="empty">История пока пустая.<br>Выполненные расчёты будут сохраняться на этом устройстве.</div>'}</main>`,
     'history',
   );
   document.getElementById('clearHistory')?.addEventListener('click', () => {
