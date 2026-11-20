@@ -1,0 +1,7 @@
+
+> sanich6-ios-pwa@2.8.1-web.22 build
+> node scripts/build.mjs
+
+OK 2.8.1-web.22: 207 pages, 64169 search words, 335 internal + 3 external links, 75 station steps, 71 photos, 16160 PED records; scripts, manifest and cache assets valid.
+OK 2.8.1-web.22: 207 pages, 64169 search words, 335 internal + 3 external links, 75 station steps, 71 photos, 16160 PED records; scripts, manifest and cache assets valid.
+Static HTTPS publication bundle: dist/

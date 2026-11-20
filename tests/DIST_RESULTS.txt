@@ -1,0 +1,12 @@
+✔ all routes render; operating screens use existing mathematical functions (2707.170784ms)
+✔ complete VNR: download 207 pages, reload offline and decode every image (8976.879134ms)
+✔ PED selection/current and operator station/mode survive navigation and reload (5259.047508ms)
+✔ manual calendar dates save complete interval history and survive reload (3540.598354ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 21060.579445

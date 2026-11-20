@@ -1,0 +1,71 @@
+name: Publish Operator DNG
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Cache test browser
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-${{ runner.arch }}-playwright-shell-${{ hashFiles('node_modules/playwright-core/browsers.json') }}
+      - name: Install test browser
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: Check application files
+        run: npm run check
+      - name: Run calculation and browser tests
+        run: npm test
+      - name: Build static application
+        run: npm run build
+      - name: Check all editions, inflow, PED cooling and isolated offline data
+        run: node --test tests/editions.browser.cjs tests/inflow-audit.browser.cjs tests/ped-audit.browser.cjs
+      - name: Test published subdirectory layout
+        env:
+          PWA_TEST_ROOT: dist
+          PWA_TEST_SUBPATH: '1'
+        run: node --test --test-name-pattern='complete VNR|VNR landscape|manual interval starts|PED reset|operating modes round|flow selectors|head at frequency|all routes|manual calendar|PED selection|home is compact|Android question buttons|shell, VNR index' tests/browser.test.cjs
+      - name: Upload Pages site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Publish application
+        id: deployment
+        uses: actions/deploy-pages@v4
