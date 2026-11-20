@@ -1,0 +1,16 @@
+{
+  "name": "operator-dng-pwa",
+  "version": "3.0.33",
+  "private": true,
+  "description": "Оператор ДНГ: офлайн инженерные расчёты и регламент ВНР",
+  "scripts": {
+    "start": "python3 -m http.server 8081 --bind 127.0.0.1",
+    "test": "node --test tests/*.test.cjs",
+    "check": "node scripts/check.mjs",
+    "build": "node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "prettier": "3.8.0"
+  }
+}

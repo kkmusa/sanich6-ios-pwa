@@ -1,0 +1,4609 @@
+{
+  "source": "Приложение 19, версия 7",
+  "sha256": "4fca3185ee2494474baaf4c7d0e80fe41c075965fbdb6062c7dfcf685c1280b6",
+  "formula": "PI()/4*((Dэк-2*s)^2-Dпэд^2)*1e-6*v*86400",
+  "models": [
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)16-95 В5",
+      "diameter": 95,
+      "power": 16,
+      "speed": 0.1,
+      "sourceRow": 10
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)20-95 В5",
+      "diameter": 95,
+      "power": 20,
+      "speed": 0.1,
+      "sourceRow": 11
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)24-95 В5",
+      "diameter": 95,
+      "power": 24,
+      "speed": 0.1,
+      "sourceRow": 12
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)28-95 В5",
+      "diameter": 95,
+      "power": 28,
+      "speed": 0.15,
+      "sourceRow": 13
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)32-95 В5",
+      "diameter": 95,
+      "power": 32,
+      "speed": 0.15,
+      "sourceRow": 14
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)36-95 В5",
+      "diameter": 95,
+      "power": 36,
+      "speed": 0.16,
+      "sourceRow": 15
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)40-95 В5",
+      "diameter": 95,
+      "power": 40,
+      "speed": 0.2,
+      "sourceRow": 16
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)45-95 В5",
+      "diameter": 95,
+      "power": 45,
+      "speed": 0.2,
+      "sourceRow": 17
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)50-95 В5",
+      "diameter": 95,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 18
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)56-95 В5",
+      "diameter": 95,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 19
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)63-95 В5",
+      "diameter": 95,
+      "power": 63,
+      "speed": 0.3,
+      "sourceRow": 20
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)70-95 В5",
+      "diameter": 95,
+      "power": 70,
+      "speed": 0.3,
+      "sourceRow": 21
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)80-95 В5",
+      "diameter": 95,
+      "power": 80,
+      "speed": 0.35,
+      "sourceRow": 22
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)90-95 В5",
+      "diameter": 95,
+      "power": 90,
+      "speed": 0.4,
+      "sourceRow": 23
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)100-95 В5",
+      "diameter": 95,
+      "power": 100,
+      "speed": 0.5,
+      "sourceRow": 24
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)120-95 В5",
+      "diameter": 95,
+      "power": 120,
+      "speed": 0.6,
+      "sourceRow": 25
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)135-95 В5",
+      "diameter": 95,
+      "power": 135,
+      "speed": 0.7,
+      "sourceRow": 26
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБC(ТК)150-95 В5",
+      "diameter": 95,
+      "power": 150,
+      "speed": 0.75,
+      "sourceRow": 27
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)22-103э В5",
+      "diameter": 103,
+      "power": 22,
+      "speed": 0.15,
+      "sourceRow": 28
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)24-103э В5",
+      "diameter": 103,
+      "power": 24,
+      "speed": 0.15,
+      "sourceRow": 29
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)28-103э В5",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.17,
+      "sourceRow": 30
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)32-103э В5",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.17,
+      "sourceRow": 31
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)36-103э В5",
+      "diameter": 103,
+      "power": 36,
+      "speed": 0.17,
+      "sourceRow": 32
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)40-103э В5",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.2,
+      "sourceRow": 33
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)45-103э В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.2,
+      "sourceRow": 34
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)50-103э В5",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.25,
+      "sourceRow": 35
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)56-103э В5",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 36
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)63-103э В5",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.4,
+      "sourceRow": 37
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)70-103э В5",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.45,
+      "sourceRow": 38
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)80-103э В5",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.5,
+      "sourceRow": 39
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4.1ЭДБ(ТК)90-103э В5",
+      "diameter": 103,
+      "power": 90,
+      "speed": 0.5,
+      "sourceRow": 40
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)100-103э В5",
+      "diameter": 103,
+      "power": 100,
+      "speed": 0.5,
+      "sourceRow": 41
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)110-103э В5",
+      "diameter": 103,
+      "power": 110,
+      "speed": 0.6,
+      "sourceRow": 42
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБС(ТК)125-103э В5",
+      "diameter": 103,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 43
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБС(ТК)140-103э В5",
+      "diameter": 103,
+      "power": 140,
+      "speed": 0.7,
+      "sourceRow": 44
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4.1ЭДБС(ТК)160-103э В5",
+      "diameter": 103,
+      "power": 160,
+      "speed": 0.75,
+      "sourceRow": 45
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)180-103э В5",
+      "diameter": 103,
+      "power": 180,
+      "speed": 0.75,
+      "sourceRow": 46
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)210-103э В5",
+      "diameter": 103,
+      "power": 210,
+      "speed": 0.8,
+      "sourceRow": 47
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)16-103Н В5",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.1,
+      "sourceRow": 48
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)20-103Н В5",
+      "diameter": 103,
+      "power": 20,
+      "speed": 0.15,
+      "sourceRow": 49
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)22-103Н В5",
+      "diameter": 103,
+      "power": 22,
+      "speed": 0.15,
+      "sourceRow": 50
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)24-103Н В5",
+      "diameter": 103,
+      "power": 24,
+      "speed": 0.15,
+      "sourceRow": 51
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)28-103Н В5",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.17,
+      "sourceRow": 52
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)32-103Н В5",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.17,
+      "sourceRow": 53
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)36-103Н В5",
+      "diameter": 103,
+      "power": 36,
+      "speed": 0.17,
+      "sourceRow": 54
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)40-103Н В5",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.2,
+      "sourceRow": 55
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)45-103Н В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.2,
+      "sourceRow": 56
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)50-103Н В5",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.25,
+      "sourceRow": 57
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)56-103Н В5",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 58
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)63-103Н В5",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.4,
+      "sourceRow": 59
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)70-103Н В5",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.45,
+      "sourceRow": 60
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "ЭДБ(ТК)80-103Н В5",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.5,
+      "sourceRow": 61
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)28-117э В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.12,
+      "sourceRow": 62
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)32-117э В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.12,
+      "sourceRow": 63
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)36-117э В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.12,
+      "sourceRow": 64
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)40-117э В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 65
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)45-117э В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 66
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)50-117э В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 67
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)56-117э В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 68
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)63-117э В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 69
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)70-117э В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 70
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)80-117э В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 71
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)90-117э В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 72
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)100-117э В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 73
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБ(ТК)110-117э В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 74
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)125-117э В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 75
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБ(ТК)140-117э В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.6,
+      "sourceRow": 76
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)90-117э В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 77
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)100-117э В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 78
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4.1ЭДБС(ТК)110-117э В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 79
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБС(ТК)125-117э В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.4,
+      "sourceRow": 80
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБС(ТК)140-117э В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.4,
+      "sourceRow": 81
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБС(ТК)160-117э В5",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.5,
+      "sourceRow": 82
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБС(ТК)180-117э В5",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.6,
+      "sourceRow": 83
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБС(ТК)200-117э В5",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.6,
+      "sourceRow": 84
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)220-117э В5",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.7,
+      "sourceRow": 85
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4ЭДБС(ТК)250-117э В5",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.7,
+      "sourceRow": 86
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)8.4(1)ЭДБС(ТК)300-117э В5",
+      "diameter": 117,
+      "power": 300,
+      "speed": 0.9,
+      "sourceRow": 87
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБС(ТК)360-117э В5",
+      "diameter": 117,
+      "power": 360,
+      "speed": 1,
+      "sourceRow": 88
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)22-117эМ5 В5",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 89
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)28-117эМ5 В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.12,
+      "sourceRow": 90
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)32-117эМ5 В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.12,
+      "sourceRow": 91
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)40-117эМ5 В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 92
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)45-117эМ5 В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 93
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)50-117эМ5 В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 94
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)56-117эМ5 В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 95
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)63-117эМ5 В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 96
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)70-117эМ5 В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 97
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)80-117эМ5 В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 98
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)90-117эМ5 В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 99
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)16-117Н В5",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.08,
+      "sourceRow": 100
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)20-117Н В5",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.08,
+      "sourceRow": 101
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)22-117Н В5",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 102
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)24-117Н В5",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.1,
+      "sourceRow": 103
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)28-117Н В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.12,
+      "sourceRow": 104
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)32-117Н В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.12,
+      "sourceRow": 105
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)36-117Н В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.12,
+      "sourceRow": 106
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)40-117Н В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 107
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)45-117Н В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 108
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)50-117Н В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 109
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)56-117Н В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 110
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)63-117Н В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 111
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)70-117Н В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 112
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)80-117Н В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 113
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)90-117Н В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 114
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)100-117Н В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 115
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)ЭДБ(ТК)125-117Н В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.7,
+      "sourceRow": 116
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)22-130э В5",
+      "diameter": 130,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 117
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)32-130э В5",
+      "diameter": 130,
+      "power": 32,
+      "speed": 0.12,
+      "sourceRow": 118
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)45-130э В5",
+      "diameter": 130,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 119
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)56-130э В5",
+      "diameter": 130,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 120
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)70-130э В5",
+      "diameter": 130,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 121
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)80-130э В5",
+      "diameter": 130,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 122
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)90-130э В5",
+      "diameter": 130,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 123
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)100-130э В5",
+      "diameter": 130,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 124
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)110-130э В5",
+      "diameter": 130,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 125
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)125-130э В5",
+      "diameter": 130,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 126
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)140-130э В5",
+      "diameter": 130,
+      "power": 140,
+      "speed": 0.6,
+      "sourceRow": 127
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)150-130э В5",
+      "diameter": 130,
+      "power": 150,
+      "speed": 0.65,
+      "sourceRow": 128
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)160-130э В5",
+      "diameter": 130,
+      "power": 160,
+      "speed": 0.65,
+      "sourceRow": 129
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБ(ТК)180-130э В5",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.7,
+      "sourceRow": 130
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)250-130э В5",
+      "diameter": 130,
+      "power": 250,
+      "speed": 0.8,
+      "sourceRow": 131
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)300-130э В5",
+      "diameter": 130,
+      "power": 300,
+      "speed": 0.9,
+      "sourceRow": 132
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)360-130э В5",
+      "diameter": 130,
+      "power": 360,
+      "speed": 1,
+      "sourceRow": 133
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)400-130э В5",
+      "diameter": 130,
+      "power": 400,
+      "speed": 1,
+      "sourceRow": 134
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)450-130э В5",
+      "diameter": 130,
+      "power": 450,
+      "speed": 1,
+      "sourceRow": 135
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9)4ЭДБС(ТК)500-130э В5",
+      "diameter": 130,
+      "power": 500,
+      "speed": 1,
+      "sourceRow": 136
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ10-103/3М1В5",
+      "diameter": 103,
+      "power": 10,
+      "speed": 0.02,
+      "sourceRow": 137
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ15-103/3М1В5",
+      "diameter": 103,
+      "power": 15,
+      "speed": 0.02,
+      "sourceRow": 138
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ21-103/3М1В5",
+      "diameter": 103,
+      "power": 21,
+      "speed": 0.04,
+      "sourceRow": 139
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ27-103/3М1В5",
+      "diameter": 103,
+      "power": 27,
+      "speed": 0.06,
+      "sourceRow": 140
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ32-103/3М1В5",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.06,
+      "sourceRow": 141
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ38-103/3М1В5",
+      "diameter": 103,
+      "power": 38,
+      "speed": 0.06,
+      "sourceRow": 142
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ44-103/3М1В5",
+      "diameter": 103,
+      "power": 44,
+      "speed": 0.08,
+      "sourceRow": 143
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ50-103/3М1В5",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 144
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ56-103/3М1В5",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 145
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ63-103/3М1В5",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 146
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ70-103/3М1В5",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.2,
+      "sourceRow": 147
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ80-103/3М1В5",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.25,
+      "sourceRow": 148
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ90-103/3М1В5",
+      "diameter": 103,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 149
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ100-103/3М1В5",
+      "diameter": 103,
+      "power": 100,
+      "speed": 0.35,
+      "sourceRow": 150
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ110-103/3М1В5",
+      "diameter": 103,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 151
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ120-103/3М1В5",
+      "diameter": 103,
+      "power": 120,
+      "speed": 0.5,
+      "sourceRow": 152
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ130-103/3М1В5",
+      "diameter": 103,
+      "power": 130,
+      "speed": 0.5,
+      "sourceRow": 153
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ140-103/3М1В5",
+      "diameter": 103,
+      "power": 140,
+      "speed": 0.55,
+      "sourceRow": 154
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ18-117/3М1В5",
+      "diameter": 117,
+      "power": 18,
+      "speed": 0.08,
+      "sourceRow": 155
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ27-117/3М1В5",
+      "diameter": 117,
+      "power": 27,
+      "speed": 0.1,
+      "sourceRow": 156
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ36-117/3М1В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.12,
+      "sourceRow": 157
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ45-117/3М1В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 158
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ54-117/3М1В5",
+      "diameter": 117,
+      "power": 54,
+      "speed": 0.15,
+      "sourceRow": 159
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ63-117/3М1В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 160
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ72-117/3М1В5",
+      "diameter": 117,
+      "power": 72,
+      "speed": 0.17,
+      "sourceRow": 161
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ80-117/3М1В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.17,
+      "sourceRow": 162
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ90-117/3М1В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 163
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ100-117/3М1В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 164
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ110-117/3М1В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 165
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ128-117/3М1В5",
+      "diameter": 117,
+      "power": 128,
+      "speed": 0.4,
+      "sourceRow": 166
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ140-117/3М1В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.6,
+      "sourceRow": 167
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ160-117/3М1В5",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.6,
+      "sourceRow": 168
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ180-117/3М1В5",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.6,
+      "sourceRow": 169
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ200-117/3М1В5",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.6,
+      "sourceRow": 170
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБТ250-117/3М1В5",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.7,
+      "sourceRow": 171
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ20-117/3М1В5",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.08,
+      "sourceRow": 172
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ30-117/3М1В5",
+      "diameter": 117,
+      "power": 30,
+      "speed": 0.1,
+      "sourceRow": 173
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ40-117/3М1В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 174
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ50-117/3М1В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 175
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ60-117/3М1В5",
+      "diameter": 117,
+      "power": 60,
+      "speed": 0.17,
+      "sourceRow": 176
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ70-117/3М1В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.2,
+      "sourceRow": 177
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ80-117/3М1В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.25,
+      "sourceRow": 178
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ90-117/3М1В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 179
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ105-117/3М1В5",
+      "diameter": 117,
+      "power": 105,
+      "speed": 0.4,
+      "sourceRow": 180
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ115-117/3М1В5",
+      "diameter": 117,
+      "power": 115,
+      "speed": 0.48,
+      "sourceRow": 181
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ125-117/3М1В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.5,
+      "sourceRow": 182
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ140-117/3М1В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.55,
+      "sourceRow": 183
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ150-117/3М1В5",
+      "diameter": 117,
+      "power": 150,
+      "speed": 0.6,
+      "sourceRow": 184
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ160-117/3М1В5",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.6,
+      "sourceRow": 185
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ170-117/3М1В5",
+      "diameter": 117,
+      "power": 170,
+      "speed": 0.6,
+      "sourceRow": 186
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ190-117/3М1В5",
+      "diameter": 117,
+      "power": 190,
+      "speed": 0.6,
+      "sourceRow": 187
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ210-117/3М1В5",
+      "diameter": 117,
+      "power": 210,
+      "speed": 0.7,
+      "sourceRow": 188
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).1ВЭДБ230-117/3М1В5",
+      "diameter": 117,
+      "power": 230,
+      "speed": 0.7,
+      "sourceRow": 189
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ28-130/3В5",
+      "diameter": 130,
+      "power": 28,
+      "speed": 0.08,
+      "sourceRow": 190
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ45-130/3В5",
+      "diameter": 130,
+      "power": 45,
+      "speed": 0.1,
+      "sourceRow": 191
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ63-130/3В5",
+      "diameter": 130,
+      "power": 63,
+      "speed": 0.15,
+      "sourceRow": 192
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ80-130/3В5",
+      "diameter": 130,
+      "power": 80,
+      "speed": 0.17,
+      "sourceRow": 193
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ100-130/3В5",
+      "diameter": 130,
+      "power": 100,
+      "speed": 0.2,
+      "sourceRow": 194
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ120-130/3В5",
+      "diameter": 130,
+      "power": 120,
+      "speed": 0.4,
+      "sourceRow": 195
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ140-130/3В5",
+      "diameter": 130,
+      "power": 140,
+      "speed": 0.6,
+      "sourceRow": 196
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ160-130/3В5",
+      "diameter": 130,
+      "power": 160,
+      "speed": 0.65,
+      "sourceRow": 197
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ180-130/3В5",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.7,
+      "sourceRow": 198
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ200-130/3В5",
+      "diameter": 130,
+      "power": 200,
+      "speed": 0.7,
+      "sourceRow": 199
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ220-130/3В5",
+      "diameter": 130,
+      "power": 220,
+      "speed": 0.8,
+      "sourceRow": 200
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ240-130/3В5",
+      "diameter": 130,
+      "power": 240,
+      "speed": 0.8,
+      "sourceRow": 201
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ260-130/3В5",
+      "diameter": 130,
+      "power": 260,
+      "speed": 0.8,
+      "sourceRow": 202
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ280-130/3В5",
+      "diameter": 130,
+      "power": 280,
+      "speed": 0.8,
+      "sourceRow": 203
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ300-130/3В5",
+      "diameter": 130,
+      "power": 300,
+      "speed": 0.9,
+      "sourceRow": 204
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ330-130/3В5",
+      "diameter": 130,
+      "power": 330,
+      "speed": 1,
+      "sourceRow": 205
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ360-130/3В5",
+      "diameter": 130,
+      "power": 360,
+      "speed": 1,
+      "sourceRow": 206
+    },
+    {
+      "manufacturer": "ООО \"ПК \"Борец\"",
+      "name": "(9).11ВЭДБТ400-130/3В5",
+      "diameter": 130,
+      "power": 400,
+      "speed": 1,
+      "sourceRow": 207
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД16-М,М1",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.07,
+      "sourceRow": 208
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД24-М,М1",
+      "diameter": 103,
+      "power": 24,
+      "speed": 0.1,
+      "sourceRow": 209
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД28-М,М1",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.1,
+      "sourceRow": 210
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД32-М,М1",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.1,
+      "sourceRow": 211
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД40-М,М1",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.15,
+      "sourceRow": 212
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД45-М,М1",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 213
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД50-М,М1",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 214
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС90-М,М1",
+      "diameter": 103,
+      "power": 90,
+      "speed": 0.2,
+      "sourceRow": 215
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС100-М,М1",
+      "diameter": 103,
+      "power": 100,
+      "speed": 0.25,
+      "sourceRow": 216
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД56-М,М1",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 217
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС110-М,М1",
+      "diameter": 103,
+      "power": 110,
+      "speed": 0.3,
+      "sourceRow": 218
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД63-М,М1",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.35,
+      "sourceRow": 219
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД70-М,М1",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.35,
+      "sourceRow": 220
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС125-М,М1",
+      "diameter": 103,
+      "power": 125,
+      "speed": 0.35,
+      "sourceRow": 221
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД80-М,М1",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.4,
+      "sourceRow": 222
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС140-М,М1",
+      "diameter": 103,
+      "power": 140,
+      "speed": 0.4,
+      "sourceRow": 223
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД16-М,М1",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.05,
+      "sourceRow": 224
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД24-М,М1",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.06,
+      "sourceRow": 225
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД28-М,М1",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.08,
+      "sourceRow": 226
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД32-М,М1",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 227
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД40-М,М1",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 228
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД45-М,М1",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 229
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД50-М,М1",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 230
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД56-М,М1",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.25,
+      "sourceRow": 231
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД63-М,М1",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.3,
+      "sourceRow": 232
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД70-М,М1",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.3,
+      "sourceRow": 233
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД80-М,М1",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 234
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД90-М,М1",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 235
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД100-М,М1",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 236
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД110-М,М1",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.3,
+      "sourceRow": 237
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭД125-М,М1",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.3,
+      "sourceRow": 238
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС140-М,М1",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 239
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС160-М,М1",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.5,
+      "sourceRow": 240
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС180-М,М1",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.5,
+      "sourceRow": 241
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС200-М,М1",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.5,
+      "sourceRow": 242
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС220-М,М1",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.8,
+      "sourceRow": 243
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС250-М",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.8,
+      "sourceRow": 244
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС270-М",
+      "diameter": 117,
+      "power": 270,
+      "speed": 0.8,
+      "sourceRow": 245
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС300-М",
+      "diameter": 117,
+      "power": 300,
+      "speed": 0.8,
+      "sourceRow": 246
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС250-М1",
+      "diameter": 117,
+      "power": 250,
+      "speed": 1,
+      "sourceRow": 247
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС270-М1",
+      "diameter": 117,
+      "power": 270,
+      "speed": 1.1,
+      "sourceRow": 248
+    },
+    {
+      "manufacturer": "ОАО \"БЭНЗ\"",
+      "name": "ПЭДС300-М1",
+      "diameter": 117,
+      "power": 300,
+      "speed": 1.1,
+      "sourceRow": 249
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД8-103В5",
+      "diameter": 103,
+      "power": 8,
+      "speed": 0.05,
+      "sourceRow": 250
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД12-103В5",
+      "diameter": 103,
+      "power": 12,
+      "speed": 0.08,
+      "sourceRow": 251
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД14-103В5",
+      "diameter": 103,
+      "power": 14,
+      "speed": 0.08,
+      "sourceRow": 252
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД16-103В5",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.08,
+      "sourceRow": 253
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД16-103В5",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.08,
+      "sourceRow": 254
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД20-103В5",
+      "diameter": 103,
+      "power": 20,
+      "speed": 0.1,
+      "sourceRow": 255
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД20-103В5",
+      "diameter": 103,
+      "power": 20,
+      "speed": 0.1,
+      "sourceRow": 256
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД22-103В5",
+      "diameter": 103,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 257
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД24-103В5",
+      "diameter": 103,
+      "power": 24,
+      "speed": 0.1,
+      "sourceRow": 258
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД28-103В5",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.1,
+      "sourceRow": 259
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД30-103В5",
+      "diameter": 103,
+      "power": 30,
+      "speed": 0.1,
+      "sourceRow": 260
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД32-103В5",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.1,
+      "sourceRow": 261
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД36-103В5",
+      "diameter": 103,
+      "power": 36,
+      "speed": 0.12,
+      "sourceRow": 262
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД40-103В5",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 263
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД45-103В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 264
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД45-103 М4В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 265
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД45-103В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 266
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД48-103В5",
+      "diameter": 103,
+      "power": 48,
+      "speed": 0.15,
+      "sourceRow": 267
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД50-103В5",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 268
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД56-103В5",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.2,
+      "sourceRow": 269
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД63-103В5",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.25,
+      "sourceRow": 270
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД70-103В5",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.25,
+      "sourceRow": 271
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД80-103В5",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.25,
+      "sourceRow": 272
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС90-103В5",
+      "diameter": 103,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 273
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС100-103В5",
+      "diameter": 103,
+      "power": 100,
+      "speed": 0.32,
+      "sourceRow": 274
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС110-103В5",
+      "diameter": 103,
+      "power": 110,
+      "speed": 0.35,
+      "sourceRow": 275
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС125-103В5",
+      "diameter": 103,
+      "power": 125,
+      "speed": 0.4,
+      "sourceRow": 276
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС140-103В5",
+      "diameter": 103,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 277
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС150-103В5",
+      "diameter": 103,
+      "power": 150,
+      "speed": 0.5,
+      "sourceRow": 278
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС160-103В5",
+      "diameter": 103,
+      "power": 160,
+      "speed": 0.2,
+      "sourceRow": 279
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС180-103В5",
+      "diameter": 103,
+      "power": 180,
+      "speed": 0.6,
+      "sourceRow": 280
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС200-103В5",
+      "diameter": 103,
+      "power": 200,
+      "speed": 0.7,
+      "sourceRow": 281
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС210-103В5",
+      "diameter": 103,
+      "power": 210,
+      "speed": 0.7,
+      "sourceRow": 282
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД16-103В5",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.1,
+      "sourceRow": 283
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД20-103В5",
+      "diameter": 103,
+      "power": 20,
+      "speed": 0.15,
+      "sourceRow": 284
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД22-103В5",
+      "diameter": 103,
+      "power": 22,
+      "speed": 0.15,
+      "sourceRow": 285
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД24-103В5",
+      "diameter": 103,
+      "power": 24,
+      "speed": 0.15,
+      "sourceRow": 286
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД28-103В5",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.17,
+      "sourceRow": 287
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД32-103В5",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.17,
+      "sourceRow": 288
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД36-103В5",
+      "diameter": 103,
+      "power": 36,
+      "speed": 0.2,
+      "sourceRow": 289
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД40-103В5",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.2,
+      "sourceRow": 290
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД45-103В5",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.2,
+      "sourceRow": 291
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД50-103В5",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.25,
+      "sourceRow": 292
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД56-103В5",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 293
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД63-103В5",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.35,
+      "sourceRow": 294
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД70-103В5",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.4,
+      "sourceRow": 295
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД80-103В5",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.5,
+      "sourceRow": 296
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД8-117В5",
+      "diameter": 117,
+      "power": 8,
+      "speed": 0.05,
+      "sourceRow": 297
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД12-117В5",
+      "diameter": 117,
+      "power": 12,
+      "speed": 0.08,
+      "sourceRow": 298
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД12-117В5",
+      "diameter": 117,
+      "power": 12,
+      "speed": 0.05,
+      "sourceRow": 299
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД16-117В5",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.08,
+      "sourceRow": 300
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД16-117В5",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.08,
+      "sourceRow": 301
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД20-117В5",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.08,
+      "sourceRow": 302
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД20-117В5",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.08,
+      "sourceRow": 303
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД22-117В5",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.08,
+      "sourceRow": 304
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД24-117В5",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.08,
+      "sourceRow": 305
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД25-117В5",
+      "diameter": 117,
+      "power": 25,
+      "speed": 0.09,
+      "sourceRow": 306
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД28-117В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.09,
+      "sourceRow": 307
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД32-117В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.09,
+      "sourceRow": 308
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД36-117В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.1,
+      "sourceRow": 309
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД40-117В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.1,
+      "sourceRow": 310
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД45-117В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 311
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД50-117В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 312
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД56-117В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 313
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД56-117В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 314
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД63-117В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.15,
+      "sourceRow": 315
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД70-117В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.15,
+      "sourceRow": 316
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД100-117В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.15,
+      "sourceRow": 317
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД22-117М1В5",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 318
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД24-117М1В5",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.12,
+      "sourceRow": 319
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД28-117М1В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.12,
+      "sourceRow": 320
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД32-117М1В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.12,
+      "sourceRow": 321
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД36-117М1В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.12,
+      "sourceRow": 322
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД40-117М1В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 323
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД45-117М1В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 324
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД50-117М1В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 325
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД56-117М1В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 326
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД56-117М1В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 327
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД63-117М1В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 328
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД70-117М1В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 329
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "1ПЭД70-117М1В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 330
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД80-117М1В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 331
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД90-117М1В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 332
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД100-117М1В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 333
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД110-117М1В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.5,
+      "sourceRow": 334
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД125-117М1В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 335
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД125-117М2В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 336
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД125-117М4В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.9,
+      "sourceRow": 337
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД140-117М1В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.9,
+      "sourceRow": 338
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД160-117М1В5",
+      "diameter": 117,
+      "power": 160,
+      "speed": 1,
+      "sourceRow": 339
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС90-117В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.35,
+      "sourceRow": 340
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС100-117М1В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 341
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС100-117В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 342
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС110-117В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.4,
+      "sourceRow": 343
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС125-117В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.4,
+      "sourceRow": 344
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС140-117В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 345
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС160-117В5",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.7,
+      "sourceRow": 346
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС180-117В5",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.8,
+      "sourceRow": 347
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС200-117В5",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.8,
+      "sourceRow": 348
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС220-117В5",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.9,
+      "sourceRow": 349
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС250-117В5",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.9,
+      "sourceRow": 350
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС250-117М1В5",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.9,
+      "sourceRow": 351
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС300-117М1В5",
+      "diameter": 117,
+      "power": 300,
+      "speed": 1,
+      "sourceRow": 352
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС300-117В5",
+      "diameter": 117,
+      "power": 300,
+      "speed": 0.9,
+      "sourceRow": 353
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС320-117В5",
+      "diameter": 117,
+      "power": 320,
+      "speed": 0.9,
+      "sourceRow": 354
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС360-117В5",
+      "diameter": 117,
+      "power": 360,
+      "speed": 0.8,
+      "sourceRow": 355
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД16-117В5",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.06,
+      "sourceRow": 356
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД20-117В5",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.08,
+      "sourceRow": 357
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД22-117В5",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.08,
+      "sourceRow": 358
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД24-117В5",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.09,
+      "sourceRow": 359
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД28-117В5",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.09,
+      "sourceRow": 360
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД32-117В5",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.09,
+      "sourceRow": 361
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД36-117В5",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.1,
+      "sourceRow": 362
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД40-117В5",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.12,
+      "sourceRow": 363
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД45-117В5",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.12,
+      "sourceRow": 364
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД50-117В5",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.15,
+      "sourceRow": 365
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД56-117В5",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.15,
+      "sourceRow": 366
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД63-117В5",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.17,
+      "sourceRow": 367
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД70-117В5",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.17,
+      "sourceRow": 368
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД80-117В5",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.2,
+      "sourceRow": 369
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД90-117В5",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 370
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД100-117В5",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 371
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД110-117В5",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.6,
+      "sourceRow": 372
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭД125-117В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.9,
+      "sourceRow": 373
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭДС125-117В5",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.4,
+      "sourceRow": 374
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "НПЭДС140-117В5",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 375
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД22-130В5",
+      "diameter": 130,
+      "power": 22,
+      "speed": 0.12,
+      "sourceRow": 376
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД32-130В5",
+      "diameter": 130,
+      "power": 32,
+      "speed": 0.15,
+      "sourceRow": 377
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД45-130В5",
+      "diameter": 130,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 378
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД50-130В5",
+      "diameter": 130,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 379
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД56-130В5",
+      "diameter": 130,
+      "power": 56,
+      "speed": 0.2,
+      "sourceRow": 380
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД63-130В5",
+      "diameter": 130,
+      "power": 63,
+      "speed": 0.25,
+      "sourceRow": 381
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД70-130В5",
+      "diameter": 130,
+      "power": 70,
+      "speed": 0.25,
+      "sourceRow": 382
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД80-130В5",
+      "diameter": 130,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 383
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД90-130В5",
+      "diameter": 130,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 384
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД100-130В5",
+      "diameter": 130,
+      "power": 100,
+      "speed": 0.4,
+      "sourceRow": 385
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД110-130В5",
+      "diameter": 130,
+      "power": 110,
+      "speed": 0.5,
+      "sourceRow": 386
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД125-130В5",
+      "diameter": 130,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 387
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД140-130В5",
+      "diameter": 130,
+      "power": 140,
+      "speed": 0.65,
+      "sourceRow": 388
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД150-130В5",
+      "diameter": 130,
+      "power": 150,
+      "speed": 0.7,
+      "sourceRow": 389
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД160-130В5",
+      "diameter": 130,
+      "power": 160,
+      "speed": 0.9,
+      "sourceRow": 390
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭД180-130В5",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.9,
+      "sourceRow": 391
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС250-130В5",
+      "diameter": 130,
+      "power": 250,
+      "speed": 0.8,
+      "sourceRow": 392
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС300-130В5",
+      "diameter": 130,
+      "power": 300,
+      "speed": 0.9,
+      "sourceRow": 393
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС360-130В5",
+      "diameter": 130,
+      "power": 360,
+      "speed": 1,
+      "sourceRow": 394
+    },
+    {
+      "manufacturer": "ООО \"Новые технологии\"",
+      "name": "ПЭДС400-130В5",
+      "diameter": 130,
+      "power": 400,
+      "speed": 1,
+      "sourceRow": 395
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я 140-117 М5В5 Т",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.46,
+      "sourceRow": 396
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я 180-117 М5В5 Т",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.6,
+      "sourceRow": 397
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я 200-117 М5В5 Т",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.66,
+      "sourceRow": 398
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я 220-117 М5В5 Т",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.74,
+      "sourceRow": 399
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я 250-117 М5В5 Т",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.81,
+      "sourceRow": 400
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭДС-Я  300-117 М5В5 Т",
+      "diameter": 117,
+      "power": 300,
+      "speed": 0.99,
+      "sourceRow": 401
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭД-Я 80-117 М5В5 Т",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.26,
+      "sourceRow": 402
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "ПЭД-Я 180-130 М5В5 Т",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.54,
+      "sourceRow": 403
+    },
+    {
+      "manufacturer": "ООО \"Алмаз\"",
+      "name": "РППЭДС-Я 220-71-145кВт-117 МВ5",
+      "diameter": 117,
+      "power": 145,
+      "speed": 0.6599999999999999,
+      "sourceRow": 404
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ12-117М",
+      "diameter": 117,
+      "power": 12,
+      "speed": 0.05,
+      "sourceRow": 406
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ16-117М",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.05,
+      "sourceRow": 407
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ22-117М",
+      "diameter": 117,
+      "power": 22,
+      "speed": 0.05,
+      "sourceRow": 408
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ28-117М",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.08,
+      "sourceRow": 409
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ36-117М",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.08,
+      "sourceRow": 410
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ32-117М",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 411
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ40-117М",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.08,
+      "sourceRow": 412
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ45-117М",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.08,
+      "sourceRow": 413
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ50-117М",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.12,
+      "sourceRow": 414
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ56-117М",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.12,
+      "sourceRow": 415
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ63-117М",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.3,
+      "sourceRow": 416
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ70-117М",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.3,
+      "sourceRow": 417
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ80-117М6",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 418
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ90-117М6",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 419
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ100-117М6",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 420
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ110-117М6",
+      "diameter": 117,
+      "power": 110,
+      "speed": 0.3,
+      "sourceRow": 421
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДТ125-117М6",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.3,
+      "sourceRow": 422
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ80-117М",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 423
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ90-117М",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 424
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ100-117М",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 425
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ125-117М",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.3,
+      "sourceRow": 426
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ140-117М",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 427
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ160-117М",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.5,
+      "sourceRow": 428
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ180-117М4",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.5,
+      "sourceRow": 429
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС200-117М",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.5,
+      "sourceRow": 430
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС220-117М",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.5,
+      "sourceRow": 431
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС250-117М6",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.8,
+      "sourceRow": 433
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС300-117М4",
+      "diameter": 117,
+      "power": 300,
+      "speed": 1.1,
+      "sourceRow": 434
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС350-117М4",
+      "diameter": 117,
+      "power": 350,
+      "speed": 1.1,
+      "sourceRow": 435
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД12-117М ГР1…5А",
+      "diameter": 117,
+      "power": 12,
+      "speed": 0.05,
+      "sourceRow": 436
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД16-117М ГР1…5А",
+      "diameter": 117,
+      "power": 16,
+      "speed": 0.05,
+      "sourceRow": 437
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД20-117М ГР1…5А",
+      "diameter": 117,
+      "power": 20,
+      "speed": 0.05,
+      "sourceRow": 438
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД24-117М ГР1…5А",
+      "diameter": 117,
+      "power": 24,
+      "speed": 0.08,
+      "sourceRow": 439
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД28-117М ГР1…5А",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.08,
+      "sourceRow": 440
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД32-117М ГР1…5А",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 441
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД36-117М ГР1…5А",
+      "diameter": 117,
+      "power": 36,
+      "speed": 0.08,
+      "sourceRow": 442
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД40-117М ГР1…5А",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.08,
+      "sourceRow": 443
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД45-117М ГР1…5А",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.08,
+      "sourceRow": 444
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД50-117М ГР1…5А",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.12,
+      "sourceRow": 445
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД56-117М ГР1…5А",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.12,
+      "sourceRow": 446
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД63-117М ГР1…5А",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.15,
+      "sourceRow": 447
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД70-117М ГР1…5А",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.2,
+      "sourceRow": 448
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД80-117М ГР1…5А",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 449
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД90-117М ГР1…5А",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 450
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД100-117М ГР1…5А",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.3,
+      "sourceRow": 451
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД140-117М",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.3,
+      "sourceRow": 452
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД200-117М",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.3,
+      "sourceRow": 453
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ПЭД220-117М",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.3,
+      "sourceRow": 454
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД28-117Э",
+      "diameter": 117,
+      "power": 28,
+      "speed": 0.08,
+      "sourceRow": 455
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД32-117Э",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 456
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД45-117Э",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.08,
+      "sourceRow": 457
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД56-117Э",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.12,
+      "sourceRow": 458
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД63-117Э",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.3,
+      "sourceRow": 459
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД70-117Э",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.3,
+      "sourceRow": 460
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД80-117Э",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 461
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НПЭД90-117Э",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 462
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД16-96М",
+      "diameter": 96,
+      "power": 16,
+      "speed": 0.09,
+      "sourceRow": 463
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД22-96М",
+      "diameter": 96,
+      "power": 22,
+      "speed": 0.09,
+      "sourceRow": 464
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД28-96М",
+      "diameter": 96,
+      "power": 28,
+      "speed": 0.09,
+      "sourceRow": 465
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД32-96М",
+      "diameter": 96,
+      "power": 32,
+      "speed": 0.1,
+      "sourceRow": 466
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД36-96М",
+      "diameter": 96,
+      "power": 36,
+      "speed": 0.09,
+      "sourceRow": 467
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД40-96М",
+      "diameter": 96,
+      "power": 40,
+      "speed": 0.09,
+      "sourceRow": 468
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ56-96М",
+      "diameter": 96,
+      "power": 56,
+      "speed": 0.09,
+      "sourceRow": 469
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ63-96М",
+      "diameter": 96,
+      "power": 63,
+      "speed": 0.1,
+      "sourceRow": 470
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ70-96М",
+      "diameter": 96,
+      "power": 70,
+      "speed": 0.09,
+      "sourceRow": 471
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД16-103М1",
+      "diameter": 103,
+      "power": 16,
+      "speed": 0.07,
+      "sourceRow": 472
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД22-103М1",
+      "diameter": 103,
+      "power": 22,
+      "speed": 0.1,
+      "sourceRow": 473
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД28-103М1",
+      "diameter": 103,
+      "power": 28,
+      "speed": 0.1,
+      "sourceRow": 474
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД32-103М1",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.1,
+      "sourceRow": 475
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД40-103М1",
+      "diameter": 103,
+      "power": 40,
+      "speed": 0.15,
+      "sourceRow": 476
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД45-103М1",
+      "diameter": 103,
+      "power": 45,
+      "speed": 0.15,
+      "sourceRow": 477
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД50-103М1",
+      "diameter": 103,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 478
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД56-103М1",
+      "diameter": 103,
+      "power": 56,
+      "speed": 0.3,
+      "sourceRow": 479
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД63-103М1",
+      "diameter": 103,
+      "power": 63,
+      "speed": 0.35,
+      "sourceRow": 480
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД70-103М1",
+      "diameter": 103,
+      "power": 70,
+      "speed": 0.35,
+      "sourceRow": 481
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД80-103М1",
+      "diameter": 103,
+      "power": 80,
+      "speed": 0.3,
+      "sourceRow": 482
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "НЭДТ1-32-103М1",
+      "diameter": 103,
+      "power": 32,
+      "speed": 0.1,
+      "sourceRow": 483
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ90-103М3",
+      "diameter": 103,
+      "power": 90,
+      "speed": 0.2,
+      "sourceRow": 484
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ100-103М3",
+      "diameter": 103,
+      "power": 100,
+      "speed": 0.25,
+      "sourceRow": 485
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ110-103М3",
+      "diameter": 103,
+      "power": 110,
+      "speed": 0.3,
+      "sourceRow": 486
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ125-103М3",
+      "diameter": 103,
+      "power": 125,
+      "speed": 0.35,
+      "sourceRow": 487
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ140-103М3",
+      "diameter": 103,
+      "power": 140,
+      "speed": 0.3,
+      "sourceRow": 488
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ150-103М3",
+      "diameter": 103,
+      "power": 150,
+      "speed": 0.2,
+      "sourceRow": 489
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ180-103М3",
+      "diameter": 103,
+      "power": 180,
+      "speed": 0.2,
+      "sourceRow": 490
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД22-130М",
+      "diameter": 130,
+      "power": 22,
+      "speed": 0.6,
+      "sourceRow": 491
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД32-130М",
+      "diameter": 130,
+      "power": 32,
+      "speed": 0.6,
+      "sourceRow": 492
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД40-130М",
+      "diameter": 130,
+      "power": 40,
+      "speed": 0.6,
+      "sourceRow": 493
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД75-130М",
+      "diameter": 130,
+      "power": 75,
+      "speed": 0.5,
+      "sourceRow": 494
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД90-130М",
+      "diameter": 130,
+      "power": 90,
+      "speed": 0.6,
+      "sourceRow": 495
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД125-130М",
+      "diameter": 130,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 496
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД150-130М",
+      "diameter": 130,
+      "power": 150,
+      "speed": 0.6,
+      "sourceRow": 497
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД180-130М",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.6,
+      "sourceRow": 498
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)180-130М",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.7,
+      "sourceRow": 499
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)230-130М",
+      "diameter": 130,
+      "power": 230,
+      "speed": 1.1,
+      "sourceRow": 500
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)250-130М",
+      "diameter": 130,
+      "power": 250,
+      "speed": 1.1,
+      "sourceRow": 501
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)320-130М",
+      "diameter": 130,
+      "power": 320,
+      "speed": 1,
+      "sourceRow": 502
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)360-130М",
+      "diameter": 130,
+      "power": 360,
+      "speed": 1.1,
+      "sourceRow": 503
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)400-130М",
+      "diameter": 130,
+      "power": 400,
+      "speed": 2.8,
+      "sourceRow": 504
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)460-130М1",
+      "diameter": 130,
+      "power": 460,
+      "speed": 1.1,
+      "sourceRow": 505
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС(Т)500-130М1",
+      "diameter": 130,
+      "power": 500,
+      "speed": 1.1,
+      "sourceRow": 506
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДСТ1-550-130М",
+      "diameter": 130,
+      "power": 550,
+      "speed": 1.1,
+      "sourceRow": 507
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "7ЭД(Т)22-130М",
+      "diameter": 130,
+      "power": 22,
+      "speed": 0.6,
+      "sourceRow": 508
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "7ЭД(Т)32-130М",
+      "diameter": 130,
+      "power": 32,
+      "speed": 0.6,
+      "sourceRow": 509
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "7ЭД(Т)90-130М",
+      "diameter": 130,
+      "power": 90,
+      "speed": 0.6,
+      "sourceRow": 510
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "7ЭД(Т)125-130М",
+      "diameter": 130,
+      "power": 125,
+      "speed": 0.6,
+      "sourceRow": 511
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "7ЭД(Т)150-130М",
+      "diameter": 130,
+      "power": 150,
+      "speed": 0.6,
+      "sourceRow": 512
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД125-180М",
+      "diameter": 180,
+      "power": 125,
+      "speed": 0.3,
+      "sourceRow": 513
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭД250-180М",
+      "diameter": 180,
+      "power": 250,
+      "speed": 0.6,
+      "sourceRow": 514
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС500-180М",
+      "diameter": 180,
+      "power": 500,
+      "speed": 1.5,
+      "sourceRow": 515
+    },
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": "ЭДС750-180М",
+      "diameter": 180,
+      "power": 750,
+      "speed": 1.5,
+      "sourceRow": 516
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 32-117-1000",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 517
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 63-117-1900",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.16,
+      "sourceRow": 518
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 70-117-2000",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.2,
+      "sourceRow": 519
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 80-117-2100",
+      "diameter": 117,
+      "power": 80,
+      "speed": 0.32,
+      "sourceRow": 520
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 90-117-2000",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.28,
+      "sourceRow": 521
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 100-117-2000",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.38,
+      "sourceRow": 522
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН 125-117-2100",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.65,
+      "sourceRow": 523
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 150-117-2000",
+      "diameter": 117,
+      "power": 150,
+      "speed": 0.35,
+      "sourceRow": 524
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН3С 300-117-3200",
+      "diameter": 117,
+      "power": 300,
+      "speed": 3,
+      "sourceRow": 525
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 140-117-2440",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.24,
+      "sourceRow": 526
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 160-117-2400",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.3,
+      "sourceRow": 527
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 180-117-2500",
+      "diameter": 117,
+      "power": 180,
+      "speed": 0.38,
+      "sourceRow": 528
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН3С 320-117-3950",
+      "diameter": 117,
+      "power": 320,
+      "speed": 1,
+      "sourceRow": 529
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 200-117-2600",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.5,
+      "sourceRow": 530
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 220-117-2700",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.7,
+      "sourceRow": 531
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДН3С 270-117-3300",
+      "diameter": 117,
+      "power": 270,
+      "speed": 0.85,
+      "sourceRow": 532
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПЭДНС 250-117-2900",
+      "diameter": 117,
+      "power": 250,
+      "speed": 1.2,
+      "sourceRow": 533
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПВЭДН 32-117-1250-3.0",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.15,
+      "sourceRow": 534
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПВЭДН 40-117-1550-3.0",
+      "diameter": 117,
+      "power": 40,
+      "speed": 0.15,
+      "sourceRow": 535
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПВЭДН 50-117-1870-3.0",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.2,
+      "sourceRow": 536
+    },
+    {
+      "manufacturer": "АО \"Новомет-Пермь\"",
+      "name": "ПВЭДН 63-117-2220-3.0",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.2,
+      "sourceRow": 537
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "до 22",
+      "speed": 0.05,
+      "sourceRow": 538
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "28 - 45",
+      "speed": 0.08,
+      "sourceRow": 539
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": 50,
+      "speed": 0.1,
+      "sourceRow": 540
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "56 - 63",
+      "speed": 0.12,
+      "sourceRow": 541
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "70 - 125 (кроме 90)",
+      "speed": 0.3,
+      "sourceRow": 542
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": 90,
+      "speed": 0.35,
+      "sourceRow": 543
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "140-160",
+      "speed": 0.5,
+      "sourceRow": 544
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (EZ-Line)",
+      "name": "EZ-Line",
+      "diameter": 115.8,
+      "power": "180-220",
+      "speed": 0.6,
+      "sourceRow": 545
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 32-117",
+      "diameter": 117,
+      "power": 32,
+      "speed": 0.08,
+      "sourceRow": 546
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 45-117",
+      "diameter": 117,
+      "power": 45,
+      "speed": 0.08,
+      "sourceRow": 547
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 50-117",
+      "diameter": 117,
+      "power": 50,
+      "speed": 0.1,
+      "sourceRow": 548
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 56-117",
+      "diameter": 117,
+      "power": 56,
+      "speed": 0.12,
+      "sourceRow": 549
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 63-117",
+      "diameter": 117,
+      "power": 63,
+      "speed": 0.12,
+      "sourceRow": 550
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 70-117",
+      "diameter": 117,
+      "power": 70,
+      "speed": 0.3,
+      "sourceRow": 551
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 90-117",
+      "diameter": 117,
+      "power": 90,
+      "speed": 0.3,
+      "sourceRow": 552
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 100-117",
+      "diameter": 117,
+      "power": 100,
+      "speed": 0.35,
+      "sourceRow": 553
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 125-117",
+      "diameter": 117,
+      "power": 125,
+      "speed": 0.4,
+      "sourceRow": 554
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 140-117",
+      "diameter": 117,
+      "power": 140,
+      "speed": 0.5,
+      "sourceRow": 555
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТC 160-117 (2x80 kWt)",
+      "diameter": 117,
+      "power": 160,
+      "speed": 0.5,
+      "sourceRow": 556
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТC 200-117 (2x100 kWt)",
+      "diameter": 117,
+      "power": 200,
+      "speed": 0.6,
+      "sourceRow": 557
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТC 220-117 (2x110 kWt)",
+      "diameter": 117,
+      "power": 220,
+      "speed": 0.6,
+      "sourceRow": 558
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТC 250-117 (2x125 kWt)",
+      "diameter": 117,
+      "power": 250,
+      "speed": 0.6,
+      "sourceRow": 559
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 125-130",
+      "diameter": 130,
+      "power": 125,
+      "speed": 0.55,
+      "sourceRow": 560
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 180-130",
+      "diameter": 130,
+      "power": 180,
+      "speed": 0.7,
+      "sourceRow": 561
+    },
+    {
+      "manufacturer": "СЦ ЭПУ (TPS-Line)",
+      "name": "ПЭДМТ 400-130 (2x200 kWt)",
+      "diameter": 130,
+      "power": 400,
+      "speed": 1.1,
+      "sourceRow": 562
+    }
+  ],
+  "generic": [
+    {
+      "manufacturer": "REDA, CENTRILIFT",
+      "name": null,
+      "diameter": "все",
+      "power": "все",
+      "speed": 0.31,
+      "sourceRow": 563
+    }
+  ],
+  "incomplete": [
+    {
+      "manufacturer": "ОАО \"Алнас\"",
+      "name": null,
+      "diameter": 81,
+      "power": null,
+      "speed": 0.08,
+      "sourceRow": 405
+    }
+  ],
+  "geometries": [
+    {
+      "casing": 102,
+      "wall": 6.5
+    },
+    {
+      "casing": 114,
+      "wall": 5.2
+    },
+    {
+      "casing": 114,
+      "wall": 5.7
+    },
+    {
+      "casing": 114,
+      "wall": 6.4
+    },
+    {
+      "casing": 114,
+      "wall": 7.4
+    },
+    {
+      "casing": 114,
+      "wall": 8.6
+    },
+    {
+      "casing": 114,
+      "wall": 10.2
+    },
+    {
+      "casing": 139.7,
+      "wall": 6.2
+    },
+    {
+      "casing": 139.7,
+      "wall": 7.0
+    },
+    {
+      "casing": 139.7,
+      "wall": 7.7
+    },
+    {
+      "casing": 139.7,
+      "wall": 9.2
+    },
+    {
+      "casing": 139.7,
+      "wall": 10.5
+    },
+    {
+      "casing": 140,
+      "wall": 6.2
+    },
+    {
+      "casing": 140,
+      "wall": 7.0
+    },
+    {
+      "casing": 140,
+      "wall": 7.7
+    },
+    {
+      "casing": 140,
+      "wall": 9.2
+    },
+    {
+      "casing": 140,
+      "wall": 10.5
+    },
+    {
+      "casing": 146,
+      "wall": 6.5
+    },
+    {
+      "casing": 146,
+      "wall": 7.0
+    },
+    {
+      "casing": 146,
+      "wall": 7.7
+    },
+    {
+      "casing": 146,
+      "wall": 8.5
+    },
+    {
+      "casing": 146,
+      "wall": 9.6
+    },
+    {
+      "casing": 146,
+      "wall": 10.7
+    },
+    {
+      "casing": 168,
+      "wall": 7.3
+    },
+    {
+      "casing": 168,
+      "wall": 8.0
+    },
+    {
+      "casing": 168,
+      "wall": 8.9
+    },
+    {
+      "casing": 168,
+      "wall": 10.6
+    },
+    {
+      "casing": 168,
+      "wall": 12.1
+    },
+    {
+      "casing": 178,
+      "wall": 5.9
+    },
+    {
+      "casing": 178,
+      "wall": 6.9
+    },
+    {
+      "casing": 178,
+      "wall": 8.1
+    },
+    {
+      "casing": 178,
+      "wall": 9.2
+    },
+    {
+      "casing": 178,
+      "wall": 10.4
+    },
+    {
+      "casing": 178,
+      "wall": 11.5
+    },
+    {
+      "casing": 178,
+      "wall": 12.7
+    },
+    {
+      "casing": 178,
+      "wall": 13.7
+    },
+    {
+      "casing": 178,
+      "wall": 15.0
+    },
+    {
+      "casing": 194,
+      "wall": 7.6
+    },
+    {
+      "casing": 194,
+      "wall": 8.3
+    },
+    {
+      "casing": 194,
+      "wall": 9.3
+    },
+    {
+      "casing": 194,
+      "wall": 10.9
+    },
+    {
+      "casing": 194,
+      "wall": 12.7
+    },
+    {
+      "casing": 194,
+      "wall": 16.1
+    }
+  ]
+}
