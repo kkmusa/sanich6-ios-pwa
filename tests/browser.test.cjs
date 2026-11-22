@@ -1725,6 +1725,19 @@ test('VNR landscape keeps the reading paragraph and zoom, with compact controls 
       { width: 390, height: 844 },
     ]) {
       await page.setViewportSize(viewport);
+      if (viewport.width > viewport.height) {
+        await page.waitForFunction(() => {
+          const bar = document.querySelector('.vnr-screen .topbar');
+          return innerWidth > innerHeight && bar?.getBoundingClientRect().height <= 50;
+        });
+        await frame.waitForFunction(() => {
+          const controls = document.querySelector('.vnr-position');
+          return innerWidth > innerHeight && controls?.getBoundingClientRect().bottom <= 90;
+        });
+      } else {
+        await page.waitForFunction(() => innerWidth < innerHeight);
+        await frame.waitForFunction(() => innerWidth < innerHeight);
+      }
       await settle();
       const after = await position();
       assert.ok(
@@ -1735,7 +1748,10 @@ test('VNR landscape keeps the reading paragraph and zoom, with compact controls 
       if (viewport.width > viewport.height) {
         assert.equal(await page.locator('.bottom-nav').isVisible(), false);
         assert.equal(await page.locator('.topbar .back').isVisible(), true);
-        assert.ok(after.documentHeight > viewport.height - 150);
+        assert.ok(
+          after.documentHeight > viewport.height - 150,
+          JSON.stringify({ viewport, before, after }),
+        );
         const controlsFit = await frame.evaluate(() =>
           [
             ...document.querySelectorAll(
