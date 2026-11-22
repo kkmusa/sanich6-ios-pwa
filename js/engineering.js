@@ -461,7 +461,7 @@ function renderPumpDepthReduction() {
       ['depthReductionLevel', 'Динамический уровень по стволу, м'],
     ];
   app.innerHTML = screen(
-    `${topbar(title)}<main class="content stack">${fields.slice(0, 5).map(([id, label]) => field(id, label)).join('')}<label class="switchline card"><span><b>Газосепаратор установлен</b></span><input id="depthReductionGasSeparator" type="checkbox"></label>${fields.slice(5).map(([id, label]) => field(id, label)).join('')}<div id="liveResult">${resultCard(title, '', 'Введите исходные параметры')}</div><button class="btn secondary full" id="clearDepthReduction">Очистить</button><p class="hint">Расчёт предварительно оценивает возможность уменьшения глубины на 500 м. Окончательное решение требует проверки напора, охлаждения ПЭД, кавитационного запаса и компоновки.</p></main>`,
+    `${topbar(title)}<main class="content stack">${fields.slice(0, 5).map(([id, label]) => field(id, label)).join('')}<label class="switchline card"><span><b>Газосепаратор установлен</b></span><input id="depthReductionGasSeparator" type="checkbox"></label>${fields.slice(5).map(([id, label]) => field(id, label)).join('')}<div id="liveResult">${resultCard(title, '', 'Введите исходные параметры')}</div><button class="btn secondary full" id="clearDepthReduction">Очистить</button><p class="hint">Проверяется именно подъём УЭЦН на 500 м выше: новая глубина равна текущей минус 500 м. Это не спуск насоса ещё ниже.</p></main>`,
     'technologist',
   );
   function calc() {
@@ -484,12 +484,16 @@ function renderPumpDepthReduction() {
     });
     if (!result) return setResult(title, '', 'Проверьте исходные параметры и единицы');
     const recommendation = result.canReduce
-      ? 'Возможно уменьшить глубину спуска или увеличить отбор'
-      : 'По расчётному критерию текущая глубина оптимальна';
+      ? 'По расчётному критерию возможен подъём УЭЦН на 500 м'
+      : 'Подъём УЭЦН на 500 м по расчётному критерию не рекомендуется';
+    const newDepth = values[1] - 500,
+      submergence = newDepth - values[9];
     const text =
       `${recommendation}\n` +
+      `Новая глубина спуска: ${fmt(newDepth)} м\n` +
+      `Погружение под Hдин: ${fmt(submergence)} м\n` +
       `Расчётная граница: ${fmt(result.criterionDepth)} м\n` +
-      `Запас после уменьшения на 500 м: ${fmt(result.reserveAfterReduction)} м`;
+      `Расчётный запас после подъёма: ${fmt(result.reserveAfterReduction)} м`;
     setResult(title, text);
     state.last = {
       title,

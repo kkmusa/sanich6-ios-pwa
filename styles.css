@@ -504,8 +504,17 @@ select {
   font-weight: 800;
   color: var(--text);
 }
-.assistant-causes p {
-  margin-top: 0;
+.assistant-causes ul {
+  margin: 0;
+  padding-left: 22px;
+}
+.assistant-causes li + li {
+  margin-top: 7px;
+}
+.assistant-actions h3 {
+  margin: 18px 0 8px;
+  font-weight: 800;
+  color: var(--text);
 }
 .warning-card {
   background: #fff3cd;
@@ -756,6 +765,23 @@ button {
 }
 .vnr-screen .topbar {
   flex-shrink: 0;
+  max-height: calc(90px + var(--safe-top));
+  overflow: hidden;
+  transition:
+    max-height 0.18s ease,
+    padding 0.18s ease,
+    opacity 0.15s ease,
+    transform 0.18s ease;
+}
+.vnr-screen.vnr-reading-idle .topbar {
+  min-height: 0;
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  box-shadow: none;
 }
 .vnr-screen .vnr-host {
   position: relative;
@@ -788,6 +814,11 @@ button {
   }
   html.manual-landscape .vnr-screen + .bottom-nav {
     display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vnr-screen .topbar {
+    transition: none;
   }
 }
 @media (min-width: 720px) {

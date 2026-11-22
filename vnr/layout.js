@@ -52,10 +52,14 @@
   window.addEventListener('load', remember);
   remember();
 
-  // Keep only the bookmark/download/position bar out of the way while reading.
-  // Opacity preserves its bounds, which the page/zoom anchors above rely on.
+  // Move the document controls and the parent application header out of the way while reading.
   const controls = document.querySelector('.vnr-position');
   if (!controls) return;
+  const controlBars = [
+    controls,
+    document.querySelector('.vnr-tools'),
+    document.querySelector('.vnr-page-tools'),
+  ].filter(Boolean);
   const panels = [
     document.querySelector('.vnr-bookmarks'),
     document.querySelector('.vnr-offline'),
@@ -66,12 +70,18 @@
     keyboardInput = true;
   const inControls = (target) =>
     target instanceof Element &&
-    (controls.contains(target) || panels.some((panel) => panel.contains(target)));
+    (controlBars.some((bar) => bar.contains(target)) ||
+      panels.some((panel) => panel.contains(target)));
+  function setReadingIdle(idle) {
+    document.body.classList.toggle('vnr-reading-idle', idle);
+    if (window.parent !== window)
+      window.parent.postMessage({ type: 'vnr-reading-idle', idle }, location.origin);
+  }
   function pinned() {
     return (
       pointers.size > 0 ||
       touchingControls ||
-      (keyboardInput && controls.contains(document.activeElement)) ||
+      (keyboardInput && controlBars.some((bar) => bar.contains(document.activeElement))) ||
       panels.some((panel) => !panel.hidden)
     );
   }
@@ -79,10 +89,14 @@
     clearTimeout(idleTimer);
     idleTimer = null;
     controls.classList.remove('vnr-position-idle');
+    setReadingIdle(false);
     if (document.hidden || pinned()) return;
     idleTimer = setTimeout(() => {
       idleTimer = null;
-      if (!pinned()) controls.classList.add('vnr-position-idle');
+      if (!pinned()) {
+        controls.classList.add('vnr-position-idle');
+        setReadingIdle(true);
+      }
     }, 1500);
   }
   document.addEventListener(
@@ -128,7 +142,17 @@
     keyboardInput = true;
     showControls();
   }, true);
-  document.addEventListener('focusin', showControls, true);
+  document.addEventListener('input', () => {
+    keyboardInput = true;
+    showControls();
+  }, true);
+  document.addEventListener('focusin', (event) => {
+    if (
+      event.target instanceof Element &&
+      event.target.matches('input, textarea, select, [contenteditable="true"]')
+    ) keyboardInput = true;
+    showControls();
+  }, true);
   document.addEventListener('focusout', () => Promise.resolve().then(showControls), true);
   const observer = new MutationObserver(showControls);
   for (const panel of panels)
@@ -144,6 +168,7 @@
     clearTimeout(idleTimer);
     pointers.clear();
     touchingControls = false;
+    setReadingIdle(false);
   });
   showControls();
 })();

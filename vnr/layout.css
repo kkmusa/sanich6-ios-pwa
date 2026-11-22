@@ -7,6 +7,22 @@ body .vnr-position {
   transition: opacity 0.15s ease;
 }
 
+body .vnr-tools,
+body .vnr-page-tools {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.15s ease,
+    transform 0.18s ease;
+}
+
+body.vnr-reading-idle .vnr-tools,
+body.vnr-reading-idle .vnr-page-tools {
+  opacity: 0;
+  transform: translateY(calc(-100% - 8px));
+  pointer-events: none;
+}
+
 body .vnr-position.vnr-position-idle {
   opacity: 0;
   pointer-events: none;
@@ -18,7 +34,9 @@ body .vnr-position:focus-within {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body .vnr-position {
+  body .vnr-position,
+  body .vnr-tools,
+  body .vnr-page-tools {
     transition: none;
   }
 }

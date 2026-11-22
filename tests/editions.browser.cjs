@@ -19,6 +19,13 @@ const paragraphs = topic => {
     return topic.preserve ? step : `${hasCauses ? i : i + 1}. ${step}`;
   });
 };
+const causeItems = topic => {
+  const first = topic.steps[0] || '',
+    pattern = /^(?:Основные\s+)?возможные причины(?:\s+[^:]*)?:\s*/i;
+  return pattern.test(first)
+    ? first.replace(pattern, '').split(/;\s*/).map(value => value.trim()).filter(Boolean)
+    : [];
+};
 let server, browser, base, official, withoutAssistant;
 
 before(async () => {
@@ -182,6 +189,8 @@ test('three editions have separate install identities, correct assistant access 
     assert.equal(await withoutPage.evaluate(() => state.route), 'reference');
     assert.doesNotMatch(await withoutPage.locator('main').textContent(),
       /Аварийные остановки и нештатные режимы/);
+    await authorPage.evaluate(() => go('reference'));
+    assert.equal(await authorPage.locator('.menu-card', { hasText: 'Помощник оператора' }).count(), 1);
     assert.ok(await withoutPage.locator('.menu-card').count() > 0,
       'Redirect from the removed assistant must show a usable reference screen');
     const formalDisplay = [...formal].sort((left, right) =>
@@ -203,8 +212,17 @@ test('three editions have separate install identities, correct assistant access 
         const source = original.find(entry => entry.title === topic.title);
         assert.equal(await authorBlock.locator('h2').textContent(), 'Порядок работы');
         assert.equal(await formalPage.locator('.assistant-reglament h2').textContent(), 'Требования регламента');
-        assert.deepEqual(await authorBlock.locator('p').allTextContents(), paragraphs(source),
-          'Author text and paragraph order are preserved for ' + source.title);
+        const causes = causeItems(source);
+        if (causes.length) {
+          assert.deepEqual(await authorBlock.locator('.assistant-causes li').allTextContents(), causes,
+            'Author causes remain complete for ' + source.title);
+          assert.deepEqual(await authorBlock.locator('.assistant-actions p').allTextContents(), paragraphs(source).slice(1),
+            'Author action order is preserved for ' + source.title);
+          assert.equal(await authorBlock.locator('.assistant-actions h3').textContent(), 'Алгоритм действий');
+        } else {
+          assert.deepEqual(await authorBlock.locator('p').allTextContents(), paragraphs(source),
+            'Author text and paragraph order are preserved for ' + source.title);
+        }
         assert.equal(await authorBlock.evaluate(node => !!(node.compareDocumentPosition(
           document.querySelector('.assistant-reglament')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
       } else {

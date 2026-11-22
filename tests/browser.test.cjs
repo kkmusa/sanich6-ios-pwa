@@ -870,7 +870,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.34'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.35'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1346,11 +1346,17 @@ test('VNR position controls hide after idle and return after touch and keyboard 
     await frame.locator('.vnr-download-close').click();
     const bar = frame.locator('.vnr-position');
     await frame.locator('.vnr-position-idle').waitFor({ state: 'attached' });
-    const before = await bar.boundingBox();
+    await page.locator('.vnr-screen.vnr-reading-idle').waitFor({ state: 'attached' });
+    assert.equal(await frame.locator('body.vnr-reading-idle').count(), 1);
+    assert.equal(await frame.locator('.vnr-tools').evaluate((node) => getComputedStyle(node).opacity), '0');
+    const beforeHost = await page.locator('.vnr-host').boundingBox();
     await frame.locator('#page-1 img').tap({ position: { x: 40, y: 260 } });
     assert.equal(await bar.evaluate((node) => node.classList.contains('vnr-position-idle')), false);
-    const after = await bar.boundingBox();
-    assert.equal(after.y, before.y);
+    assert.equal(await page.locator('.vnr-screen').evaluate((node) => node.classList.contains('vnr-reading-idle')), false);
+    await page.waitForTimeout(250);
+    assert.equal(await frame.locator('.vnr-tools').evaluate((node) => getComputedStyle(node).opacity), '1');
+    const afterHost = await page.locator('.vnr-host').boundingBox();
+    assert.ok(beforeHost.height > afterHost.height, 'Скрытая верхняя панель должна увеличивать область чтения');
     await frame.locator('.vnr-position-idle').waitFor({ state: 'attached' });
     await frame.locator('#vnr-position').press('ArrowRight');
     await page.waitForTimeout(1700);
@@ -1384,7 +1390,7 @@ test('Android question buttons show formulas and terms, retain inputs and close 
       ['cablePowerLoss', 5, 'кабель'],
       ['optimalTubing', 3, 'конструкции'],
       ['pumpFill', 3, 'объёмный коэффициент'],
-      ['pumpDepthReduction', 5, 'инклинометр'],
+      ['pumpDepthReduction', 7, 'инклинометр'],
       ['twoAParameters', 5, 'текущая обычная частота'],
     ];
     for (const [route, count, term] of topics) {

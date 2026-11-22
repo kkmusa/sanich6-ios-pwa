@@ -5,6 +5,14 @@ function openRefInfo(title, text) {
   state.refInfo = { title, text };
   go('refinfo');
 }
+window.addEventListener('message', (event) => {
+  if (event.origin !== location.origin || event.data?.type !== 'vnr-reading-idle') return;
+  const screenNode = document.querySelector('.vnr-screen'),
+    frame = screenNode?.querySelector('iframe');
+  if (!frame || event.source !== frame.contentWindow) return;
+  screenNode.classList.toggle('vnr-reading-idle', event.data.idle === true);
+});
+
 function renderRefInfo() {
   const x = state.refInfo || { title: 'Справочник', text: '' };
   app.innerHTML = screen(
@@ -73,7 +81,7 @@ ${refCard('pedCooling', 'Необходимый приток для охлажд
 ${refCard('⏱', 'Работа ПЭД при недостаточном притоке', 'Допустимое время работы и охлаждения', "openRefKey('pedLowFlow')")}
 ${refCard('🌡', 'Температурные группы ПЭД', 'Допустимая температура пластовой жидкости', "openRefKey('pedTemp')")}
 ${refCard('zsp', 'Уставки защиты от срыва подачи', 'Рекомендуемые значения ЗСП по загрузке ПЭД', "openRefKey('zsp')")}
-${APP_EDITION === 'bez' ? '' : refCard('⚠', 'Аварийные остановки и нештатные режимы', 'Алгоритмы действий по производственным ситуациям', "go('assistant')")}
+${APP_EDITION === 'bez' ? '' : refCard('🛠', 'Помощник оператора', 'Остановки, нештатные режимы и порядок действий', "go('assistant')")}
 ${refCard('ℹ', 'Данные при передаче запуска ВНР', 'Справочная информация для передачи запуска на пульт', "openRefKey('vnr')")}
 ${refCard('pipeLarge', 'Обсадные трубы — ГОСТ 632-80', 'Диаметры ЭК, толщины стенок и внутренние диаметры', "go('casingReference')")}
 ${refCard('pipeSmall', 'НКТ — ГОСТ 633-80', 'НКТ 60, 73, 89 мм: стенки и внутренние диаметры', "go('tubingReference')")}

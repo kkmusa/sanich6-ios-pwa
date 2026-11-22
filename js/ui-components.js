@@ -24,14 +24,20 @@ function resultCard(title, value, error = '') {
 }
 function assistantCard(topic, heading = '', className = '') {
   const hasCauses = !topic.preserve && /^(?:Основные\s+)?возможные причины(?:\s+[^:]*)?:/i.test(topic.steps[0] || '');
-  const steps = topic.steps.map((step, index) => {
-    if (hasCauses && index === 0) {
-      const causes = step.replace(/^(?:Основные\s+)?возможные причины(?:\s+[^:]*)?:\s*/i, '');
-      return `<section class="assistant-causes"><h3>Возможные причины</h3><p>${esc(causes)}</p></section>`;
-    }
-    const number = hasCauses ? index : index + 1;
-    return `<p>${esc(topic.preserve ? step : `${number}. ${step}`)}</p>`;
-  }).join('');
+  const firstAction = hasCauses ? 1 : 0,
+    actions = topic.steps
+      .slice(firstAction)
+      .map((step, index) => `<p>${esc(topic.preserve ? step : `${index + 1}. ${step}`)}</p>`)
+      .join('');
+  let steps = actions;
+  if (hasCauses) {
+    const causes = topic.steps[0]
+      .replace(/^(?:Основные\s+)?возможные причины(?:\s+[^:]*)?:\s*/i, '')
+      .split(/;\s*/)
+      .map((cause) => cause.trim())
+      .filter(Boolean);
+    steps = `<section class="assistant-causes"><h3>Возможные причины</h3><ul>${causes.map((cause) => `<li>${esc(cause)}</li>`).join('')}</ul></section><section class="assistant-actions"><h3>Алгоритм действий</h3>${actions}</section>`;
+  }
   const table = topic.table
     ? `<div class="assistant-table-wrap"><h3>${esc(topic.table.title)}</h3><table class="assistant-table"><thead><tr>${topic.table.headers.map((value) => `<th>${esc(value)}</th>`).join('')}</tr></thead><tbody>${topic.table.rows.map((row) => `<tr>${row.map((value) => `<td>${esc(value)}</td>`).join('')}</tr>`).join('')}</tbody></table>${topic.table.note ? `<div class="hint">${esc(topic.table.note)}</div>` : ''}</div>`
     : '';
