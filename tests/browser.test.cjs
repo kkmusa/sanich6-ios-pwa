@@ -870,7 +870,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.33'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.34'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1378,7 +1378,7 @@ test('Android question buttons show formulas and terms, retain inputs and close 
       ['wellPotential', 1, 'потенциал'],
       ['ped', 3, 'номинальн'],
       ['foreignPump', 2, 'паспорт'],
-      ['mrmLevel', 5, 'компоновк'],
+      ['mrmLevel', 10, 'компоновк'],
       ['periodicCorrection', 5, 'архив'],
       ['energyConsumption', 3, 'станции'],
       ['cablePowerLoss', 5, 'кабель'],

@@ -53,6 +53,8 @@ test('Android help has complete formulas, terms and explicit route mapping witho
   assert.equal(c.calculationHelpFor('motorCoefficient').formulas[3], 'fобычная = fстанции / КФ');
   assert.doesNotMatch(JSON.stringify(c.helpData), /[HН]ур/);
   assert.equal(c.calculationHelpFor('ped').formulas.length, 3);
+  assert.match(c.calculationHelpFor('mrmLevel').formulas.join(' '), /Lгжс.*Iгжс.*ρн/);
+  assert.match(c.calculationHelpFor('pumpDepthReduction').terms.join(' '), /Kq.*дебит.*не коэффициент подачи/s);
   for (const r of ['home', 'history', 'ramp', 'rich', 'assistant', 'technologist'])
     assert.equal(c.calculationHelpFor(r), null);
   for (const d of Object.values(c.helpData)) {

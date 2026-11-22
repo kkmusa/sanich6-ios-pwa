@@ -219,7 +219,7 @@ const casingWalls = {
 function renderFlow() {
   app.innerHTML = screen(`${topbar('Определение притока')}<main class="content stack">
 ${selectField('flowType', 'Вид расчёта', ['Герметичный ОК', 'Негерметичный ОК в период слива', 'Негерметичный ОК после слива'], 'Герметичный ОК')}
-${selectField('source', 'Источник Vкп', ['По справочнику', 'По геометрии'], 'По справочнику')}
+${selectField('source', 'Источник объёма КП на 1 м', ['По справочнику', 'По геометрии'], 'По справочнику')}
 <div class="card stack" id="vkpBox"></div><div class="row">${field('dh', 'ΔH, м')}${field('time', 'Время, мин')}</div><div id="hstWrap"></div><div id="liveResult">${resultCard('Приток', '', 'Заполните параметры')}</div></main>`);
   const flowTypeSelect = document.getElementById('flowType');
   const sourceSelect = document.getElementById('source');
@@ -367,7 +367,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       }
     }
     const vt = document.getElementById('vkpText');
-    if (vt) vt.textContent = vkp ? `Vкп: ${vkp.toFixed(6)} м³/м` : 'Выберите размеры и проверьте сечение кабеля';
+    if (vt) vt.textContent = vkp ? `Объём КП на 1 м глубины: ${vkp.toFixed(6)} м³` : 'Выберите размеры и проверьте сечение кабеля';
     const D = num(dh.value),
       T = num(time.value);
     if (D === null || D < 0 || T === null || T <= 0 || !vkp)
@@ -391,7 +391,7 @@ ${selectField('source', 'Источник Vкп', ['По справочнику'
       title: type,
       method: sourceSelect.value,
       result: `${fmt(r)} м³/сут`,
-      details: `ΔH=${D} м; время=${T} мин; ${detail}; Vкп=${vkp.toFixed(6)} м³/м${mode === 'drain' ? `; Hст=${hs} м` : ''}`,
+      details: `ΔH=${D} м; время=${T} мин; ${detail}; объём КП на 1 м=${vkp.toFixed(6)} м³${mode === 'drain' ? `; Hст=${hs} м` : ''}`,
     };
   }
   bind(['flowType'], () => {

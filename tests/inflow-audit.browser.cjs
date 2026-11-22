@@ -102,7 +102,7 @@ for (const directory of ['', 'reglament/', 'bez/'])
       assert.equal(await page.locator('#casing').inputValue(), '139.7');
       assert.equal(await page.locator('#tubing').inputValue(), '73');
       assert.deepEqual(await page.locator('#vkpBox .row select').evaluateAll(nodes => nodes.map(n => n.id)), ['casing','tubing']);
-      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.007700 м³/м');
+      assert.equal(await page.locator('#vkpText').innerText(), 'Объём КП на 1 м глубины: 0.007700 м³');
       assert.match(await page.locator('#vkpAssumption').innerText(), /7 мм.*КПБП 3×16.*14,7 × 35,3/);
       await page.locator('#flowType').selectOption('Герметичный ОК');
       await result(page, '18.48 м³/сут');
@@ -123,7 +123,7 @@ for (const directory of ['', 'reglament/', 'bez/'])
       assert.equal(await page.locator('#tubing').inputValue(), '73');
       assert.deepEqual(await page.locator('#vkpBox .row select').evaluateAll(nodes => nodes.map(n => n.id)), ['casingOuter','tubing']);
       await page.locator('#wall').selectOption('6.2');
-      assert.equal(await page.locator('#vkpText').innerText(), 'Vкп: 0.008542 м³/м');
+      assert.equal(await page.locator('#vkpText').innerText(), 'Объём КП на 1 м глубины: 0.008542 м³');
       await page.locator('#flowType').selectOption('Герметичный ОК');
       await result(page, '20.5 м³/сут');
       await page.locator('#flowCableArea').fill('200');
