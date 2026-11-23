@@ -581,16 +581,16 @@ const DngMath = Object.freeze({
     return Number.isFinite(flow) ? flow : null;
   },
   // Android part01: MotorCoefficientScreen.kt, lines 35–46.
-  motorCoefficient(rpm, poles, frequency = null, reverse = false) {
+  motorCoefficient(rpm, polePairs, frequency = null, reverse = false) {
     if (
       !Number.isFinite(rpm) ||
       rpm <= 0 ||
-      !Number.isInteger(poles) ||
-      poles <= 0 ||
-      poles % 2 !== 0
+      !Number.isInteger(polePairs) ||
+      polePairs < 1 ||
+      polePairs > 3
     )
       return null;
-    const base = (rpm * (poles / 2)) / 60,
+    const base = (rpm * polePairs) / 60,
       coefficient = base / 50;
     if (!Number.isFinite(coefficient) || coefficient <= 0) return null;
     const converted =

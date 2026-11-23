@@ -223,6 +223,20 @@ test('three editions have separate install identities, correct assistant access 
           assert.deepEqual(await authorBlock.locator('p').allTextContents(), paragraphs(source),
             'Author text and paragraph order are preserved for ' + source.title);
         }
+        if (topic.title === 'Запуск скважины ВНР') {
+          const extra = authorBlock.locator('.assistant-extra');
+          assert.equal(await extra.getAttribute('open'), null);
+          assert.equal(await extra.locator('summary').textContent(), 'А что, если нет агрегата?');
+          assert.match(await extra.evaluate(node => node.previousElementSibling.textContent), /^3\./);
+          await extra.locator('summary').click();
+          assert.equal(await extra.locator('.assistant-formula').count(), 3);
+          assert.deepEqual(await extra.locator('.assistant-formula').allTextContents(), [
+            'tрасч = Hст1 × BНКТ / QЭЦН',
+            'QЭЦН = Hст1 × BНКТ / tфакт',
+            'QЭЦН = VНКТ × ΔH × 1440 / (1000 × tзам)',
+          ]);
+          assert.match(await extra.textContent(), /15 минут.*НКТ 60 мм.*НРХ.*негерметичность лифта НКТ/s);
+        }
         assert.equal(await authorBlock.evaluate(node => !!(node.compareDocumentPosition(
           document.querySelector('.assistant-reglament')) & Node.DOCUMENT_POSITION_FOLLOWING)), true);
       } else {

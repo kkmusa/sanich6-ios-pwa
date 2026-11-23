@@ -49,21 +49,22 @@ test('APV: rounds minimum cycle to full minutes', () => {
   assert.equal(math.apvMinimumCycle(100, 50, 61, 60), 300);
   assert.equal(math.apvMinimumCycle(100, 100, 60, 60), null);
 });
-test('Android motor coefficient: both directions, zero frequency and invalid poles', () => {
-  assert.deepEqual(math.motorCoefficient(6000, 2, 50), {
+test('Android motor coefficient: both directions, zero frequency and invalid pole pairs', () => {
+  assert.deepEqual(math.motorCoefficient(6000, 1, 50), {
     base: 100,
     coefficient: 2,
     converted: 100,
   });
-  assert.deepEqual(math.motorCoefficient(6000, 2, 100, true), {
+  assert.deepEqual(math.motorCoefficient(6000, 1, 100, true), {
     base: 100,
     coefficient: 2,
     converted: 50,
   });
-  assert.equal(math.motorCoefficient(3000, 4, 0).converted, 0);
-  assert.equal(math.motorCoefficient(3000, 3, 50), null);
-  assert.equal(math.motorCoefficient(0, 2, 50), null);
-  assert.equal(math.motorCoefficient(6000, 2).converted, null);
+  assert.equal(math.motorCoefficient(3000, 2, 0).converted, 0);
+  assert.equal(math.motorCoefficient(3000, 3, 50).coefficient, 3);
+  assert.equal(math.motorCoefficient(3000, 4, 50), null);
+  assert.equal(math.motorCoefficient(0, 1, 50), null);
+  assert.equal(math.motorCoefficient(6000, 1).converted, null);
 });
 test('Android TMS temperature: all groups, cap and invalid inputs', () => {
   assert.equal(math.temperatureSetpoint(80, 'Д1'), 84);

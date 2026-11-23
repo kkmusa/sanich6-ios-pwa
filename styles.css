@@ -516,6 +516,52 @@ select {
   font-weight: 800;
   color: var(--text);
 }
+.assistant-extra {
+  margin: 12px 0 16px;
+  border: 2px solid #f28c00;
+  border-radius: 12px;
+  background: #fff8e8;
+  overflow: hidden;
+}
+.assistant-extra summary {
+  padding: 12px 14px;
+  background: #ffd89b;
+  color: #171717;
+  font-weight: 800;
+  cursor: pointer;
+}
+.assistant-extra-body {
+  display: grid;
+  gap: 14px;
+  padding: 14px;
+}
+.assistant-extra-block h4 {
+  margin: 0 0 7px;
+  font-size: 15px;
+}
+.assistant-extra-block ul {
+  margin: 9px 0 0;
+  padding-left: 20px;
+}
+.assistant-extra-block li + li {
+  margin-top: 5px;
+}
+.assistant-formula {
+  margin-top: 9px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+  border-left: 4px solid #f28c00;
+  border-radius: 7px;
+  background: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.assistant-extra-conclusion {
+  padding-top: 12px;
+  border-top: 1px solid #f28c0066;
+  font-weight: 650;
+}
 .warning-card {
   background: #fff3cd;
 }

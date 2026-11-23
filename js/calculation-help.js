@@ -36,6 +36,10 @@ function calculationFormula(formula) {
       `<msup><mrow><mo>(</mo>${helpFraction('f', '50')}<mo>)</mo></mrow><mn>2</mn></msup>`;
   } else if (left === 'H = ' && expression === 'Hсп − 10 × (Pд − Pз) / ρ') {
     body = helpMathText('Hсп − ') + helpFraction('10 × (Pд − Pз)', 'ρ');
+  } else if (left === 'Hверт = ' && expression === 'Hсп − ΔLсп − 10 × (Pд − Pз) / ρ') {
+    body = helpMathText('Hсп − ΔLсп − ') + helpFraction('10 × (Pд − Pз)', 'ρ');
+  } else if (left === 'k = ' && expression === '(Hверт − Hверт₁) / (Hверт₂ − Hверт₁)') {
+    body = helpFraction('Hверт − Hверт₁', 'Hверт₂ − Hверт₁');
   } else if (left === 'f = ') {
     body = helpMathText('50 × ') + `<msqrt>${helpFraction('40 × 9,81 + H', 'Hэцн')}</msqrt>`;
   } else if (left === 'ΔUкаб = ') {

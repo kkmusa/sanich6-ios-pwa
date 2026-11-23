@@ -22,12 +22,24 @@ function selectField(id, label, options, value) {
 function resultCard(title, value, error = '') {
   return `<div class="card result"><h4>${esc(title)}</h4>${value ? `<div class="value">${esc(value)}</div>` : `<div class="error">${esc(error || 'Заполните параметры')}</div>`}</div>`;
 }
+function assistantExtra(extra) {
+  if (!extra?.summary || !extra.blocks?.length) return '';
+  const blocks = extra.blocks
+    .map(
+      (block) => `<section class="assistant-extra-block"><h4>${esc(block.title)}</h4><div>${esc(block.text)}</div><div class="assistant-formula">${esc(block.formula)}</div><ul>${block.terms.map((term) => `<li>${esc(term)}</li>`).join('')}</ul></section>`,
+    )
+    .join('');
+  return `<details class="assistant-extra"><summary>${esc(extra.summary)}</summary><div class="assistant-extra-body"><div>${esc(extra.intro)}</div>${blocks}<div class="assistant-extra-conclusion">${esc(extra.conclusion)}</div></div></details>`;
+}
 function assistantCard(topic, heading = '', className = '') {
   const hasCauses = !topic.preserve && /^(?:Основные\s+)?возможные причины(?:\s+[^:]*)?:/i.test(topic.steps[0] || '');
   const firstAction = hasCauses ? 1 : 0,
     actions = topic.steps
       .slice(firstAction)
-      .map((step, index) => `<p>${esc(topic.preserve ? step : `${index + 1}. ${step}`)}</p>`)
+      .map((step, index) => {
+        const originalStep = firstAction + index + 1;
+        return `<p>${esc(topic.preserve ? step : `${index + 1}. ${step}`)}</p>${topic.extra?.afterStep === originalStep ? assistantExtra(topic.extra) : ''}`;
+      })
       .join('');
   let steps = actions;
   if (hasCauses) {

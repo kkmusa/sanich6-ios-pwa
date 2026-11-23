@@ -5,28 +5,28 @@ function renderMotorCoefficient() {
   const title = 'Коэффициент двигателя 2А';
   app.innerHTML = screen(`${topbar(title)}<main class="content stack">
     ${field('motorRpm', 'Паспортные обороты, об/мин')}
-    ${field('motorPoles', 'Число полюсов 2p', 'value="2"')}
+    ${selectField('motorPolePairs', 'Количество пар полюсов p', [1, 2, 3], 1)}
     <div id="motorCoefficientResult" class="card" role="status"></div>
     <label class="switchline card"><span>Станция → обычная частота</span><input id="motorReverse" type="checkbox"></label>
     <div class="field"><label id="motorFrequencyLabel" for="motorFrequency">Обычная частота, Гц</label><input id="motorFrequency" inputmode="decimal" autocomplete="off"></div>
     <button class="btn secondary full" id="motorSwap" disabled>Поменять местами ↔</button>
     <div id="liveResult">${resultCard('Частота для станции', '', 'Введите параметры')}</div>
-    <p class="hint">КФ = n × (2p / 2) / 3000. Перед изменением частоты сверяйте допустимый диапазон с паспортом двигателя и настройками станции.</p>
+    <p class="hint">КФ = n × p / 3000. Перед изменением частоты сверяйте допустимый диапазон с паспортом двигателя и настройками станции.</p>
   </main>`);
   const byId = (id) => document.getElementById(id);
   let calculation = null;
   function calc() {
     const rpm = engineeringNumber(byId('motorRpm').value),
-      poles = engineeringNumber(byId('motorPoles').value),
+      polePairs = engineeringNumber(byId('motorPolePairs').value),
       frequency = engineeringNumber(byId('motorFrequency').value),
       reverse = byId('motorReverse').checked;
-    calculation = DngMath.motorCoefficient(rpm, poles, frequency, reverse);
+    calculation = DngMath.motorCoefficient(rpm, polePairs, frequency, reverse);
     byId('motorFrequencyLabel').textContent = reverse
       ? 'Частота станции, Гц'
       : 'Обычная частота, Гц';
     byId('motorCoefficientResult').textContent = calculation
       ? `Базовая частота: ${fmt(calculation.base)} Гц; КФ=${fmt(calculation.coefficient)}`
-      : 'Укажите положительные обороты и чётное число полюсов (2, 4, 6…).';
+      : 'Укажите положительные обороты и выберите 1, 2 или 3 пары полюсов.';
     const converted = calculation?.converted;
     byId('motorSwap').disabled = converted === null || converted === undefined;
     setResult(
@@ -44,11 +44,11 @@ function renderMotorCoefficient() {
             ? ''
             : `; ${reverse ? 'Обычная' : 'Частота станции'}=${fmt(converted)} Гц`),
         details:
-          `Обороты=${rpm} об/мин; полюсов=${poles}` +
+          `Обороты=${rpm} об/мин; пар полюсов=${polePairs}` +
           (converted === null ? '' : `; входная частота=${frequency} Гц`),
       };
   }
-  bind(['motorRpm', 'motorPoles', 'motorFrequency', 'motorReverse'], calc);
+  bind(['motorRpm', 'motorPolePairs', 'motorFrequency', 'motorReverse'], calc);
   byId('motorSwap').onclick = () => {
     if (calculation?.converted === null || !calculation) return;
     byId('motorFrequency').value = fmt(calculation.converted);

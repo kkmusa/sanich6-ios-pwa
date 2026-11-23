@@ -40,6 +40,14 @@ test('help groups tap fractions without moving cable or motor factors into denom
     render('H = Hсп − 10 × (Pд − Pз) / ρ'),
     /Hсп − <\/mtext><mfrac><mtext>10 × \(Pд − Pз\)<\/mtext><mtext>ρ<\/mtext>/,
   );
+  assert.match(
+    render('Hверт = Hсп − ΔLсп − 10 × (Pд − Pз) / ρ'),
+    /Hверт = <\/mtext><mtext>Hсп − ΔLсп − <\/mtext><mfrac><mtext>10 × \(Pд − Pз\)<\/mtext><mtext>ρ<\/mtext>/,
+  );
+  assert.match(
+    render('k = (Hверт − Hверт₁) / (Hверт₂ − Hверт₁)'),
+    /k = <\/mtext><mfrac><mtext>Hверт − Hверт₁<\/mtext><mtext>Hверт₂ − Hверт₁<\/mtext>/,
+  );
   assert.match(render('f = 50 × √((40 × 9,81 + H) / Hэцн)'), /<msqrt><mfrac>/);
 });
 test('Android help has complete formulas, terms and explicit route mapping without unrelated screens', () => {
@@ -48,9 +56,16 @@ test('Android help has complete formulas, terms and explicit route mapping witho
   assert.equal(c.calculationHelpFor('upr'), c.calculationHelpFor('apv'));
   assert.equal(c.calculationHelpFor('manual').formulas[0], 'Q = Vл × 1440 / (tмин × 1000)');
   assert.match(c.calculationHelpFor('level').terms.join(' '), /ρ .*актуальная плотность.*лабораторных данных/i);
+  assert.deepEqual(Array.from(c.calculationHelpFor('level').formulas), [
+    'Hверт = Hсп − ΔLсп − 10 × (Pд − Pз) / ρ',
+    'k = (Hверт − Hверт₁) / (Hверт₂ − Hверт₁)',
+    'Hств = Hств₁ + k × (Hств₂ − Hств₁)',
+  ]);
+  assert.match(c.calculationHelpFor('level').notes.join(' '), /гидростатического.*Коэффициент 10.*МРМ/s);
   assert.equal(c.calculationHelpFor('motorCoefficient').formulas[1], 'КФ = n × p / 3000');
   assert.equal(c.calculationHelpFor('motorCoefficient').formulas[2], 'fстанции = fобычная × КФ');
   assert.equal(c.calculationHelpFor('motorCoefficient').formulas[3], 'fобычная = fстанции / КФ');
+  assert.match(c.calculationHelpFor('motorCoefficient').terms.join(' '), /p.*1, 2 или 3.*1 пара = 2 полюса/s);
   assert.doesNotMatch(JSON.stringify(c.helpData), /[HН]ур/);
   assert.equal(c.calculationHelpFor('ped').formulas.length, 3);
   assert.match(c.calculationHelpFor('mrmLevel').formulas.join(' '), /Lгжс.*Iгжс.*ρн/);

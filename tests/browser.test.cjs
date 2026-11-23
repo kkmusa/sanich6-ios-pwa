@@ -466,7 +466,9 @@ test('VNR index: 207 sections, 338 links, phrase search, highlight, arrows and c
 test('Android engineering calculators: motor swap, temperature cap, potential and fresh entries', () =>
   withPage(async (page) => {
     await page.locator('.menu-card').filter({ hasText: 'Коэффициент двигателя 2А' }).click();
-    await fill(page, { motorRpm: '6000', motorPoles: '2', motorFrequency: '50' });
+    assert.deepEqual(await page.locator('#motorPolePairs option').allTextContents(), ['1', '2', '3']);
+    assert.equal(await page.locator('#motorPolePairs').inputValue(), '1');
+    await fill(page, { motorRpm: '6000', motorFrequency: '50' });
     await result(page, '100 Гц');
     await page.locator('#motorSwap').click();
     assert.equal(await page.locator('#motorFrequency').inputValue(), '100');
@@ -480,7 +482,7 @@ test('Android engineering calculators: motor swap, temperature cap, potential an
     await go(page, 'motorCoefficient');
     assert.equal(await page.locator('#motorRpm').inputValue(), '');
     assert.equal(await page.locator('#motorReverse').isChecked(), false);
-    await fill(page, { motorRpm: '6000', motorPoles: '2', motorFrequency: '50' });
+    await fill(page, { motorRpm: '6000', motorFrequency: '50' });
     await result(page, '100 Гц');
     await go(page, 'temperatureSetpoint');
     await fill(page, { workingTemperature: '150' });
@@ -870,7 +872,7 @@ test('new shell activation preserves existing VNR, photos and unrelated caches',
     await page.waitForFunction(() => navigator.serviceWorker.controller !== null);
     const keys = await page.evaluate(() => caches.keys());
     assert.ok(!keys.includes('operator-dng-pwa-v21'));
-    assert.ok(keys.includes('operator-dng-pwa-v3.0.35'));
+    assert.ok(keys.includes('operator-dng-pwa-v3.0.36'));
     assert.ok(keys.includes('unrelated-app'));
     const present = await page.evaluate(async () => {
       const a = await (await caches.open('operator-dng-vnr-pages-v1')).match('vnr/pages/001.jpg'),
@@ -1328,6 +1330,9 @@ test('home is compact, product identity is Operator DNG, and technologist tools 
       'energyConsumption', 'cablePowerLoss', 'optimalTubing', 'pumpFill',
       'pumpDepthReduction', 'sko', 'temperatureSetpoint',
     ]);
+    const depthIcon = page.locator(`.menu-card[onclick="go('pumpDepthReduction')"] .emoji`);
+    assert.equal(await depthIcon.locator('svg path').getAttribute('fill'), '#f28c00');
+    assert.equal((await depthIcon.textContent()).trim(), '');
     assert.equal(techRoutes.filter((route) => homeRoutes.includes(route)).length, 0);
     for (const route of techRoutes) {
       await page.locator(`.menu-card[onclick="go('${route}')"]`).click();
@@ -1370,7 +1375,7 @@ test('VNR position controls hide after idle and return after touch and keyboard 
 test('Android question buttons show formulas and terms, retain inputs and close accessibly', () =>
   withPage(async (page) => {
     const topics = [
-      ['level', 2, 'Плотность'],
+      ['level', 3, 'Плотность'],
       ['frequency', 1, 'частота'],
       ['headAtFrequency', 1, 'напор'],
       ['motorCoefficient', 4, 'полюсов'],
